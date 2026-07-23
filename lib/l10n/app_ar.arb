@@ -1,0 +1,17 @@
+{
+    "@@locale": "ar",
+    "appName": "ليفت لوج",
+    "@appName": {},
+    "login": "تسجيل الدخول",
+    "@login": {},
+    "register": "إنشاء حساب",
+    "@register": {},
+    "email": "البريد الإلكتروني",
+    "@email": {},
+    "password": "كلمة المرور",
+    "@password": {},
+    "save": "حفظ",
+    "@save": {},
+    "cancel": "إلغاء",
+    "@cancel": {}
+}

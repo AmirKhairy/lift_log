@@ -1,0 +1,17 @@
+{
+    "@@locale": "en",
+    "appName": "Lift Log",
+    "@appName": {},
+    "login": "Login",
+    "@login": {},
+    "register": "Register",
+    "@register": {},
+    "email": "Email",
+    "@email": {},
+    "password": "Password",
+    "@password": {},
+    "save": "Save",
+    "@save": {},
+    "cancel": "Cancel",
+    "@cancel": {}
+}
