@@ -139,6 +139,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @skipOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip Onboarding'**
+  String get skipOnboarding;
+
+  /// No description provided for @alreadyHaveAccountLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Log In'**
+  String get alreadyHaveAccountLogin;
+
+  /// No description provided for @onboardingPhaseOne.
+  ///
+  /// In en, this message translates to:
+  /// **'PHASE 01'**
+  String get onboardingPhaseOne;
+
+  /// No description provided for @onboardingTrackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Every Machine.'**
+  String get onboardingTrackTitle;
+
+  /// No description provided for @onboardingTrackDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Map your gym floor, save machine settings, and keep every lift easy to repeat.'**
+  String get onboardingTrackDescription;
+
+  /// No description provided for @onboardingPerfectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect Every Rep'**
+  String get onboardingPerfectTitle;
+
+  /// No description provided for @onboardingPerfectDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach form notes and tutorial clips so every machine setup feels familiar.'**
+  String get onboardingPerfectDescription;
+
+  /// No description provided for @onboardingGainsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Your Gains'**
+  String get onboardingGainsTitle;
+
+  /// No description provided for @onboardingGainsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Record every set with precision and watch your estimated strength evolve.'**
+  String get onboardingGainsDescription;
+
+  /// No description provided for @onboardingContinueToInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Insights'**
+  String get onboardingContinueToInsights;
+
+  /// No description provided for @onboardingStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Journey Starts Now'**
+  String get onboardingStartTitle;
+
+  /// No description provided for @onboardingStartDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Precision tracking for peak performance. Join the community of dedicated athletes.'**
+  String get onboardingStartDescription;
+
+  /// No description provided for @onboardingGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get onboardingGetStarted;
+
+  /// No description provided for @onboardingProperDeadliftForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Proper Deadlift Form'**
+  String get onboardingProperDeadliftForm;
+
+  /// No description provided for @onboardingFeatured.
+  ///
+  /// In en, this message translates to:
+  /// **'FEATURED'**
+  String get onboardingFeatured;
+
+  /// No description provided for @onboardingBenchPress.
+  ///
+  /// In en, this message translates to:
+  /// **'Bench Press'**
+  String get onboardingBenchPress;
+
+  /// No description provided for @onboardingCableRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Row'**
+  String get onboardingCableRow;
+
+  /// No description provided for @onboardingPrecision.
+  ///
+  /// In en, this message translates to:
+  /// **'Precision'**
+  String get onboardingPrecision;
+
+  /// No description provided for @onboardingPinPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin positions'**
+  String get onboardingPinPositions;
+
+  /// No description provided for @onboardingHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get onboardingHistory;
+
+  /// No description provided for @onboardingWeightLoads.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight loads'**
+  String get onboardingWeightLoads;
+
+  /// No description provided for @onboardingBarbellSquat.
+  ///
+  /// In en, this message translates to:
+  /// **'Barbell Squat'**
+  String get onboardingBarbellSquat;
+
+  /// No description provided for @onboardingSets.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets'**
+  String get onboardingSets;
+
+  /// No description provided for @onboardingReps.
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get onboardingReps;
+
+  /// No description provided for @onboardingEstimatedOneRm.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated 1RM'**
+  String get onboardingEstimatedOneRm;
 }
 
 class _AppLocalizationsDelegate

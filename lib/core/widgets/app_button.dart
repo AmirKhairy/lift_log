@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/widgets/app_text.dart';
 
 class AppButton extends StatelessWidget {
   const AppButton({
@@ -32,7 +33,7 @@ class AppButton extends StatelessWidget {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : icon ?? const SizedBox.shrink(),
-        label: Text(title),
+        label: AppText(title),
       ),
     );
   }

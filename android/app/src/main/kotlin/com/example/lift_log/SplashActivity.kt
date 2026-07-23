@@ -1,7 +1,5 @@
 package com.example.lift_log
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -15,16 +13,14 @@ class SplashActivity : Activity() {
 
         val lottieAnimation = findViewById<LottieAnimationView>(R.id.lottieAnimation)
 
-        lottieAnimation.addAnimatorListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                lottieAnimation.postDelayed({
-                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                    finish()
-                }, 300)
-            }
-        })
-
+        // Start the animation
         lottieAnimation.playAnimation()
+
+        // Navigate after exactly 3 seconds
+        lottieAnimation.postDelayed({
+            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            finish()
+        }, 3000)
     }
 }

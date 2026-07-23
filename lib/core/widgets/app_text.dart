@@ -34,8 +34,14 @@ class AppText extends StatelessWidget {
             color: color,
             fontSize: fontSize,
             fontWeight: fontWeight,
+            fontFamily: 'BLKCHCRY',
           ) ??
-          TextStyle(color: color, fontSize: fontSize, fontWeight: fontWeight),
+          TextStyle(
+            color: color,
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+            fontFamily: 'BLKCHCRY',
+          ),
     );
   }
 }
