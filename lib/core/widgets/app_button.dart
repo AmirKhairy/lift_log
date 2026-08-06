@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/core/widgets/loading.dart';
 
 class AppButton extends StatelessWidget {
   const AppButton({
@@ -10,6 +12,8 @@ class AppButton extends StatelessWidget {
     this.width,
     this.height = 52,
     this.icon,
+    this.backgroundColor,
+    this.textColor,
   });
 
   final String title;
@@ -18,6 +22,8 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double height;
   final Widget? icon;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +31,18 @@ class AppButton extends StatelessWidget {
       width: width ?? double.infinity,
       height: height,
       child: FilledButton.icon(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(
+            backgroundColor ?? AppColors.primary,
+          ),
+        ),
         onPressed: loading ? null : onPressed,
         icon: loading
-            ? const SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
+            ? const SizedBox.shrink()
             : icon ?? const SizedBox.shrink(),
-        label: AppText(title),
+        label: loading
+            ? const Loading()
+            : AppText(title, color: textColor ?? AppColors.white),
       ),
     );
   }

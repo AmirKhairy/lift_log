@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/theme/app_colors.dart';
 
 class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,
     this.controller,
     this.focusNode,
-    this.label,
     this.hint,
     this.validator,
     this.keyboardType,
@@ -21,12 +21,16 @@ class AppTextField extends StatefulWidget {
     this.obscureText = false,
     this.autofocus = false,
     this.textCapitalization = TextCapitalization.none,
+    this.filled = true,
+    this.fillColor,
+    this.hintColor,
+    this.obscureIconColor,
+    this.textColor,
   });
 
   final TextEditingController? controller;
   final FocusNode? focusNode;
 
-  final String? label;
   final String? hint;
 
   final String? Function(String?)? validator;
@@ -52,6 +56,12 @@ class AppTextField extends StatefulWidget {
 
   final TextCapitalization textCapitalization;
 
+  final bool filled;
+  final Color? fillColor;
+  final Color? hintColor;
+  final Color? obscureIconColor;
+  final Color? textColor;
+
   @override
   State<AppTextField> createState() => _AppTextFieldState();
 }
@@ -68,6 +78,7 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      style: TextStyle(color: widget.textColor ?? AppColors.textDark),
       controller: widget.controller,
       focusNode: widget.focusNode,
       validator: widget.validator,
@@ -82,11 +93,9 @@ class _AppTextFieldState extends State<AppTextField> {
       obscureText: _obscure,
       textCapitalization: widget.textCapitalization,
       decoration: InputDecoration(
-        labelText: widget.label,
         hintText: widget.hint,
-
+        hintStyle: TextStyle(color: widget.hintColor ?? AppColors.textDark),
         prefixIcon: widget.prefixIcon,
-
         suffixIcon: widget.obscureText
             ? IconButton(
                 onPressed: () {
@@ -94,7 +103,12 @@ class _AppTextFieldState extends State<AppTextField> {
                     _obscure = !_obscure;
                   });
                 },
-                icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility),
+                icon: Icon(
+                  _obscure
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: widget.obscureIconColor ?? AppColors.white,
+                ),
               )
             : widget.suffixIcon == null
             ? null
@@ -102,6 +116,8 @@ class _AppTextFieldState extends State<AppTextField> {
                 onPressed: widget.onSuffixPressed,
                 icon: widget.suffixIcon!,
               ),
+        filled: widget.filled,
+        fillColor: widget.fillColor ?? AppColors.backgroundLight,
       ),
     );
   }

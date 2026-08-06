@@ -3,6 +3,8 @@ import 'package:flutter/widgets.dart';
 class AppPadding {
   AppPadding._();
 
+  static const xs = EdgeInsets.all(8);
+  
   static const screen = EdgeInsets.all(16);
 
   static const card = EdgeInsets.all(20);

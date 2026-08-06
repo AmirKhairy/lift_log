@@ -5,6 +5,7 @@ class AppColors {
 
   // Brand
   static const primary = Color(0xff3B82F6);
+  static const secondary = Color(0xffADC6FF);
 
   // Dark
   static const backgroundDark = Color(0xff000000);
@@ -13,6 +14,9 @@ class AppColors {
 
   static const textDark = Colors.white;
   static const subtitleDark = Color(0xffA0A0A0);
+  static const gray = Color(0xff171717);
+  static const darkGray = Color(0xff0f0f0f);
+  static const borderGray = Color(0xff161616);
 
   // Light
 

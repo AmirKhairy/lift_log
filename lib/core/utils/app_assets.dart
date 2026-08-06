@@ -9,6 +9,8 @@ class AppAssets {
 
   static const onboardingBackground = 'assets/images/onboarding_background.png';
 
+  static const onboardingMachine = 'assets/images/onboarding_machine.png';
+
   static const onboardingStart = 'assets/images/onboarding_start.png';
 
   static const onboardingVideo = 'assets/images/onboarding_video.png';
@@ -19,4 +21,8 @@ class AppAssets {
       'assets/images/onboarding_bench_press.png';
 
   static const onboardingCapleRow = 'assets/images/onboarding_cable_row.png';
+
+  static const apple = 'assets/icons/apple.png';
+
+  static const google = 'assets/icons/google.png';
 }

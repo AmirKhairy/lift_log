@@ -66,5 +66,26 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.155419891564-mk0be96757ka51b59ctg64e5pm7n67jd</string>
+			</array>
+		</dict>
+
+		<dict>
+        	<key>CFBundleTypeRole</key>
+        	<string>Editor</string>
+
+        	<key>CFBundleURLSchemes</key>
+        	<array>
+            	<string>liftlog</string>
+        	</array>
+    	</dict>
+	</array>
 </dict>
 </plist>

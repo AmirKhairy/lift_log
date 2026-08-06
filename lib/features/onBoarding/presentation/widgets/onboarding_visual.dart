@@ -37,27 +37,35 @@ class _MachineVisual extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Align(
-      alignment: Alignment.center,
-      child: Row(
-        children: [
-          Expanded(
-            child: _MetricTile(
-              icon: Icons.tune_rounded,
-              title: l10n.onboardingPrecision,
-              subtitle: l10n.onboardingPinPositions,
-            ),
+    return Column(
+      children: [
+        Expanded(
+          child: _ImagePanel(
+            assetPath: AppAssets.onboardingMachine,
+            icon: Icons.insights_rounded,
           ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: _MetricTile(
-              icon: Icons.history_rounded,
-              title: l10n.onboardingHistory,
-              subtitle: l10n.onboardingWeightLoads,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          children: [
+            Expanded(
+              child: _MetricTile(
+                icon: Icons.tune_rounded,
+                title: l10n.onboardingPrecision,
+                subtitle: l10n.onboardingPinPositions,
+              ),
             ),
-          ),
-        ],
-      ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _MetricTile(
+                icon: Icons.history_rounded,
+                title: l10n.onboardingHistory,
+                subtitle: l10n.onboardingWeightLoads,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
