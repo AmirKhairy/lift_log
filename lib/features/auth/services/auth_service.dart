@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
@@ -40,7 +41,7 @@ class AuthService {
       final idToken = googleAuthentication.idToken;
 
       if (idToken == null) {
-        throw 'No ID Token found.';
+        throw 'no_id_token'.tr;
       }
 
       final authResult = await Supabase.instance.client.auth.signInWithIdToken(

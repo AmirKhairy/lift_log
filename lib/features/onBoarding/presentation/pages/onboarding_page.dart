@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 import '../../../../core/router/app_router.dart';
@@ -9,7 +10,6 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_padding.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_scaffold.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../../cubit/onboarding_cubit.dart';
 import '../../cubit/onboarding_states.dart';
 import '../../models/onboarding_item.dart';
@@ -61,8 +61,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           }
         },
         builder: (context, state) {
-          final l10n = AppLocalizations.of(context)!;
-          final items = onboardingItems(l10n);
+          final items = onboardingItems();
           final currentItem = items[state.currentIndex];
           final isLastPage = state.currentIndex == items.length - 1;
 
@@ -99,9 +98,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 TextButton(
                   onPressed: context.read<OnboardingCubit>().complete,
                   child: AppText(
-                    isLastPage
-                        ? l10n.alreadyHaveAccountLogin
-                        : l10n.skipOnboarding,
+                    isLastPage ? 'already_have_an_account_login'.tr : 'skip'.tr,
                     style: const TextStyle(color: AppColors.subtitleDark),
                   ),
                 ),

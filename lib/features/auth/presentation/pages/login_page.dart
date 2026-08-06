@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: [
                   AppText(
-                    'LiftLog',
+                    'lift_log'.tr,
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -68,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: AppSpacing.sm),
                   AppText(
-                    'welcome back',
+                    'welcome_back'.tr,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -93,12 +94,12 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AppText(
-                    'Don\'t have an account? ',
+                    'dont_have_account'.tr,
                     style: TextStyle(color: AppColors.subtitleDark),
                   ),
                   TextButton(
                     child: AppText(
-                      'Sign up',
+                      'sign_up'.tr,
                       style: TextStyle(color: AppColors.primary),
                     ),
                     onPressed: () {

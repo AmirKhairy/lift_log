@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
@@ -22,7 +23,7 @@ class RegesterCardSectionTitle extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.sm),
         AppText(
-          title,
+          title.tr,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,

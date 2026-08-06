@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
@@ -70,7 +71,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 child: Column(
                   children: [
                     AppText(
-                      'Reset Password',
+                      'reset_password'.tr,
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -79,7 +80,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     ),
                     SizedBox(height: AppSpacing.sm),
                     AppText(
-                      'Enter your new password below to reset your account password.',
+                      'reset_password_instructions'.tr,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
@@ -94,7 +95,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               AppStaggeredAnimation(
                 index: 2,
                 child: LabeledTextField(
-                  label: 'New Password',
+                  label: 'new_password'.tr,
                   child: AppTextField(
                     controller: newPasswordController,
                     hint: '••••••••',
@@ -119,7 +120,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   listener: (context, state) {
                     if (state is ResetPasswordSuccess) {
                       AppSnackbar.success(
-                        message: 'Password Reset Successfully',
+                        message: 'reset_password_success'.tr,
                         context: context,
                       );
                       Future.delayed(const Duration(seconds: 2));
@@ -134,7 +135,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   },
                   builder: (context, state) {
                     return AppButton(
-                      title: 'Reset Password',
+                      title: 'reset_password'.tr,
                       onPressed: () {
                         final password = newPasswordController.text.trim();
                         context.read<AuthCubit>().updatePassword(
@@ -152,7 +153,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 index: 4,
                 child: TextButton(
                   child: AppText(
-                    'Back to Login',
+                    'back_to_login'.tr,
                     style: TextStyle(color: AppColors.secondary),
                   ),
                   onPressed: () {

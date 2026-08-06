@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
@@ -46,7 +47,7 @@ class LoginCardWidget extends StatelessWidget {
             AppStaggeredAnimation(
               index: 0,
               child: LabeledTextField(
-                label: 'Email',
+                label: 'email'.tr,
                 child: AppTextField(
                   controller: emailController,
                   hint: 'name@example.com',
@@ -66,7 +67,7 @@ class LoginCardWidget extends StatelessWidget {
             AppStaggeredAnimation(
               index: 1,
               child: LabeledTextField(
-                label: 'Password',
+                label: 'password'.tr,
                 child: AppTextField(
                   controller: passwordController,
                   hint: '••••••••',
@@ -90,7 +91,7 @@ class LoginCardWidget extends StatelessWidget {
                 alignment: AlignmentDirectional.centerEnd,
                 child: TextButton(
                   child: AppText(
-                    'Forgot password?',
+                    'forgot_password'.tr,
                     style: TextStyle(color: AppColors.primary),
                   ),
                   onPressed: () {
@@ -112,7 +113,7 @@ class LoginCardWidget extends StatelessWidget {
                 },
                 builder: (context, state) {
                   return AppButton(
-                    title: 'Login',
+                    title: 'login'.tr,
                     onPressed: () {
                       final email = emailController.text.trim();
                       final password = passwordController.text.trim();
@@ -142,7 +143,7 @@ class LoginCardWidget extends StatelessWidget {
                     ),
                   ),
                   AppText(
-                    'Or Continue with',
+                    'or_continue_with'.tr,
                     style: TextStyle(color: AppColors.subtitleDark),
                   ),
                   Expanded(
@@ -185,7 +186,7 @@ class LoginCardWidget extends StatelessWidget {
                     children: [
                       Expanded(
                         child: AppButton(
-                          title: 'Google',
+                          title: 'google'.tr,
                           onPressed: () =>
                               context.read<AuthCubit>().loginWithGoogle(),
                           icon: Image.asset(AppAssets.google, width: 20),

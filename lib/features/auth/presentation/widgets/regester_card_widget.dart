@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
@@ -47,7 +48,7 @@ class RegesterCardWidget extends StatelessWidget {
           children: [
             AppStaggeredAnimation(
               index: 0,
-              child: RegesterCardSectionTitle(title: 'Account Details'),
+              child: RegesterCardSectionTitle(title: 'account_details'.tr),
             ),
             SizedBox(height: AppSpacing.md),
 
@@ -60,7 +61,7 @@ class RegesterCardWidget extends StatelessWidget {
             SizedBox(height: AppSpacing.md),
             AppStaggeredAnimation(
               index: 4,
-              child: RegesterCardSectionTitle(title: 'Physical Profile'),
+              child: RegesterCardSectionTitle(title: 'physical_details'.tr),
             ),
             SizedBox(height: AppSpacing.md),
             BlocBuilder<AuthCubit, AuthState>(
@@ -76,14 +77,14 @@ class RegesterCardWidget extends StatelessWidget {
                 listener: (context, state) {
                   if (state is RegisterAuthSuccess) {
                     AppSnackbar.success(
-                      message: 'Registration success',
+                      message: 'registration_success'.tr,
                       context: context,
                     );
                     context.go(AppRoutes.home, extra: {'userId': state.userId});
                   }
                   if (state is GoogleRegisterAuthSuccess) {
                     AppSnackbar.success(
-                      message: 'Registration success',
+                      message: 'registration_success'.tr,
                       context: context,
                     );
                     context.go(AppRoutes.home, extra: {'userId': state.userId});
@@ -100,7 +101,7 @@ class RegesterCardWidget extends StatelessWidget {
                 },
                 builder: (context, state) {
                   return AppButton(
-                    title: 'Sign Up',
+                    title: 'sign_up'.tr,
                     onPressed: () {
                       if (userIdFromGoogle.isNotEmpty) {
                         context.read<AuthCubit>().registerWithGoogle(

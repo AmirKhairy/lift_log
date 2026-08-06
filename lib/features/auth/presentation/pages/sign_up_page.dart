@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_assets.dart';
@@ -66,7 +67,7 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 children: [
                   AppText(
-                    'Create Account',
+                    'create_account'.tr,
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -75,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: AppSpacing.sm),
                   AppText(
-                    'Start your journey to peak performance today.',
+                    'create_account_instructions'.tr,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
@@ -103,12 +104,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AppText(
-                    'Already have an account?',
+                    'already_have_account'.tr,
                     style: TextStyle(color: AppColors.subtitleDark),
                   ),
                   TextButton(
                     child: AppText(
-                      'Login',
+                      'login'.tr,
                       style: TextStyle(color: AppColors.primary),
                     ),
                     onPressed: () {

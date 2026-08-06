@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_radius.dart';
@@ -49,7 +50,7 @@ class AppPickerField<T> extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppText(
-              label,
+              label.tr,
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -80,8 +81,8 @@ class AppPickerField<T> extends StatelessWidget {
                   duration: const Duration(milliseconds: 250),
                   child: AppText(
                     value == null
-                        ? hint
-                        : displayText?.call(value as T) ?? value.toString(),
+                        ? hint.tr
+                        : displayText?.call(value as T) ?? value.toString().tr,
                     key: ValueKey(value),
                     style: TextStyle(
                       color: value == null

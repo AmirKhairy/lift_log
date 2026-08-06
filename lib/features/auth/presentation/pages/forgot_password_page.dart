@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
@@ -69,7 +70,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 child: Column(
                   children: [
                     AppText(
-                      'Reset Password',
+                      'reset_password'.tr,
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                     SizedBox(height: AppSpacing.sm),
                     AppText(
-                      'Enter your email address below and we\'ll send you a link to reset your password.',
+                      'reset_password_description'.tr,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
@@ -93,7 +94,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               AppStaggeredAnimation(
                 index: 2,
                 child: LabeledTextField(
-                  label: 'Email',
+                  label: 'email'.tr,
                   child: AppTextField(
                     controller: emailController,
                     hint: 'name@example.com',
@@ -116,8 +117,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   listener: (context, state) {
                     if (state is ResetPasswordEmailSuccess) {
                       AppSnackbar.success(
-                        message:
-                            'Password reset email sent successfully, Please check your inbox.',
+                        message: 'reset_password_email_sent'.tr,
                         context: context,
                       );
                     }
@@ -130,7 +130,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   },
                   builder: (context, state) {
                     return AppButton(
-                      title: 'Send Reset Link',
+                      title: 'send_reset_email'.tr,
                       onPressed: () {
                         final email = emailController.text.trim();
                         context.read<AuthCubit>().sendResetPasswordEmail(
@@ -148,7 +148,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 index: 4,
                 child: TextButton(
                   child: AppText(
-                    'Back to Login',
+                    'back_to_login'.tr,
                     style: TextStyle(color: AppColors.secondary),
                   ),
                   onPressed: () {

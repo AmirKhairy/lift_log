@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 
 class AppTextField extends StatefulWidget {
@@ -93,7 +94,7 @@ class _AppTextFieldState extends State<AppTextField> {
       obscureText: _obscure,
       textCapitalization: widget.textCapitalization,
       decoration: InputDecoration(
-        hintText: widget.hint,
+        hintText: widget.hint?.tr,
         hintStyle: TextStyle(color: widget.hintColor ?? AppColors.textDark),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.obscureText

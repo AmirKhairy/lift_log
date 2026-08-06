@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lift_log/l10n/app_localizations.dart';
+import 'package:lift_log/core/constants/app_constants.dart';
+import 'package:lift_log/i18n/localization_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/router/app_router.dart';
@@ -16,29 +17,32 @@ class LiftLogApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, _) {
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
+        return AnimatedBuilder(
+          animation: LocalizationService.instance,
+          builder: (_, _) {
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
 
-          title: 'Lift Log',
+              title: AppConstants.appName,
+              theme: AppTheme.light,
 
-          theme: AppTheme.light,
+              darkTheme: AppTheme.dark,
 
-          darkTheme: AppTheme.dark,
+              themeMode: ThemeMode.system,
 
-          themeMode: ThemeMode.system,
+              routerConfig: appRouter,
 
-          routerConfig: appRouter,
+              locale: LocalizationService.instance.locale,
 
-          locale: const Locale('en'),
+              supportedLocales: AppConstants.locales,
 
-          supportedLocales: AppLocalizations.supportedLocales,
-
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+            );
+          },
         );
       },
     );

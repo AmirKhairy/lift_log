@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
+import 'package:lift_log/core/theme/app_spacing.dart';
+import 'package:lift_log/core/utils/app_radius.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 class AppSnackbar {
@@ -8,13 +11,13 @@ class AppSnackbar {
     required BuildContext context,
     Duration duration = const Duration(seconds: 3),
   }) {
-    final snackBar = SnackBar(
-      content: AppText(message),
-      duration: duration,
+    _show(
+      context: context,
+      message: message.tr,
       backgroundColor: AppColors.success,
+      icon: Icons.check_circle_rounded,
+      duration: duration,
     );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   static void error({
@@ -22,12 +25,71 @@ class AppSnackbar {
     required BuildContext context,
     Duration duration = const Duration(seconds: 3),
   }) {
-    final snackBar = SnackBar(
-      content: Text(message),
-      duration: duration,
+    _show(
+      context: context,
+      message: message.tr,
       backgroundColor: AppColors.error,
+      icon: Icons.error_rounded,
+      duration: duration,
     );
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  static void info({
+    required String message,
+    required BuildContext context,
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    _show(
+      context: context,
+      message: message.tr,
+      backgroundColor: AppColors.primary,
+      icon: Icons.info_rounded,
+      duration: duration,
+    );
+  }
+
+  static void _show({
+    required BuildContext context,
+    required String message,
+    required Color backgroundColor,
+    required IconData icon,
+    required Duration duration,
+  }) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          duration: duration,
+          margin: const EdgeInsets.all(AppSpacing.md),
+          content: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: Colors.white, size: 24),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: AppText(
+                    message.tr,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/widgets/app_picker.dart';
 import 'package:lift_log/features/auth/cubit/auth_state.dart';
@@ -30,7 +31,7 @@ class AuthCubit extends Cubit<AuthState> {
     } on AuthException catch (e) {
       emit(EmailAuthFailure(e.message));
     } catch (_) {
-      emit(EmailAuthFailure('Something went wrong'));
+      emit(EmailAuthFailure('something_went_wrong'.tr));
     }
   }
 
@@ -92,7 +93,7 @@ class AuthCubit extends Cubit<AuthState> {
       items: [for (var i = 10; i <= 70; i++) i],
       itemLabel: (e) => e.toString(),
       initialValue: age,
-      pickerTitle: 'Age',
+      pickerTitle: 'age',
     );
 
     if (value != null) {
@@ -106,7 +107,7 @@ class AuthCubit extends Cubit<AuthState> {
       items: Gender.values,
       itemLabel: (e) => e.name,
       initialValue: gender,
-      pickerTitle: 'Gender',
+      pickerTitle: 'gender',
     );
 
     if (value != null) {
@@ -120,7 +121,7 @@ class AuthCubit extends Cubit<AuthState> {
       items: [for (var i = 100; i <= 250; i++) i / 1],
       itemLabel: (e) => '$e cm',
       initialValue: height,
-      pickerTitle: 'Height',
+      pickerTitle: 'height',
     );
 
     if (value != null) {
@@ -134,7 +135,7 @@ class AuthCubit extends Cubit<AuthState> {
       items: [for (var i = 15; i <= 300; i++) i / 1],
       itemLabel: (e) => '$e kg',
       initialValue: weight,
-      pickerTitle: 'Weight',
+      pickerTitle: 'weight',
     );
 
     if (value != null) {
@@ -168,7 +169,7 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e, s) {
       debugPrint(e.toString());
       debugPrintStack(stackTrace: s);
-      emit(RegisterAuthFailure('Something went wrong'));
+      emit(RegisterAuthFailure('something_went_wrong'.tr));
     }
   }
 
@@ -194,7 +195,7 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e, s) {
       debugPrint(e.toString());
       debugPrintStack(stackTrace: s);
-      emit(GoogleRegisterAuthFailure('Something went wrong'));
+      emit(GoogleRegisterAuthFailure('something_went_wrong'.tr));
     }
   }
 
@@ -212,7 +213,7 @@ class AuthCubit extends Cubit<AuthState> {
     } on AuthException catch (e) {
       emit(ResetPasswordEmailFailure(e.message));
     } catch (_) {
-      emit(ResetPasswordEmailFailure('Something went wrong'));
+      emit(ResetPasswordEmailFailure('something_went_wrong'.tr));
     }
   }
 
@@ -230,7 +231,7 @@ class AuthCubit extends Cubit<AuthState> {
     } on AuthException catch (e) {
       emit(ResetPasswordFailure(e.message));
     } catch (_) {
-      emit(ResetPasswordFailure('Something went wrong'));
+      emit(ResetPasswordFailure('something_went_wrong'.tr));
     }
   }
 }

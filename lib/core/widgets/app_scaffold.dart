@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/widgets/app_text.dart';
 
 class AppScaffold extends StatelessWidget {
   const AppScaffold({
@@ -70,7 +72,7 @@ class AppScaffold extends StatelessWidget {
                 (title == null
                     ? null
                     : AppBar(
-                        title: Text(title!),
+                        title: AppText(title!.tr),
                         centerTitle: centerTitle,
                         leading: leading,
                         actions: actions,

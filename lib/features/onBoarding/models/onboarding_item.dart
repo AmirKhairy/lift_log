@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../l10n/app_localizations.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 
 class OnboardingItem {
   const OnboardingItem({
@@ -22,33 +21,33 @@ class OnboardingItem {
 
 enum OnboardingVisualType { machines, videos, analytics, start }
 
-List<OnboardingItem> onboardingItems(AppLocalizations l10n) {
+List<OnboardingItem> onboardingItems() {
   return [
     OnboardingItem(
-      title: l10n.onboardingTrackTitle,
-      description: l10n.onboardingTrackDescription,
-      buttonText: l10n.next,
+      title: 'onboarding_track_title'.tr,
+      description: 'onboarding_track_description'.tr,
+      buttonText: 'next'.tr,
       icon: Icons.fitness_center_rounded,
       visualType: OnboardingVisualType.machines,
     ),
     OnboardingItem(
-      title: l10n.onboardingPerfectTitle,
-      description: l10n.onboardingPerfectDescription,
-      buttonText: l10n.next,
+      title: 'onboarding_perfect_title'.tr,
+      description: 'onboarding_perfect_description'.tr,
+      buttonText: 'next'.tr,
       icon: Icons.play_circle_fill_rounded,
       visualType: OnboardingVisualType.videos,
     ),
     OnboardingItem(
-      title: l10n.onboardingGainsTitle,
-      description: l10n.onboardingGainsDescription,
-      buttonText: l10n.onboardingContinueToInsights,
+      title: 'onboarding_gains_title'.tr,
+      description: 'onboarding_gains_description'.tr,
+      buttonText: 'continue_to_insights'.tr,
       icon: Icons.trending_up_rounded,
       visualType: OnboardingVisualType.analytics,
     ),
     OnboardingItem(
-      title: l10n.onboardingStartTitle,
-      description: l10n.onboardingStartDescription,
-      buttonText: l10n.onboardingGetStarted,
+      title: 'onboarding_start_title'.tr,
+      description: 'onboarding_start_description'.tr,
+      buttonText: 'get_started'.tr,
       icon: Icons.fitness_center_rounded,
       visualType: OnboardingVisualType.start,
     ),

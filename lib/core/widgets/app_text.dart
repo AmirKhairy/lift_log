@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 
 class AppText extends StatelessWidget {
   const AppText(
@@ -25,7 +26,7 @@ class AppText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      text,
+      text.tr,
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,

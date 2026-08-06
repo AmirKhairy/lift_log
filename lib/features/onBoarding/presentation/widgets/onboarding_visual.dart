@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -6,7 +7,6 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_assets.dart';
 import '../../../../core/utils/app_padding.dart';
 import '../../../../core/utils/app_radius.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../../models/onboarding_item.dart';
 
 class OnboardingVisual extends StatelessWidget {
@@ -35,8 +35,6 @@ class _MachineVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Column(
       children: [
         Expanded(
@@ -51,16 +49,16 @@ class _MachineVisual extends StatelessWidget {
             Expanded(
               child: _MetricTile(
                 icon: Icons.tune_rounded,
-                title: l10n.onboardingPrecision,
-                subtitle: l10n.onboardingPinPositions,
+                title: 'precision'.tr,
+                subtitle: 'pin_position'.tr,
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: _MetricTile(
                 icon: Icons.history_rounded,
-                title: l10n.onboardingHistory,
-                subtitle: l10n.onboardingWeightLoads,
+                title: 'history'.tr,
+                subtitle: 'weight_loads'.tr,
               ),
             ),
           ],
@@ -75,8 +73,6 @@ class _VideoVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Column(
       children: [
         Expanded(
@@ -97,7 +93,7 @@ class _VideoVisual extends StatelessWidget {
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       AppText(
-                        l10n.onboardingProperDeadliftForm,
+                        'proper_deadlift_form'.tr,
                         style: const TextStyle(
                           color: AppColors.white,
                           fontWeight: FontWeight.w700,
@@ -109,7 +105,7 @@ class _VideoVisual extends StatelessWidget {
                 Positioned(
                   right: AppSpacing.md,
                   top: AppSpacing.md,
-                  child: _SmallBadge(label: l10n.onboardingFeatured),
+                  child: _SmallBadge(label: 'featured'.tr),
                 ),
               ],
             ),
@@ -120,14 +116,14 @@ class _VideoVisual extends StatelessWidget {
           children: [
             Expanded(
               child: _Thumbnail(
-                label: l10n.onboardingBenchPress,
+                label: 'bench_press'.tr,
                 image: AppAssets.onboardingBenchPress,
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: _Thumbnail(
-                label: l10n.onboardingCableRow,
+                label: 'caple_row'.tr,
                 image: AppAssets.onboardingCapleRow,
               ),
             ),
@@ -143,8 +139,6 @@ class _InsightsVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Column(
       children: [
         Container(
@@ -152,11 +146,11 @@ class _InsightsVisual extends StatelessWidget {
           decoration: _panelDecoration(),
           child: Row(
             children: [
-              _LiftStat(label: l10n.onboardingBarbellSquat, value: '140 kg'),
+              _LiftStat(label: 'barbell_squat'.tr, value: '140 kg'),
               const Spacer(),
-              _LiftStat(label: l10n.onboardingSets, value: '5'),
+              _LiftStat(label: 'sets'.tr, value: '5'),
               const SizedBox(width: AppSpacing.md),
-              _LiftStat(label: l10n.onboardingReps, value: '8'),
+              _LiftStat(label: 'reps'.tr, value: '8'),
               const SizedBox(width: AppSpacing.md),
               const CircleAvatar(
                 radius: 18,
@@ -274,7 +268,7 @@ class _MetricTile extends StatelessWidget {
           Icon(icon, color: const Color(0xffA8C4FF), size: 22),
           const SizedBox(height: AppSpacing.sm),
           AppText(
-            title,
+            title.tr,
             style: const TextStyle(
               color: AppColors.white,
               fontSize: 12,
@@ -282,7 +276,7 @@ class _MetricTile extends StatelessWidget {
             ),
           ),
           AppText(
-            subtitle,
+            subtitle.tr,
             style: const TextStyle(color: AppColors.subtitleDark, fontSize: 10),
           ),
         ],
@@ -309,7 +303,7 @@ class _Thumbnail extends StatelessWidget {
           child: Padding(
             padding: AppPadding.screen,
             child: AppText(
-              label,
+              label.tr,
               style: const TextStyle(
                 color: AppColors.white,
                 fontSize: 11,
@@ -369,7 +363,7 @@ class _SmallBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: AppText(
-        label,
+        label.tr,
         style: const TextStyle(
           color: AppColors.white,
           fontSize: 9,

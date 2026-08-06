@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 import 'package:lift_log/core/widgets/loading.dart';
@@ -42,7 +43,7 @@ class AppButton extends StatelessWidget {
             : icon ?? const SizedBox.shrink(),
         label: loading
             ? const Loading()
-            : AppText(title, color: textColor ?? AppColors.white),
+            : AppText(title.tr, color: textColor ?? AppColors.white),
       ),
     );
   }

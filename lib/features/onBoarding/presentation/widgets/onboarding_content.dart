@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -39,7 +40,7 @@ class OnboardingContent extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
               AppText(
-                'LiftLog',
+                'lift_log'.tr,
                 style: AppTextStyles.title.copyWith(
                   color: AppColors.white,
                   fontWeight: FontWeight.w800,
@@ -63,7 +64,7 @@ class OnboardingContent extends StatelessWidget {
                 ),
               ),
               child: AppText(
-                badge,
+                badge.tr,
                 style: AppTextStyles.label.copyWith(
                   color: const Color(0xffA8C4FF),
                   fontSize: 11,
@@ -72,7 +73,7 @@ class OnboardingContent extends StatelessWidget {
               ),
             ),
           AppText(
-            item.title,
+            item.title.tr,
             textAlign: TextAlign.center,
             style: AppTextStyles.headline.copyWith(
               color: AppColors.white,
@@ -82,7 +83,7 @@ class OnboardingContent extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           AppText(
-            item.description,
+            item.description.tr,
             textAlign: TextAlign.center,
             style: AppTextStyles.bodySmall.copyWith(
               color: AppColors.subtitleDark,

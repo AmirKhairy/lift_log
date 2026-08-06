@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
@@ -34,12 +35,12 @@ class AppPicker {
                   CupertinoButton(
                     onPressed: null,
                     child: AppText(
-                      pickerTitle,
+                      pickerTitle.tr,
                       style: const TextStyle(color: AppColors.white),
                     ),
                   ),
                   CupertinoButton(
-                    child: const AppText("Done"),
+                    child: AppText("done".tr),
                     onPressed: () => context.pop(),
                   ),
                 ],
@@ -59,7 +60,7 @@ class AppPicker {
                       .map(
                         (e) => Center(
                           child: AppText(
-                            itemLabel(e),
+                            itemLabel(e).tr,
                             style: const TextStyle(color: AppColors.white),
                           ),
                         ),

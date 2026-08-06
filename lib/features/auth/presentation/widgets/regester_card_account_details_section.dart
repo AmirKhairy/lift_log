@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
@@ -27,7 +28,7 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
         AppStaggeredAnimation(
           index: 1,
           child: LabeledTextField(
-            label: 'Full Name',
+            label: 'full_name'.tr,
             child: AppTextField(
               enabled: userIdFromGoogle.isEmpty,
               controller: nameController,
@@ -48,7 +49,7 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
         AppStaggeredAnimation(
           index: 2,
           child: LabeledTextField(
-            label: 'Email',
+            label: 'email'.tr,
             child: AppTextField(
               enabled: userIdFromGoogle.isEmpty,
               controller: emailController,
@@ -70,7 +71,7 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
           AppStaggeredAnimation(
             index: 3,
             child: LabeledTextField(
-              label: 'Password',
+              label: 'password'.tr,
               child: AppTextField(
                 controller: passwordController,
                 hint: '••••••••',

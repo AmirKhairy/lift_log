@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
@@ -21,8 +22,8 @@ class RegesterCardPhysicalSection extends StatelessWidget {
             children: [
               Expanded(
                 child: AppPickerField<int>(
-                  label: 'Age',
-                  hint: 'Select',
+                  label: 'age'.tr,
+                  hint: 'select'.tr,
                   value: context.read<AuthCubit>().age,
                   fillColor: AppColors.gray,
 
@@ -33,8 +34,8 @@ class RegesterCardPhysicalSection extends StatelessWidget {
               SizedBox(width: 16),
               Expanded(
                 child: AppPickerField<Gender>(
-                  label: 'Gender',
-                  hint: 'Select',
+                  label: 'gender'.tr,
+                  hint: 'select'.tr,
                   value: context.read<AuthCubit>().gender,
                   fillColor: AppColors.gray,
                   displayText: (g) =>
@@ -56,8 +57,8 @@ class RegesterCardPhysicalSection extends StatelessWidget {
             children: [
               Expanded(
                 child: AppPickerField<double>(
-                  label: 'height',
-                  hint: 'Select',
+                  label: 'height'.tr,
+                  hint: 'select'.tr,
                   value: context.read<AuthCubit>().height,
                   fillColor: AppColors.gray,
                   displayText: (h) => '${h.toInt()} cm',
@@ -69,8 +70,8 @@ class RegesterCardPhysicalSection extends StatelessWidget {
               SizedBox(width: 16),
               Expanded(
                 child: AppPickerField<double>(
-                  label: 'weight',
-                  hint: 'Select',
+                  label: 'weight'.tr,
+                  hint: 'select'.tr,
                   value: context.read<AuthCubit>().weight,
                   fillColor: AppColors.gray,
                   displayText: (w) => '${w.toInt()} kg',
