@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_radius.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
@@ -51,10 +51,10 @@ class AppPickerField<T> extends StatelessWidget {
           children: [
             AppText(
               label.tr,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: AppColors.textDark,
+                color: context.theme.colorScheme.onSurface,
               ),
             ),
 
@@ -67,13 +67,14 @@ class AppPickerField<T> extends StatelessWidget {
                 isEmpty: value == null,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: fillColor,
+                  fillColor:
+                      fillColor ?? context.theme.inputDecorationTheme.fillColor,
                   prefixIcon: prefixIcon,
                   suffixIcon:
                       suffixIcon ??
-                      const Icon(
+                      Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        color: AppColors.subtitleDark,
+                        color: context.appColors.subtitle,
                       ),
                   errorText: field.errorText,
                 ),
@@ -86,8 +87,8 @@ class AppPickerField<T> extends StatelessWidget {
                     key: ValueKey(value),
                     style: TextStyle(
                       color: value == null
-                          ? hintColor ?? AppColors.subtitleDark
-                          : textColor ?? AppColors.textDark,
+                          ? hintColor ?? context.appColors.subtitle
+                          : textColor ?? context.theme.colorScheme.onSurface,
                     ),
                   ),
                 ),

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 class AppPicker {
@@ -25,7 +25,7 @@ class AppPicker {
 
         return Container(
           height: 300,
-          color: AppColors.black,
+          color: context.theme.colorScheme.surface,
           child: Column(
             children: [
               Row(
@@ -36,7 +36,9 @@ class AppPicker {
                     onPressed: null,
                     child: AppText(
                       pickerTitle.tr,
-                      style: const TextStyle(color: AppColors.white),
+                      style: TextStyle(
+                        color: context.theme.colorScheme.onSurface,
+                      ),
                     ),
                   ),
                   CupertinoButton(
@@ -61,7 +63,9 @@ class AppPicker {
                         (e) => Center(
                           child: AppText(
                             itemLabel(e).tr,
-                            style: const TextStyle(color: AppColors.white),
+                            style: TextStyle(
+                              color: context.theme.colorScheme.onSurface,
+                            ),
                           ),
                         ),
                       )

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
 import 'package:lift_log/core/router/app_router.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_radius.dart';
 import 'package:lift_log/core/widgets/app_button.dart';
@@ -43,7 +43,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: context.theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -55,13 +55,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: context.theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(AppRadius.lg),
                   ),
                   child: Icon(
                     Icons.lock_reset_outlined,
                     size: 40,
-                    color: AppColors.surfaceDark,
+                    color: context.theme.colorScheme.onPrimary,
                   ),
                 ),
               ),
@@ -75,7 +75,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textDark,
+                        color: context.theme.colorScheme.onSurface,
                       ),
                     ),
                     SizedBox(height: AppSpacing.sm),
@@ -85,7 +85,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.subtitleLight,
+                        color: context.appColors.subtitle,
                       ),
                     ),
                   ],
@@ -99,16 +99,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   child: AppTextField(
                     controller: newPasswordController,
                     hint: '••••••••',
-                    hintColor: AppColors.subtitleDark,
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: true,
-                    obscureIconColor: AppColors.white,
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.lock_outline,
-                      color: AppColors.white,
+                      color: context.theme.colorScheme.onSurface,
                     ),
                     filled: true,
-                    fillColor: AppColors.gray,
                     validator: (value) => Validators.password(value),
                   ),
                 ),
@@ -154,7 +151,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 child: TextButton(
                   child: AppText(
                     'back_to_login'.tr,
-                    style: TextStyle(color: AppColors.secondary),
+                    style: TextStyle(color: context.theme.colorScheme.primary),
                   ),
                   onPressed: () {
                     context.go(AppRoutes.login);

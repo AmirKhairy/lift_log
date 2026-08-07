@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
@@ -17,7 +17,7 @@ class RegesterCardSectionTitle extends StatelessWidget {
           width: 3,
           height: 24,
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: context.theme.colorScheme.primary,
             shape: BoxShape.rectangle,
           ),
         ),
@@ -27,7 +27,7 @@ class RegesterCardSectionTitle extends StatelessWidget {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: AppColors.textDark,
+            color: context.theme.colorScheme.onSurface,
           ),
         ),
       ],

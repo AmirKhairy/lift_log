@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_labeled_text_field.dart';
 import 'package:lift_log/core/widgets/app_staggered_animation.dart';
@@ -33,14 +33,11 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
               enabled: userIdFromGoogle.isEmpty,
               controller: nameController,
               hint: 'John Doe',
-              hintColor: AppColors.subtitleDark,
               keyboardType: TextInputType.name,
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.person_outline,
-                color: AppColors.white,
+                color: context.theme.colorScheme.onSurface,
               ),
-              filled: true,
-              fillColor: AppColors.gray,
               validator: (value) => Validators.name(value),
             ),
           ),
@@ -54,14 +51,11 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
               enabled: userIdFromGoogle.isEmpty,
               controller: emailController,
               hint: 'name@example.com',
-              hintColor: AppColors.subtitleDark,
               keyboardType: TextInputType.emailAddress,
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.email_outlined,
-                color: AppColors.white,
+                color: context.theme.colorScheme.onSurface,
               ),
-              filled: true,
-              fillColor: AppColors.gray,
               validator: (value) => Validators.email(value),
             ),
           ),
@@ -75,16 +69,12 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
               child: AppTextField(
                 controller: passwordController,
                 hint: '••••••••',
-                hintColor: AppColors.subtitleDark,
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: true,
-                obscureIconColor: AppColors.white,
-                prefixIcon: const Icon(
+                prefixIcon: Icon(
                   Icons.lock_outline,
-                  color: AppColors.white,
+                  color: context.theme.colorScheme.onSurface,
                 ),
-                filled: true,
-                fillColor: AppColors.gray,
                 validator: (value) => Validators.password(
                   value,
                   skip: userIdFromGoogle.isNotEmpty,

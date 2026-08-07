@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 class LabeledTextField extends StatelessWidget {
@@ -18,10 +18,10 @@ class LabeledTextField extends StatelessWidget {
           children: [
             AppText(
               label.tr,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
+                color: context.theme.colorScheme.onSurface,
               ),
             ),
           ],

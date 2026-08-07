@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/context_extension.dart';
 
 class AppCard extends StatelessWidget {
   const AppCard({
@@ -19,7 +20,7 @@ class AppCard extends StatelessWidget {
     return Container(
       margin: margin,
       child: Material(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),

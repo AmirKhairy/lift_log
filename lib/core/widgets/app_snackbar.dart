@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_radius.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
@@ -14,7 +14,7 @@ class AppSnackbar {
     _show(
       context: context,
       message: message.tr,
-      backgroundColor: AppColors.success,
+      backgroundColor: context.appColors.success,
       icon: Icons.check_circle_rounded,
       duration: duration,
     );
@@ -28,7 +28,7 @@ class AppSnackbar {
     _show(
       context: context,
       message: message.tr,
-      backgroundColor: AppColors.error,
+      backgroundColor: context.theme.colorScheme.error,
       icon: Icons.error_rounded,
       duration: duration,
     );
@@ -42,7 +42,7 @@ class AppSnackbar {
     _show(
       context: context,
       message: message.tr,
-      backgroundColor: AppColors.primary,
+      backgroundColor: context.theme.colorScheme.primary,
       icon: Icons.info_rounded,
       duration: duration,
     );
@@ -75,13 +75,17 @@ class AppSnackbar {
             ),
             child: Row(
               children: [
-                Icon(icon, color: Colors.white, size: 24),
+                Icon(
+                  icon,
+                  color: context.theme.colorScheme.onPrimary,
+                  size: 24,
+                ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: AppText(
                     message.tr,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.theme.colorScheme.onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

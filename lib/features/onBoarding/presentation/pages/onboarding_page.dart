@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_padding.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -66,7 +66,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           final isLastPage = state.currentIndex == items.length - 1;
 
           return AppScaffold(
-            backgroundColor: AppColors.backgroundDark,
+            backgroundColor: context.theme.scaffoldBackgroundColor,
 
             padding: EdgeInsets.zero,
             body: Column(
@@ -99,7 +99,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   onPressed: context.read<OnboardingCubit>().complete,
                   child: AppText(
                     isLastPage ? 'already_have_an_account_login'.tr : 'skip'.tr,
-                    style: const TextStyle(color: AppColors.subtitleDark),
+                    style: TextStyle(color: context.appColors.subtitle),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),

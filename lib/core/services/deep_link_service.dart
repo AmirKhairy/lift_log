@@ -12,23 +12,19 @@ class DeepLinkService {
   StreamSubscription<AuthState>? _subscription;
 
   void initialize() {
-    _subscription ??= Supabase.instance.client.auth.onAuthStateChange.listen((
-      data,
-    ) {
-      final event = data.event;
-      final session = data.session;
+    _subscription ??= Supabase.instance.client.auth.onAuthStateChange.listen(
+      (data) {
+        final event = data.event;
+        final session = data.session;
 
-      switch (event) {
-        case AuthChangeEvent.passwordRecovery:
-          if (session != null) {
-            appRouter.go(AppRoutes.resetPassword);
-          }
-          break;
-
-        default:
-          break;
-      }
-    });
+        if (event == AuthChangeEvent.passwordRecovery && session != null) {
+          appRouter.go(AppRoutes.resetPassword);
+        }
+      },
+      onError: (error) {
+        appRouter.go(AppRoutes.login);
+      },
+    );
   }
 
   void dispose() {

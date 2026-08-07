@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/router/app_router.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/utils/app_radius.dart';
@@ -38,9 +38,9 @@ class RegesterCardWidget extends StatelessWidget {
       width: double.infinity,
       padding: AppPadding.card,
       decoration: BoxDecoration(
-        color: AppColors.darkGray,
+        color: context.theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.borderGray, width: 1),
+        border: Border.all(color: context.appColors.border, width: 1),
       ),
       child: Form(
         key: _formKey,

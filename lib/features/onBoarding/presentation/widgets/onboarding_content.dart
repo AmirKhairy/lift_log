@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../core/utils/app_padding.dart';
@@ -29,20 +29,22 @@ class OnboardingContent extends StatelessWidget {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: const Color(0xffA8C4FF),
+                  color: context.theme.colorScheme.primary.withValues(
+                    alpha: 0.18,
+                  ),
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
                 child: Icon(
                   item.icon,
                   size: 17,
-                  color: const Color(0xff102A5C),
+                  color: context.theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
               AppText(
                 'lift_log'.tr,
                 style: AppTextStyles.title.copyWith(
-                  color: AppColors.white,
+                  color: context.theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -57,16 +59,20 @@ class OnboardingContent extends StatelessWidget {
                 vertical: AppSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.14),
+                color: context.theme.colorScheme.primary.withValues(
+                  alpha: 0.14,
+                ),
                 borderRadius: BorderRadius.circular(AppRadius.full),
                 border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.36),
+                  color: context.theme.colorScheme.primary.withValues(
+                    alpha: 0.36,
+                  ),
                 ),
               ),
               child: AppText(
                 badge.tr,
                 style: AppTextStyles.label.copyWith(
-                  color: const Color(0xffA8C4FF),
+                  color: context.theme.colorScheme.primary,
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
                 ),
@@ -76,7 +82,7 @@ class OnboardingContent extends StatelessWidget {
             item.title.tr,
             textAlign: TextAlign.center,
             style: AppTextStyles.headline.copyWith(
-              color: AppColors.white,
+              color: context.theme.colorScheme.onSurface,
               height: 1.04,
               fontWeight: FontWeight.w900,
             ),
@@ -86,7 +92,7 @@ class OnboardingContent extends StatelessWidget {
             item.description.tr,
             textAlign: TextAlign.center,
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.subtitleDark,
+              color: context.appColors.subtitle,
               height: 1.45,
             ),
           ),

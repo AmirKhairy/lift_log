@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/router/app_router.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_assets.dart';
 import 'package:lift_log/core/widgets/app_scaffold.dart';
@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: context.theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
+                      color: context.theme.colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: AppSpacing.sm),
@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.subtitleLight,
+                      color: context.appColors.subtitle,
                     ),
                   ),
                 ],
@@ -95,12 +95,14 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   AppText(
                     'dont_have_account'.tr,
-                    style: TextStyle(color: AppColors.subtitleDark),
+                    style: TextStyle(color: context.appColors.subtitle),
                   ),
                   TextButton(
                     child: AppText(
                       'sign_up'.tr,
-                      style: TextStyle(color: AppColors.primary),
+                      style: TextStyle(
+                        color: context.theme.colorScheme.primary,
+                      ),
                     ),
                     onPressed: () {
                       context.push(AppRoutes.register);

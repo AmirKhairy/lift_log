@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
 import 'package:lift_log/core/router/app_router.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_assets.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
@@ -36,9 +36,9 @@ class LoginCardWidget extends StatelessWidget {
       width: double.infinity,
       padding: AppPadding.card,
       decoration: BoxDecoration(
-        color: AppColors.darkGray,
+        color: context.theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.borderGray, width: 1),
+        border: Border.all(color: context.appColors.border, width: 1),
       ),
       child: Form(
         key: _formKey,
@@ -51,14 +51,11 @@ class LoginCardWidget extends StatelessWidget {
                 child: AppTextField(
                   controller: emailController,
                   hint: 'name@example.com',
-                  hintColor: AppColors.subtitleDark,
                   keyboardType: TextInputType.emailAddress,
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.email_outlined,
-                    color: AppColors.white,
+                    color: context.theme.colorScheme.onSurface,
                   ),
-                  filled: true,
-                  fillColor: AppColors.gray,
                   validator: (value) => Validators.email(value),
                 ),
               ),
@@ -71,16 +68,12 @@ class LoginCardWidget extends StatelessWidget {
                 child: AppTextField(
                   controller: passwordController,
                   hint: '••••••••',
-                  hintColor: AppColors.subtitleDark,
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: true,
-                  obscureIconColor: AppColors.white,
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.lock_outline,
-                    color: AppColors.white,
+                    color: context.theme.colorScheme.onSurface,
                   ),
-                  filled: true,
-                  fillColor: AppColors.gray,
                   validator: (value) => Validators.password(value),
                 ),
               ),
@@ -92,7 +85,7 @@ class LoginCardWidget extends StatelessWidget {
                 child: TextButton(
                   child: AppText(
                     'forgot_password'.tr,
-                    style: TextStyle(color: AppColors.primary),
+                    style: TextStyle(color: context.theme.colorScheme.primary),
                   ),
                   onPressed: () {
                     context.push(AppRoutes.forgotPassword);
@@ -136,7 +129,7 @@ class LoginCardWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Divider(
-                      color: AppColors.subtitleLight,
+                      color: context.theme.dividerColor,
                       thickness: 1,
                       indent: 20,
                       endIndent: 20,
@@ -144,11 +137,11 @@ class LoginCardWidget extends StatelessWidget {
                   ),
                   AppText(
                     'or_continue_with'.tr,
-                    style: TextStyle(color: AppColors.subtitleDark),
+                    style: TextStyle(color: context.appColors.subtitle),
                   ),
                   Expanded(
                     child: Divider(
-                      color: AppColors.subtitleLight,
+                      color: context.theme.dividerColor,
                       thickness: 1,
                       indent: 20,
                       endIndent: 20,
@@ -187,11 +180,12 @@ class LoginCardWidget extends StatelessWidget {
                       Expanded(
                         child: AppButton(
                           title: 'google'.tr,
+                          textColor: context.theme.colorScheme.onSurface,
                           onPressed: () =>
                               context.read<AuthCubit>().loginWithGoogle(),
                           icon: Image.asset(AppAssets.google, width: 20),
-
-                          backgroundColor: AppColors.gray,
+                          backgroundColor:
+                              context.theme.inputDecorationTheme.fillColor,
                           loading: state is GoogleAuthLoading,
                         ),
                       ),

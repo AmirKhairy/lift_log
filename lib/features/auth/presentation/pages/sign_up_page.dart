@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_assets.dart';
 import 'package:lift_log/core/widgets/app_scaffold.dart';
@@ -46,7 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: context.theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -71,7 +71,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
+                      color: context.theme.colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: AppSpacing.sm),
@@ -81,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.subtitleLight,
+                      color: context.appColors.subtitle,
                     ),
                   ),
                 ],
@@ -105,12 +105,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 children: [
                   AppText(
                     'already_have_account'.tr,
-                    style: TextStyle(color: AppColors.subtitleDark),
+                    style: TextStyle(color: context.appColors.subtitle),
                   ),
                   TextButton(
                     child: AppText(
                       'login'.tr,
-                      style: TextStyle(color: AppColors.primary),
+                      style: TextStyle(
+                        color: context.theme.colorScheme.primary,
+                      ),
                     ),
                     onPressed: () {
                       context.pop();

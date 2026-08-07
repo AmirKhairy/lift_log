@@ -38,7 +38,11 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> loginWithGoogle() async {
     try {
       emit(GoogleAuthLoading());
-      final User user = await _service.loginWithGoogle();
+      final user = await _service.loginWithGoogle();
+      if (user == null) {
+        emit(AuthInitial());
+        return;
+      }
       bool completed = await _service.isProfileCompleted(user.id);
 
       if (completed) {

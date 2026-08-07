@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/widgets/app_picker_field.dart';
@@ -25,7 +25,7 @@ class RegesterCardPhysicalSection extends StatelessWidget {
                   label: 'age'.tr,
                   hint: 'select'.tr,
                   value: context.read<AuthCubit>().age,
-                  fillColor: AppColors.gray,
+                  fillColor: context.theme.inputDecorationTheme.fillColor,
 
                   validator: (value) => Validators.age(value),
                   onTap: () => context.read<AuthCubit>().openAgePicker(context),
@@ -37,7 +37,7 @@ class RegesterCardPhysicalSection extends StatelessWidget {
                   label: 'gender'.tr,
                   hint: 'select'.tr,
                   value: context.read<AuthCubit>().gender,
-                  fillColor: AppColors.gray,
+                  fillColor: context.theme.inputDecorationTheme.fillColor,
                   displayText: (g) =>
                       g.name[0].toUpperCase() + g.name.substring(1),
                   validator: (value) => Validators.gender(value),
@@ -60,7 +60,7 @@ class RegesterCardPhysicalSection extends StatelessWidget {
                   label: 'height'.tr,
                   hint: 'select'.tr,
                   value: context.read<AuthCubit>().height,
-                  fillColor: AppColors.gray,
+                  fillColor: context.theme.inputDecorationTheme.fillColor,
                   displayText: (h) => '${h.toInt()} cm',
                   validator: (value) => Validators.height(value),
                   onTap: () =>
@@ -73,7 +73,7 @@ class RegesterCardPhysicalSection extends StatelessWidget {
                   label: 'weight'.tr,
                   hint: 'select'.tr,
                   value: context.read<AuthCubit>().weight,
-                  fillColor: AppColors.gray,
+                  fillColor: context.theme.inputDecorationTheme.fillColor,
                   displayText: (w) => '${w.toInt()} kg',
                   validator: (value) => Validators.weight(value),
                   onTap: () =>

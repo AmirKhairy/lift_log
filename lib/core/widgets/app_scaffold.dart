@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
@@ -82,7 +83,9 @@ class AppScaffold extends StatelessWidget {
 
           if (loading)
             ColoredBox(
-              color: Colors.black45,
+              color: context.theme.colorScheme.onSurface.withValues(
+                alpha: 0.45,
+              ),
               child: const Center(child: CircularProgressIndicator()),
             ),
         ],

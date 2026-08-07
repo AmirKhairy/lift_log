@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 import 'package:lift_log/core/widgets/loading.dart';
 
@@ -32,18 +31,16 @@ class AppButton extends StatelessWidget {
       width: width ?? double.infinity,
       height: height,
       child: FilledButton.icon(
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(
-            backgroundColor ?? AppColors.primary,
-          ),
-        ),
+        style: backgroundColor == null
+            ? null
+            : ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(backgroundColor),
+              ),
         onPressed: loading ? null : onPressed,
         icon: loading
             ? const SizedBox.shrink()
             : icon ?? const SizedBox.shrink(),
-        label: loading
-            ? const Loading()
-            : AppText(title.tr, color: textColor ?? AppColors.white),
+        label: loading ? const Loading() : AppText(title.tr, color: textColor),
       ),
     );
   }

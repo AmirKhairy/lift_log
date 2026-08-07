@@ -22,7 +22,7 @@ class AuthService {
     }
   }
 
-  Future<User> loginWithGoogle() async {
+  Future<User?> loginWithGoogle() async {
     try {
       final webClientId = dotenv.env['WEB_CLIENT_ID'] ?? '';
 
@@ -50,6 +50,12 @@ class AuthService {
       );
 
       return authResult.user!;
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return null;
+      }
+
+      rethrow;
     } catch (e) {
       rethrow;
     }

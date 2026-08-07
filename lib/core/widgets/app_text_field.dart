@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/theme/app_colors.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 
 class AppTextField extends StatefulWidget {
   const AppTextField({
@@ -79,7 +79,9 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: TextStyle(color: widget.textColor ?? AppColors.textDark),
+      style: TextStyle(
+        color: widget.textColor ?? context.theme.colorScheme.onSurface,
+      ),
       controller: widget.controller,
       focusNode: widget.focusNode,
       validator: widget.validator,
@@ -95,7 +97,9 @@ class _AppTextFieldState extends State<AppTextField> {
       textCapitalization: widget.textCapitalization,
       decoration: InputDecoration(
         hintText: widget.hint?.tr,
-        hintStyle: TextStyle(color: widget.hintColor ?? AppColors.textDark),
+        hintStyle: TextStyle(
+          color: widget.hintColor ?? context.appColors.subtitle,
+        ),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.obscureText
             ? IconButton(
@@ -108,7 +112,9 @@ class _AppTextFieldState extends State<AppTextField> {
                   _obscure
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
-                  color: widget.obscureIconColor ?? AppColors.white,
+                  color:
+                      widget.obscureIconColor ??
+                      context.theme.colorScheme.onSurface,
                 ),
               )
             : widget.suffixIcon == null
@@ -118,7 +124,8 @@ class _AppTextFieldState extends State<AppTextField> {
                 icon: widget.suffixIcon!,
               ),
         filled: widget.filled,
-        fillColor: widget.fillColor ?? AppColors.backgroundLight,
+        fillColor:
+            widget.fillColor ?? context.theme.inputDecorationTheme.fillColor,
       ),
     );
   }

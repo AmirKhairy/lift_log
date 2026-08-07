@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_assets.dart';
 import '../../../../core/utils/app_padding.dart';
@@ -86,16 +86,16 @@ class _VideoVisual extends StatelessWidget {
                   bottom: AppSpacing.md,
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.play_circle_fill_rounded,
-                        color: AppColors.primary,
+                        color: context.theme.colorScheme.primary,
                         size: 32,
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       AppText(
                         'proper_deadlift_form'.tr,
-                        style: const TextStyle(
-                          color: AppColors.white,
+                        style: TextStyle(
+                          color: context.theme.colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -143,7 +143,7 @@ class _InsightsVisual extends StatelessWidget {
       children: [
         Container(
           padding: AppPadding.screen,
-          decoration: _panelDecoration(),
+          decoration: _panelDecoration(context),
           child: Row(
             children: [
               _LiftStat(label: 'barbell_squat'.tr, value: '140 kg'),
@@ -152,10 +152,13 @@ class _InsightsVisual extends StatelessWidget {
               const SizedBox(width: AppSpacing.md),
               _LiftStat(label: 'reps'.tr, value: '8'),
               const SizedBox(width: AppSpacing.md),
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 18,
-                backgroundColor: AppColors.primary,
-                child: Icon(Icons.check_rounded, color: AppColors.black),
+                backgroundColor: context.theme.colorScheme.primary,
+                child: Icon(
+                  Icons.check_rounded,
+                  color: context.theme.colorScheme.onPrimary,
+                ),
               ),
             ],
           ),
@@ -216,8 +219,8 @@ class _ImagePanel extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.black.withValues(alpha: 0.08),
-                  AppColors.black.withValues(alpha: 0.48),
+                  context.theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                  context.theme.colorScheme.onSurface.withValues(alpha: 0.48),
                 ],
               ),
             ),
@@ -237,9 +240,9 @@ class _ImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: _panelDecoration(),
+      decoration: _panelDecoration(context),
       child: Center(
-        child: Icon(icon, color: const Color(0xffA8C4FF), size: 44),
+        child: Icon(icon, color: context.theme.colorScheme.primary, size: 44),
       ),
     );
   }
@@ -260,24 +263,27 @@ class _MetricTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: AppPadding.screen,
-      decoration: _panelDecoration(color: AppColors.surfaceVariantDark),
+      decoration: _panelDecoration(
+        context,
+        color: context.theme.colorScheme.surface,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: const Color(0xffA8C4FF), size: 22),
+          Icon(icon, color: context.theme.colorScheme.primary, size: 22),
           const SizedBox(height: AppSpacing.sm),
           AppText(
             title.tr,
-            style: const TextStyle(
-              color: AppColors.white,
+            style: TextStyle(
+              color: context.theme.colorScheme.onSurface,
               fontSize: 12,
               fontWeight: FontWeight.w700,
             ),
           ),
           AppText(
             subtitle.tr,
-            style: const TextStyle(color: AppColors.subtitleDark, fontSize: 10),
+            style: TextStyle(color: context.appColors.subtitle, fontSize: 10),
           ),
         ],
       ),
@@ -304,8 +310,8 @@ class _Thumbnail extends StatelessWidget {
             padding: AppPadding.screen,
             child: AppText(
               label.tr,
-              style: const TextStyle(
-                color: AppColors.white,
+              style: TextStyle(
+                color: context.theme.colorScheme.onSurface,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
               ),
@@ -330,13 +336,13 @@ class _LiftStat extends StatelessWidget {
       children: [
         AppText(
           label.toUpperCase(),
-          style: const TextStyle(color: AppColors.subtitleDark, fontSize: 9),
+          style: TextStyle(color: context.appColors.subtitle, fontSize: 9),
         ),
         const SizedBox(height: AppSpacing.xs),
         AppText(
           value,
-          style: const TextStyle(
-            color: AppColors.white,
+          style: TextStyle(
+            color: context.theme.colorScheme.onSurface,
             fontSize: 16,
             fontWeight: FontWeight.w800,
           ),
@@ -359,13 +365,13 @@ class _SmallBadge extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.black.withValues(alpha: 0.6),
+        color: context.theme.colorScheme.onSurface.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: AppText(
         label.tr,
-        style: const TextStyle(
-          color: AppColors.white,
+        style: TextStyle(
+          color: context.theme.colorScheme.onSurface,
           fontSize: 9,
           fontWeight: FontWeight.w800,
         ),
@@ -374,10 +380,12 @@ class _SmallBadge extends StatelessWidget {
   }
 }
 
-BoxDecoration _panelDecoration({Color color = AppColors.surfaceDark}) {
+BoxDecoration _panelDecoration(BuildContext context, {Color? color}) {
   return BoxDecoration(
-    color: color,
+    color: color ?? context.theme.colorScheme.surface,
     borderRadius: BorderRadius.circular(AppRadius.sm),
-    border: Border.all(color: AppColors.white.withValues(alpha: 0.08)),
+    border: Border.all(
+      color: context.theme.dividerColor.withValues(alpha: 0.08),
+    ),
   );
 }

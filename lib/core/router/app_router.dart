@@ -25,6 +25,15 @@ class AppRoutes {
 
 final GoRouter appRouter = GoRouter(
   initialLocation: AppRoutes.onboarding,
+  redirect: (context, state) {
+    final uri = state.uri;
+
+    if (uri.scheme == 'liftlog' && uri.host == 'reset-password') {
+      return AppRoutes.login;
+    }
+
+    return null;
+  },
   routes: [
     GoRoute(
       path: AppRoutes.onboarding,
