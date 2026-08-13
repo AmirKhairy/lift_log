@@ -7,7 +7,7 @@ import 'package:lift_log/features/auth/presentation/pages/forgot_password_page.d
 import 'package:lift_log/features/auth/presentation/pages/login_page.dart';
 import 'package:lift_log/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:lift_log/features/auth/presentation/pages/sign_up_page.dart';
-import 'package:lift_log/features/home/presentation/pages/home_page.dart';
+import 'package:lift_log/features/main/presentation/pages/main_page.dart';
 import 'package:lift_log/features/onBoarding/presentation/pages/onboarding_page.dart';
 
 class AppRoutes {
@@ -106,7 +106,7 @@ final GoRouter appRouter = GoRouter(
           path: AppRoutes.resetPassword,
           builder: (_, _) => const ResetPasswordPage(),
         ),
-        GoRoute(path: AppRoutes.home, builder: (_, _) => const HomePage()),
+        GoRoute(path: AppRoutes.home, builder: (_, _) => const MainPage()),
       ],
     ),
   ],

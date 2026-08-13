@@ -8,7 +8,7 @@ import 'package:lift_log/core/services/storage_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/widgets/app_picker.dart';
 import 'package:lift_log/features/auth/cubit/auth_state.dart';
-import 'package:lift_log/features/auth/services/auth_service.dart';
+import 'package:lift_log/core/services/api_services/auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
 class AuthCubit extends Cubit<AuthState> {
