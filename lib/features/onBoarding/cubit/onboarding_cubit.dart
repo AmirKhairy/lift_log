@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lift_log/core/constants/app_keys.dart';
+import 'package:lift_log/core/services/storage_service.dart';
 
 import 'onboarding_states.dart';
 
@@ -21,6 +23,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void complete() {
+    StorageService.saveBool(AppKeys.onboardingCompleted, true);
     emit(state.copyWith(isCompleted: true));
   }
 }

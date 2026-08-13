@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lift_log/core/constants/app_keys.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/services/storage_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/widgets/app_picker.dart';
 import 'package:lift_log/features/auth/cubit/auth_state.dart';
@@ -13,6 +15,10 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
   final AuthService _service = AuthService();
+
+  Future<void> _saveUserId(String userId) async {
+    await StorageService.saveString(AppKeys.userId, userId);
+  }
 
   // ========================================== Login ==========================================
 
@@ -26,6 +32,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(EmailAuthLoading());
 
         final user = await _service.login(email: email, password: password);
+        await _saveUserId(user.id);
         emit(EmailAuthSuccess(userId: user.id));
       }
     } on AuthException catch (e) {
@@ -46,6 +53,7 @@ class AuthCubit extends Cubit<AuthState> {
       bool completed = await _service.isProfileCompleted(user.id);
 
       if (completed) {
+        await _saveUserId(user.id);
         emit(GoogleAuthSuccess(userId: user.id));
       } else {
         emit(
@@ -166,6 +174,7 @@ class AuthCubit extends Cubit<AuthState> {
           weight: weight!,
           gender: gender!.name,
         );
+        await _saveUserId(user.id);
         emit(RegisterAuthSuccess(userId: user.id));
       }
     } on AuthException catch (e) {
@@ -192,6 +201,7 @@ class AuthCubit extends Cubit<AuthState> {
           weight: weight!,
           gender: gender!.name,
         );
+        await _saveUserId(userId);
         emit(GoogleRegisterAuthSuccess(userId: userId));
       }
     } on AuthException catch (e) {

@@ -13,8 +13,16 @@ class StorageService {
     await _prefs.setString(key, value);
   }
 
+  static Future<void> saveBool(String key, bool value) async {
+    await _prefs.setBool(key, value);
+  }
+
   static String? getString(String key) {
     return _prefs.getString(key);
+  }
+
+  static bool? getBool(String key) {
+    return _prefs.getBool(key);
   }
 
   static Future<void> remove(String key) async {

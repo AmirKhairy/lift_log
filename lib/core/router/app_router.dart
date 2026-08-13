@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/constants/app_keys.dart';
+import 'package:lift_log/core/services/storage_service.dart';
 import 'package:lift_log/features/auth/cubit/auth_cubit.dart';
 import 'package:lift_log/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:lift_log/features/auth/presentation/pages/login_page.dart';
@@ -23,10 +25,48 @@ class AppRoutes {
   static const workout = '/workout';
 }
 
+bool get _isOnboardingCompleted =>
+    StorageService.getBool(AppKeys.onboardingCompleted) ?? false;
+
+bool get _hasSavedUserId {
+  final userId = StorageService.getString(AppKeys.userId);
+  return userId != null && userId.isNotEmpty;
+}
+
+String _resolveInitialLocation() {
+  if (!_isOnboardingCompleted) {
+    return AppRoutes.onboarding;
+  }
+
+  if (_hasSavedUserId) {
+    return AppRoutes.home;
+  }
+
+  return AppRoutes.login;
+}
+
 final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoutes.onboarding,
+  initialLocation: _resolveInitialLocation(),
   redirect: (context, state) {
     final uri = state.uri;
+    final location = state.matchedLocation;
+
+    if (!_isOnboardingCompleted && location != AppRoutes.onboarding) {
+      return AppRoutes.onboarding;
+    }
+
+    if (_isOnboardingCompleted && location == AppRoutes.onboarding) {
+      return _hasSavedUserId ? AppRoutes.home : AppRoutes.login;
+    }
+
+    if (_hasSavedUserId &&
+        (location == AppRoutes.login || location == AppRoutes.register)) {
+      return AppRoutes.home;
+    }
+
+    if (!_hasSavedUserId && location == AppRoutes.home) {
+      return AppRoutes.login;
+    }
 
     if (uri.scheme == 'liftlog' && uri.host == 'reset-password') {
       return AppRoutes.login;
