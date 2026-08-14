@@ -34,7 +34,6 @@ class HomePage extends StatelessWidget {
                 ),
                 SizedBox(height: AppSpacing.md),
                 HomeStatsSection(
-                  gymCount: context.read<HomeCubit>().gymCount,
                   machineCount: context.read<HomeCubit>().machineCount,
                 ),
 

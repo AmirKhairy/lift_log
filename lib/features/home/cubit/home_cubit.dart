@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lift_log/core/services/api_services/user_service.dart';
 import 'package:lift_log/core/services/api_services/workout_service.dart';
-import 'package:lift_log/features/auth/models/user_model.dart';
+import 'package:lift_log/core/models/user_model.dart';
 
 import 'home_state.dart';
 
@@ -16,7 +16,6 @@ class HomeCubit extends Cubit<HomeState> {
   UserModel? userModel;
   List<DateTime> workoutDates = [];
   int get workoutCount => workoutDates.length;
-  int gymCount = 0;
   int machineCount = 0;
 
   Future<void> loadIfNeeded() {
@@ -46,7 +45,6 @@ class HomeCubit extends Cubit<HomeState> {
 
       userModel = await _userService.getUserData();
       await _loadWorkoutDates();
-      gymCount = await _workoutService.getGymCount();
       machineCount = await _workoutService.getMachineCount();
       _hasLoaded = true;
       emit(const HomeLoaded());

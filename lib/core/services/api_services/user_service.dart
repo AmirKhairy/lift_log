@@ -1,5 +1,5 @@
 import 'package:lift_log/core/services/supabase_service.dart';
-import 'package:lift_log/features/auth/models/user_model.dart';
+import 'package:lift_log/core/models/user_model.dart';
 
 class UserService {
   UserService._();

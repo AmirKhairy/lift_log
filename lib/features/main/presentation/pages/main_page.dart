@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/utils/app_radius.dart';
 import 'package:lift_log/core/widgets/app_scaffold.dart';
 import 'package:lift_log/features/home/cubit/home_cubit.dart';
 import 'package:lift_log/features/home/presentation/pages/home_page.dart';
+import 'package:lift_log/features/machines/cubit/machines_cubit.dart';
+import 'package:lift_log/features/machines/presentation/pages/machines_page.dart';
 import 'package:lift_log/features/main/cubit/main_cubit.dart';
 import 'package:lift_log/features/main/cubit/main_state.dart';
 import 'package:lift_log/features/profile/cubit/profile_cubit.dart';
 import 'package:lift_log/features/profile/presentation/pages/profile_page.dart';
-import 'package:lift_log/features/progress/cubit/progress_cubit.dart';
-import 'package:lift_log/features/progress/presentation/pages/progress_page.dart';
 import 'package:lift_log/features/videos/cubit/videos_cubit.dart';
 import 'package:lift_log/features/videos/presentation/pages/videos_page.dart';
 
@@ -26,7 +28,7 @@ class MainPage extends StatelessWidget {
         BlocProvider(create: (_) => MainCubit()),
         BlocProvider(create: (_) => HomeCubit()),
         BlocProvider(create: (_) => VideosCubit()),
-        BlocProvider(create: (_) => ProgressCubit()),
+        BlocProvider(create: (_) => MachinesCubit()),
         BlocProvider(create: (_) => ProfileCubit()),
       ],
       child: const _MainView(),
@@ -56,9 +58,9 @@ class _MainViewState extends State<_MainView> {
       case 0:
         context.read<HomeCubit>().loadIfNeeded();
       case 1:
-        context.read<VideosCubit>().loadIfNeeded();
+        context.read<MachinesCubit>().loadIfNeeded();
       case 2:
-        context.read<ProgressCubit>().loadIfNeeded();
+        context.read<VideosCubit>().loadIfNeeded();
       case 3:
         context.read<ProfileCubit>().loadIfNeeded();
     }
@@ -69,9 +71,9 @@ class _MainViewState extends State<_MainView> {
       case 0:
         context.read<HomeCubit>().refresh();
       case 1:
-        context.read<VideosCubit>().refresh();
+        context.read<MachinesCubit>().refresh();
       case 2:
-        context.read<ProgressCubit>().refresh();
+        context.read<VideosCubit>().refresh();
       case 3:
         context.read<ProfileCubit>().refresh();
     }
@@ -83,11 +85,22 @@ class _MainViewState extends State<_MainView> {
       builder: (context, state) {
         return AppScaffold(
           padding: EdgeInsets.zero,
+          floatingActionButton: state.selectedIndex == 1
+              ? FloatingActionButton(
+                  onPressed: () {
+                    context.push(AppRoutes.addMachine);
+                  },
+                  backgroundColor: context.theme.colorScheme.primary,
+                  foregroundColor: context.theme.colorScheme.onPrimary,
+                  shape: const CircleBorder(),
+                  child: const Icon(Icons.add),
+                )
+              : null,
           body: IndexedStack(
             index: state.selectedIndex,
             children: const [
               HomePage(),
-              ProgressPage(),
+              MachinesPage(),
               VideosPage(),
               ProfilePage(),
             ],
@@ -167,9 +180,9 @@ class _MainViewState extends State<_MainView> {
                     label: 'home'.tr,
                   ),
                   NavigationDestination(
-                    icon: const Icon(Icons.show_chart_outlined),
-                    selectedIcon: const Icon(Icons.show_chart),
-                    label: 'progress'.tr,
+                    icon: const Icon(Icons.precision_manufacturing_outlined),
+                    selectedIcon: const Icon(Icons.precision_manufacturing),
+                    label: 'machines'.tr,
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.play_circle_outline),

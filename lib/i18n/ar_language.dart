@@ -88,7 +88,6 @@ const Map<String, String> arLanguage = {
   "workouts_this_month": "تمارين هذا الشهر",
   "last_workout": "آخر تمرين",
   "home": "الرئيسية",
-  "progress": "التقدم",
   "videos": "الفيديوهات",
   "profile": "الملف الشخصي",
 };

@@ -7,7 +7,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../core/utils/app_padding.dart';
 import '../../../../core/utils/app_radius.dart';
-import '../../models/onboarding_item.dart';
+import '../../../../core/models/onboarding_item.dart';
 import 'onboarding_visual.dart';
 
 class OnboardingContent extends StatelessWidget {

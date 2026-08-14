@@ -28,21 +28,6 @@ class WorkoutService {
         .toList();
   }
 
-  Future<int> getGymCount() async {
-    final userId = SupabaseService.currentUser?.id;
-
-    if (userId == null) {
-      throw Exception('User is not logged in');
-    }
-
-    final response = await SupabaseService.client
-        .from('gyms')
-        .select('id')
-        .eq('user_id', userId);
-
-    return response.length;
-  }
-
   Future<int> getMachineCount() async {
     final userId = SupabaseService.currentUser?.id;
 
@@ -52,8 +37,8 @@ class WorkoutService {
 
     final response = await SupabaseService.client
         .from('machines')
-        .select('id, gyms!inner(user_id)')
-        .eq('gyms.user_id', userId);
+        .select('id, user_id')
+        .eq('user_id', userId);
 
     return response.length;
   }

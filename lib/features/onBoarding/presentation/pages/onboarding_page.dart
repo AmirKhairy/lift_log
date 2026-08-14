@@ -12,7 +12,7 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../cubit/onboarding_cubit.dart';
 import '../../cubit/onboarding_states.dart';
-import '../../models/onboarding_item.dart';
+import '../../../../core/models/onboarding_item.dart';
 import '../widgets/onboarding_content.dart';
 import '../widgets/onboarding_indicator.dart';
 

@@ -11,14 +11,10 @@ class VideosCubit extends Cubit<VideosState> {
 
   Future<void> loadIfNeeded() {
     if (_hasLoaded) {
-      debugPrint('VideosCubit: Videos data already loaded, skipping');
       return Future.value();
     }
 
     if (_loadingFuture != null) {
-      debugPrint(
-        'VideosCubit: Videos load already in progress, skipping duplicate call',
-      );
       return _loadingFuture!;
     }
 
@@ -35,25 +31,12 @@ class VideosCubit extends Cubit<VideosState> {
     emit(const VideosLoading());
 
     try {
-      if (isRefresh) {
-        debugPrint('VideosCubit: Refreshing Videos data...');
-      } else {
-        debugPrint('VideosCubit: Loading Videos data...');
-      }
-
       await Future.delayed(const Duration(milliseconds: 500));
 
       _hasLoaded = true;
       emit(const VideosLoaded());
-
-      if (isRefresh) {
-        debugPrint('VideosCubit: Videos data refreshed');
-      } else {
-        debugPrint('VideosCubit: Videos data loaded');
-      }
     } catch (e, s) {
       _hasLoaded = false;
-      debugPrint('VideosCubit: Failed to load Videos data: $e');
       debugPrintStack(stackTrace: s);
       emit(VideosError(e.toString()));
     }

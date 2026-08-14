@@ -7,7 +7,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_assets.dart';
 import '../../../../core/utils/app_padding.dart';
 import '../../../../core/utils/app_radius.dart';
-import '../../models/onboarding_item.dart';
+import '../../../../core/models/onboarding_item.dart';
 
 class OnboardingVisual extends StatelessWidget {
   const OnboardingVisual({super.key, required this.type, required this.icon});

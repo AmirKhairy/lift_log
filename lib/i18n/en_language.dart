@@ -89,7 +89,6 @@ const Map<String, String> enLanguage = {
   "workouts_this_month": "Workouts This Month",
   "last_workout": "Last Workout",
   "home": "Home",
-  "progress": "Progress",
   "videos": "Videos",
   "profile": "Profile",
 };
