@@ -1,22 +1,23 @@
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 
 extension MuscleGroupExtension on MuscleGroup {
   String get displayName {
     switch (this) {
       case MuscleGroup.chest:
-        return 'Chest';
+        return 'chest'.tr;
       case MuscleGroup.back:
-        return 'Back';
+        return 'back'.tr;
       case MuscleGroup.shoulders:
-        return 'Shoulders';
+        return 'shoulders'.tr;
       case MuscleGroup.arms:
-        return 'Arms';
+        return 'arms'.tr;
       case MuscleGroup.legs:
-        return 'Legs';
+        return 'legs'.tr;
       case MuscleGroup.glutes:
-        return 'Glutes';
+        return 'glutes'.tr;
       case MuscleGroup.core:
-        return 'Core';
+        return 'core'.tr;
     }
   }
 
