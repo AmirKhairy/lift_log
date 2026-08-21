@@ -41,13 +41,13 @@ class MachinesPage extends StatelessWidget {
                     return const MachineShimmer();
                   },
                 ),
-                MachinesLoadedSuccess() => ListView.builder(
-                  itemCount: context.read<MachinesCubit>().machines?.length,
+                MachinesLoadedSuccess(:final machines) => ListView.builder(
+                  itemCount: machines.length,
                   itemBuilder: (context, index) {
-                    final machine = context
-                        .read<MachinesCubit>()
-                        .machines?[index];
-                    return MachineItemWidget(machine: machine);
+                    return MachineItemWidget(
+                      machine: machines[index],
+                      index: index,
+                    );
                   },
                 ),
                 MachinesError(:final message) => AppText(

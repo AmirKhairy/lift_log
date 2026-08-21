@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:lift_log/core/models/machine_model.dart';
 
 sealed class MachinesState extends Equatable {
   const MachinesState();
@@ -16,7 +17,8 @@ final class MachinesLoding extends MachinesState {
 }
 
 final class MachinesLoadedSuccess extends MachinesState {
-  const MachinesLoadedSuccess();
+  final List<MachineModel> machines;
+  const MachinesLoadedSuccess({required this.machines});
 }
 
 final class MachinesError extends MachinesState {

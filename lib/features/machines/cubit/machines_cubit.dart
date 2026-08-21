@@ -39,7 +39,7 @@ class MachinesCubit extends Cubit<MachinesState> {
       await machinesService.getMachines();
 
       _hasLoaded = true;
-      emit(const MachinesLoadedSuccess());
+      emit(MachinesLoadedSuccess(machines: machines ?? []));
     } catch (e, s) {
       _hasLoaded = false;
       debugPrintStack(stackTrace: s);

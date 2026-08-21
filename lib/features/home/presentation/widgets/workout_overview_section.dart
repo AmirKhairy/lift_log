@@ -47,6 +47,7 @@ class WorkoutOverviewSection extends StatelessWidget {
                   icon: Icons.fitness_center,
                   value: workoutCount.toString(),
                   label: 'workouts_this_month'.tr,
+                  animateValue: true,
                 ),
               ),
 

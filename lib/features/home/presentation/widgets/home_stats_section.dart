@@ -4,10 +4,14 @@ import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/features/home/presentation/widgets/stat_card.dart';
 
 class HomeStatsSection extends StatelessWidget {
-  const HomeStatsSection({super.key, required this.machineCount});
+  const HomeStatsSection({
+    super.key,
+    required this.machineCount,
+    required this.animation,
+  });
 
   final int machineCount;
-
+  final Animation<double> animation;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -19,6 +23,7 @@ class HomeStatsSection extends StatelessWidget {
               icon: Icons.precision_manufacturing,
               value: machineCount.toString(),
               label: 'machines'.tr,
+              animation: animation,
             ),
           ),
         ],

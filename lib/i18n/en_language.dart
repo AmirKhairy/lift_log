@@ -103,4 +103,7 @@ const Map<String, String> enLanguage = {
   "shoulders": "Shoulders",
   "back": "Back",
   "chest": "Chest",
+  "pull": "Pull",
+  "push": "Push",
+  "cardio": "Cardio",
 };

@@ -12,29 +12,111 @@ import 'package:lift_log/features/home/presentation/widgets/workout_overview_sec
 import '../../cubit/home_cubit.dart';
 import '../../cubit/home_state.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final ScrollController _scrollController;
+
+  late final Animation<double> _appBarAnimation;
+  late final Animation<double> _overviewAnimation;
+  late final Animation<double> _statsAnimation;
+
+  late final Animation<Offset> _appBarSlideAnimation;
+  late final Animation<Offset> _overviewSlideAnimation;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    _appBarAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.0, 0.35, curve: Curves.easeOutCubic),
+    );
+
+    _overviewAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.15, 0.55, curve: Curves.easeOutCubic),
+    );
+
+    _statsAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.35, 0.75, curve: Curves.easeOutCubic),
+    );
+
+    _appBarSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.15),
+      end: Offset.zero,
+    ).animate(_appBarAnimation);
+
+    _overviewSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.15),
+      end: Offset.zero,
+    ).animate(_overviewAnimation);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _startAnimation() {
+    _animationController.forward(from: 0);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
+    return BlocConsumer<HomeCubit, HomeState>(
+      listener: (context, state) {
+        if (state is HomeLoaded) {
+          _startAnimation();
+        }
+      },
       builder: (context, state) {
         return SingleChildScrollView(
+          controller: _scrollController,
           child: switch (state) {
             HomeInitial() => AppText('home_initial_state'.tr),
             HomeLoading() => const HomeLoadingShimmer(),
             HomeLoaded() => Column(
               children: [
-                HomeAppBar(),
+                FadeTransition(
+                  opacity: _appBarAnimation,
+                  child: SlideTransition(
+                    position: _appBarSlideAnimation,
+                    child: HomeAppBar(scrollController: _scrollController),
+                  ),
+                ),
 
                 SizedBox(height: AppSpacing.sm),
-                WorkoutOverviewSection(
-                  workoutCount: context.read<HomeCubit>().workoutCount,
-                  lastWorkoutDate: context.read<HomeCubit>().lastWorkoutDate,
+                FadeTransition(
+                  opacity: _overviewAnimation,
+                  child: SlideTransition(
+                    position: _overviewSlideAnimation,
+                    child: WorkoutOverviewSection(
+                      workoutCount: context.read<HomeCubit>().workoutCount,
+                      lastWorkoutDate: context
+                          .read<HomeCubit>()
+                          .lastWorkoutDate,
+                    ),
+                  ),
                 ),
                 SizedBox(height: AppSpacing.md),
                 HomeStatsSection(
                   machineCount: context.read<HomeCubit>().machineCount,
+                  animation: _statsAnimation,
                 ),
 
                 SizedBox(height: AppSpacing.md),
@@ -45,6 +127,7 @@ class HomePage extends StatelessWidget {
                 SizedBox(height: AppSpacing.md),
               ],
             ),
+
             HomeError(:final message) => AppText(
               '${'home_error'.tr}: $message',
             ),

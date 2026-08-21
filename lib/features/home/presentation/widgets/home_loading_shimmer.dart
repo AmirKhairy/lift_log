@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shimmer/shimmer.dart';
-
 import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
-import 'package:lift_log/core/utils/app_radius.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
+import 'package:lift_log/core/utils/app_radius.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeLoadingShimmer extends StatelessWidget {
   const HomeLoadingShimmer({super.key});
@@ -44,7 +43,11 @@ class HomeLoadingShimmer extends StatelessWidget {
 
   Widget _buildAppBar(BuildContext context) {
     return Container(
-      color: context.theme.colorScheme.surface,
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      decoration: BoxDecoration(
+        color: context.theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20.r),
+      ),
       padding: AppPadding.xs,
       child: Row(
         children: [

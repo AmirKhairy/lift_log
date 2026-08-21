@@ -102,4 +102,7 @@ const Map<String, String> arLanguage = {
   "shoulders": "كتف",
   "back": "ظهر",
   "chest": "صدر",
+  "pull": "سحب",
+  "push": "دفع",
+  "cardio": "لياقة",
 };

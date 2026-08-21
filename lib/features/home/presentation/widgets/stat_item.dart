@@ -10,11 +10,13 @@ class StatItem extends StatelessWidget {
     required this.icon,
     required this.value,
     required this.label,
+    this.animateValue = false,
   });
 
   final IconData icon;
   final String value;
   final String label;
+  final bool animateValue;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +30,7 @@ class StatItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppText(
-                value,
-                color: context.theme.colorScheme.onPrimary,
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w700,
-              ),
+              _buildValue(context),
               SizedBox(height: AppSpacing.xs),
               AppText(
                 label,
@@ -46,6 +43,33 @@ class StatItem extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildValue(BuildContext context) {
+    if (!animateValue) {
+      return AppText(
+        value,
+        color: context.theme.colorScheme.onPrimary,
+        fontSize: 20.sp,
+        fontWeight: FontWeight.w700,
+      );
+    }
+
+    final targetValue = int.tryParse(value) ?? 0;
+
+    return TweenAnimationBuilder<int>(
+      tween: IntTween(begin: 0, end: targetValue),
+      duration: const Duration(milliseconds: 1000),
+      curve: Curves.easeOutCubic,
+      builder: (context, animatedValue, child) {
+        return AppText(
+          animatedValue.toString(),
+          color: context.theme.colorScheme.onPrimary,
+          fontSize: 20.sp,
+          fontWeight: FontWeight.w700,
+        );
+      },
     );
   }
 }

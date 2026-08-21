@@ -23,33 +23,39 @@ class MachineShimmer extends StatelessWidget {
       child: Shimmer.fromColors(
         baseColor: baseColor,
         highlightColor: highlightColor,
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 4 / 3,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: baseColor,
-                  borderRadius: BorderRadius.circular(AppSpacing.sm),
-                ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTextPlaceholder(
+                    context,
+                    labelWidth: 100.w,
+                    valueWidth: 120.w,
+                  ),
+
+                  SizedBox(height: AppSpacing.sm),
+
+                  _buildTextPlaceholder(
+                    context,
+                    labelWidth: 110.w,
+                    valueWidth: 90.w,
+                  ),
+                ],
               ),
             ),
 
-            SizedBox(height: AppSpacing.sm),
+            SizedBox(width: AppSpacing.sm),
 
-            _buildTextPlaceholder(
-              context,
-              labelWidth: 110.w,
-              valueWidth: 130.w,
-            ),
-
-            SizedBox(height: AppSpacing.sm),
-
-            _buildTextPlaceholder(
-              context,
-              labelWidth: 120.w,
-              valueWidth: 100.w,
+            Container(
+              width: 120.w,
+              height: 100.h,
+              decoration: BoxDecoration(
+                color: baseColor,
+                borderRadius: BorderRadius.circular(AppSpacing.sm),
+              ),
             ),
           ],
         ),
@@ -76,12 +82,14 @@ class MachineShimmer extends StatelessWidget {
           ),
         ),
         SizedBox(width: AppSpacing.sm),
-        Container(
-          width: valueWidth,
-          height: 20.h,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(4.r),
+        Flexible(
+          child: Container(
+            width: valueWidth,
+            height: 20.h,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
           ),
         ),
       ],

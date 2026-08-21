@@ -18,6 +18,12 @@ extension MuscleGroupExtension on MuscleGroup {
         return 'glutes'.tr;
       case MuscleGroup.core:
         return 'core'.tr;
+      case MuscleGroup.pull:
+        return 'pull'.tr;
+      case MuscleGroup.push:
+        return 'push'.tr;
+      case MuscleGroup.cardio:
+        return 'cardio'.tr;
     }
   }
 
@@ -37,6 +43,12 @@ extension MuscleGroupExtension on MuscleGroup {
         return MuscleGroup.glutes;
       case 'core':
         return MuscleGroup.core;
+      case 'pull':
+        return MuscleGroup.pull;
+      case 'push':
+        return MuscleGroup.push;
+      case 'cardio':
+        return MuscleGroup.cardio;
       default:
         throw Exception('Invalid muscle group: $value');
     }
