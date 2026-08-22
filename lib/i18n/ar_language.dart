@@ -89,6 +89,7 @@ const Map<String, String> arLanguage = {
   "last_workout": "آخر تمرين",
   "home": "الرئيسية",
   "videos": "الفيديوهات",
+  "videos_error": "فشل تحميل الفيديوهات التعليمية",
   "profile": "الملف الشخصي",
   "machines_error": "فشل تحميل الأجهزة",
   "machines_initial_state": "لم يتم تحميل الأجهزة بعد",

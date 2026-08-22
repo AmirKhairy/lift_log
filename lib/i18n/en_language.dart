@@ -90,6 +90,7 @@ const Map<String, String> enLanguage = {
   "last_workout": "Last Workout",
   "home": "Home",
   "videos": "Videos",
+  "videos_error": "Failed to load tutorial videos",
   "profile": "Profile",
   "machines_error": "Failed to load machines",
   "machines_initial_state": "Machines have not been loaded yet",

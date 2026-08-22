@@ -1,11 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lift_log/core/services/api_services/tutorial_videos_service.dart';
+import 'package:lift_log/core/utils/app_enums.dart';
 
 import 'videos_state.dart';
 
 class VideosCubit extends Cubit<VideosState> {
-  VideosCubit() : super(const VideosInitial());
+  VideosCubit({TutorialVideosService? service})
+    : _service = service ?? TutorialVideosService.instance,
+      super(const VideosInitial());
 
+  final TutorialVideosService _service;
+  MuscleGroup _selectedMuscleGroup = MuscleGroup.values.first;
   bool _hasLoaded = false;
   Future<void>? _loadingFuture;
 
@@ -18,27 +24,42 @@ class VideosCubit extends Cubit<VideosState> {
       return _loadingFuture!;
     }
 
-    final future = _loadData(isRefresh: false);
+    final future = _loadData(
+      muscleGroup: _selectedMuscleGroup,
+      forceRefresh: false,
+    );
     _loadingFuture = future;
     return future.whenComplete(() => _loadingFuture = null);
   }
 
   Future<void> refresh() async {
-    await _loadData(isRefresh: true);
+    await _loadData(muscleGroup: _selectedMuscleGroup, forceRefresh: true);
   }
 
-  Future<void> _loadData({required bool isRefresh}) async {
-    emit(const VideosLoading());
+  Future<void> selectMuscleGroup(MuscleGroup muscleGroup) async {
+    _selectedMuscleGroup = muscleGroup;
+    _hasLoaded = false;
+    await _loadData(muscleGroup: muscleGroup, forceRefresh: false);
+  }
+
+  Future<void> _loadData({
+    required MuscleGroup muscleGroup,
+    required bool forceRefresh,
+  }) async {
+    emit(VideosLoading(muscleGroup));
 
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      final videos = await _service.getByMuscleGroup(
+        muscleGroup,
+        forceRefresh: forceRefresh,
+      );
 
       _hasLoaded = true;
-      emit(const VideosLoaded());
+      emit(VideosLoaded(muscleGroup: muscleGroup, videos: videos));
     } catch (e, s) {
       _hasLoaded = false;
       debugPrintStack(stackTrace: s);
-      emit(VideosError(e.toString()));
+      emit(VideosError(e.toString(), muscleGroup: muscleGroup));
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/services/api_services/machines_service.dart';
+import 'package:lift_log/core/services/api_services/tutorial_videos_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/features/add_machine/cubit/add_machine_state.dart';
 
@@ -10,6 +11,8 @@ class AddMachineCubit extends Cubit<AddMachineState> {
   AddMachineCubit() : super(const AddMachineLoaded());
 
   final MachinesService _machinesService = MachinesService.instance;
+  final TutorialVideosService _tutorialVideosService =
+      TutorialVideosService.instance;
   final ImagePicker _imagePicker = ImagePicker();
 
   Future<void> pickImage(ImageSource source) async {
@@ -44,9 +47,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     );
 
     try {
-      final videos = await _machinesService.getTutorialVideosByMuscleGroup(
-        muscleGroup,
-      );
+      final videos = await _tutorialVideosService.getByMuscleGroup(muscleGroup);
 
       final latestState = state;
       if (latestState is! AddMachineLoaded) return;

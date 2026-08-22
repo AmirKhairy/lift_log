@@ -1,7 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/models/machine_model.dart';
-import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/services/supabase_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 
@@ -11,13 +10,6 @@ class MachinesService {
   static final instance = MachinesService._();
 
   List<MachineModel>? machines;
-  final Map<MuscleGroup, List<TutorialVideosModel>> _tutorialVideosCache = {};
-
-  Map<MuscleGroup, List<TutorialVideosModel>> get tutorialVideosCache =>
-      Map.unmodifiable(_tutorialVideosCache);
-
-  List<TutorialVideosModel> get tutorialVideos =>
-      _tutorialVideosCache.values.expand((videos) => videos).toList();
 
   Future<void> getMachines() async {
     try {
@@ -46,41 +38,6 @@ class MachinesService {
       machines = response.map((item) => MachineModel.fromJson(item)).toList();
     } catch (e) {
       throw Exception('Failed to fetch machines: $e');
-    }
-  }
-
-  Future<List<TutorialVideosModel>> getTutorialVideosByMuscleGroup(
-    MuscleGroup muscleGroup, {
-    bool forceRefresh = false,
-  }) async {
-    if (!forceRefresh && _tutorialVideosCache.containsKey(muscleGroup)) {
-      return _tutorialVideosCache[muscleGroup] ?? [];
-    }
-
-    try {
-      final response = await SupabaseService.client
-          .from('tutorial_videos')
-          .select('''
-          id,
-          title,
-          description,
-          video_url,
-          thumbnail_url,
-          muscle_group,
-          created_at
-        ''')
-          .eq('muscle_group', muscleGroup.toJson())
-          .order('created_at', ascending: false);
-
-      final videos = response
-          .map((item) => TutorialVideosModel.fromJson(item))
-          .toList();
-
-      _tutorialVideosCache[muscleGroup] = videos;
-
-      return videos;
-    } catch (e) {
-      throw Exception('Failed to fetch tutorial videos: $e');
     }
   }
 

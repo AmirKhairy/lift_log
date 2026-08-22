@@ -18,35 +18,40 @@ class MuscleGroupSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: MuscleGroup.values.map((muscleGroup) {
-        final isSelected = muscleGroup == selectedMuscleGroup;
+    return SizedBox(
+      height: 40.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: MuscleGroup.values.length,
+        separatorBuilder: (_, _) => SizedBox(width: AppSpacing.sm),
+        itemBuilder: (context, index) {
+          final muscleGroup = MuscleGroup.values[index];
+          final isSelected = muscleGroup == selectedMuscleGroup;
 
-        return ChoiceChip(
-          label: AppText(
-            muscleGroup.displayName,
-            color: isSelected
-                ? context.theme.colorScheme.onPrimary
-                : context.theme.colorScheme.onSurface,
-            fontSize: 13.sp,
-          ),
-          selected: isSelected,
-          showCheckmark: false,
-          onSelected: (_) => onSelected(muscleGroup),
-          selectedColor: context.theme.colorScheme.primary,
-          backgroundColor: context.theme.colorScheme.surface,
-          side: BorderSide(
-            color: isSelected
-                ? context.theme.colorScheme.primary
-                : context.appColors.border,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.r),
-          ),
-        );
-      }).toList(),
+          return ChoiceChip(
+            label: AppText(
+              muscleGroup.displayName,
+              color: isSelected
+                  ? context.theme.colorScheme.onPrimary
+                  : context.theme.colorScheme.onSurface,
+              fontSize: 13.sp,
+            ),
+            selected: isSelected,
+            showCheckmark: false,
+            onSelected: (_) => onSelected(muscleGroup),
+            selectedColor: context.theme.colorScheme.primary,
+            backgroundColor: context.theme.colorScheme.surface,
+            side: BorderSide(
+              color: isSelected
+                  ? context.theme.colorScheme.primary
+                  : context.appColors.border,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.r),
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_cached_network_image.dart';
+import 'package:lift_log/core/widgets/app_staggered_animation.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -15,6 +16,7 @@ class TutorialVideoSelector extends StatelessWidget {
     required this.isLoading,
     required this.onSelected,
     required this.onPlay,
+    this.isVertical = false,
   });
 
   final List<TutorialVideosModel> videos;
@@ -22,11 +24,12 @@ class TutorialVideoSelector extends StatelessWidget {
   final bool isLoading;
   final ValueChanged<TutorialVideosModel> onSelected;
   final ValueChanged<TutorialVideosModel> onPlay;
+  final bool isVertical;
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const _TutorialVideosLoading();
+      return _TutorialVideosLoading(isVertical: isVertical);
     }
 
     if (videos.isEmpty) {
@@ -45,25 +48,49 @@ class TutorialVideoSelector extends StatelessWidget {
       );
     }
 
-    return SizedBox(
-      height: 118.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: videos.length,
-        separatorBuilder: (_, _) => SizedBox(width: AppSpacing.sm),
-        itemBuilder: (context, index) {
-          final video = videos[index];
-          final isSelected = selectedVideo?.id == video.id;
+    return isVertical
+        ? ListView.separated(
+            padding: EdgeInsets.only(bottom: AppSpacing.md.h),
+            itemCount: videos.length,
+            separatorBuilder: (_, _) => SizedBox(height: AppSpacing.md.h),
+            itemBuilder: (context, index) {
+              final video = videos[index];
 
-          return _TutorialVideoTile(
-            video: video,
-            isSelected: isSelected,
-            onTap: () => onSelected(video),
-            onPlay: () => onPlay(video),
+              return AppStaggeredAnimation(
+                index: index,
+                child: _TutorialVideoTile(
+                  video: video,
+                  isSelected: selectedVideo?.id == video.id,
+                  isVertical: true,
+                  onTap: () => onSelected(video),
+                  onPlay: () => onPlay(video),
+                ),
+              );
+            },
+          )
+        : SizedBox(
+            height: 118.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: videos.length,
+              separatorBuilder: (_, _) => SizedBox(width: AppSpacing.sm),
+              itemBuilder: (context, index) {
+                final video = videos[index];
+                final isSelected = selectedVideo?.id == video.id;
+
+                return AppStaggeredAnimation(
+                  index: index,
+                  child: _TutorialVideoTile(
+                    video: video,
+                    isSelected: isSelected,
+                    isVertical: false,
+                    onTap: () => onSelected(video),
+                    onPlay: () => onPlay(video),
+                  ),
+                );
+              },
+            ),
           );
-        },
-      ),
-    );
   }
 }
 
@@ -71,12 +98,14 @@ class _TutorialVideoTile extends StatelessWidget {
   const _TutorialVideoTile({
     required this.video,
     required this.isSelected,
+    required this.isVertical,
     required this.onTap,
     required this.onPlay,
   });
 
   final TutorialVideosModel video;
   final bool isSelected;
+  final bool isVertical;
   final VoidCallback onTap;
   final VoidCallback onPlay;
 
@@ -91,7 +120,8 @@ class _TutorialVideoTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.nm),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
-          width: 190.w,
+          width: isVertical ? double.infinity : 190.w,
+          height: isVertical ? 142.h : null,
           padding: EdgeInsets.all(AppSpacing.sm.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppSpacing.nm),
@@ -109,8 +139,8 @@ class _TutorialVideoTile extends StatelessWidget {
                 children: [
                   AppCachedNetworkImage(
                     imageUrl: video.thumbnailUrl ?? '',
-                    width: 70.w,
-                    height: 86.h,
+                    width: isVertical ? 104.w : 70.w,
+                    height: isVertical ? 118.h : 86.h,
                     borderRadius: BorderRadius.circular(AppSpacing.sm),
                   ),
                   GestureDetector(
@@ -171,34 +201,42 @@ class _TutorialVideoTile extends StatelessWidget {
 }
 
 class _TutorialVideosLoading extends StatelessWidget {
-  const _TutorialVideosLoading();
+  const _TutorialVideosLoading({required this.isVertical});
+
+  final bool isVertical;
 
   @override
   Widget build(BuildContext context) {
     final baseColor = context.theme.colorScheme.surfaceContainerHighest;
     final highlightColor = context.theme.colorScheme.surface;
 
-    return SizedBox(
-      height: 118.h,
-      child: Shimmer.fromColors(
-        baseColor: baseColor,
-        highlightColor: highlightColor,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: 2,
-          separatorBuilder: (_, _) => SizedBox(width: AppSpacing.sm),
-          itemBuilder: (_, _) {
-            return Container(
-              width: 190.w,
-              padding: EdgeInsets.all(AppSpacing.sm.w),
-              decoration: BoxDecoration(
-                color: context.theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(AppSpacing.nm),
-              ),
-            );
-          },
+    final shimmer = Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      child: ListView.separated(
+        padding: isVertical
+            ? EdgeInsets.only(bottom: AppSpacing.md.h)
+            : EdgeInsets.zero,
+        scrollDirection: isVertical ? Axis.vertical : Axis.horizontal,
+        itemCount: 2,
+        separatorBuilder: (_, _) => SizedBox(
+          width: isVertical ? 0 : AppSpacing.sm,
+          height: isVertical ? AppSpacing.md.h : 0,
         ),
+        itemBuilder: (_, _) {
+          return Container(
+            width: isVertical ? double.infinity : 190.w,
+            height: isVertical ? 142.h : null,
+            padding: EdgeInsets.all(AppSpacing.sm.w),
+            decoration: BoxDecoration(
+              color: context.theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppSpacing.nm),
+            ),
+          );
+        },
       ),
     );
+
+    return isVertical ? shimmer : SizedBox(height: 118.h, child: shimmer);
   }
 }
