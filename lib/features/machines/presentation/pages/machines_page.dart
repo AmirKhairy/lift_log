@@ -47,6 +47,11 @@ class MachinesPage extends StatelessWidget {
                     return MachineItemWidget(
                       machine: machines[index],
                       index: index,
+                      onDelete: () {
+                        context.read<MachinesCubit>().deleteMachine(
+                          machines[index],
+                        );
+                      },
                     );
                   },
                 ),

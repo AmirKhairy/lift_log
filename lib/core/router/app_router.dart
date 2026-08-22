@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/constants/app_keys.dart';
 import 'package:lift_log/core/models/machine_model.dart';
+import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/services/storage_service.dart';
 import 'package:lift_log/features/add_machine/presentation/pages/add_machine_page.dart';
 import 'package:lift_log/features/auth/cubit/auth_cubit.dart';
@@ -12,6 +13,7 @@ import 'package:lift_log/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:lift_log/features/machine_details/presentation/pages/machine_details_page.dart';
 import 'package:lift_log/features/main/presentation/pages/main_page.dart';
 import 'package:lift_log/features/onBoarding/presentation/pages/onboarding_page.dart';
+import 'package:lift_log/features/tutorial_video_player/presentation/pages/tutorial_video_player_page.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -28,6 +30,7 @@ class AppRoutes {
   static const workout = '/workout';
   static const addMachine = '/add-machine';
   static const machineDetails = '/machine-details';
+  static const tutorialVideoPlayer = '/tutorial-video-player';
 }
 
 bool get _isOnboardingCompleted =>
@@ -121,6 +124,13 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) {
             final machine = state.extra as MachineModel;
             return MachineDetailsPage(machine: machine);
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.tutorialVideoPlayer,
+          builder: (context, state) {
+            final video = state.extra as TutorialVideosModel;
+            return TutorialVideoPlayerPage(video: video);
           },
         ),
       ],

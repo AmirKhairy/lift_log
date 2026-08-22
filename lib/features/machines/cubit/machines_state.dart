@@ -19,6 +19,9 @@ final class MachinesLoding extends MachinesState {
 final class MachinesLoadedSuccess extends MachinesState {
   final List<MachineModel> machines;
   const MachinesLoadedSuccess({required this.machines});
+
+  @override
+  List<Object?> get props => [machines];
 }
 
 final class MachinesError extends MachinesState {

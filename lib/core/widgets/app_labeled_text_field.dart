@@ -16,12 +16,14 @@ class LabeledTextField extends StatelessWidget {
       children: [
         Row(
           children: [
-            AppText(
-              label.tr,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: context.theme.colorScheme.onSurface,
+            Expanded(
+              child: AppText(
+                label.tr,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: context.theme.colorScheme.onSurface,
+                ),
               ),
             ),
           ],

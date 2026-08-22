@@ -9,15 +9,21 @@ import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
+import 'package:lift_log/core/utils/logic_utilities.dart';
 import 'package:lift_log/core/widgets/app_cached_network_image.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 class MachineItemWidget extends StatefulWidget {
-  const MachineItemWidget({super.key, required this.machine, this.index = 0});
+  const MachineItemWidget({
+    super.key,
+    required this.machine,
+    this.index = 0,
+    this.onDelete,
+  });
 
   final MachineModel? machine;
   final int index;
-
+  final VoidCallback? onDelete;
   @override
   State<MachineItemWidget> createState() => _MachineItemWidgetState();
 }
@@ -148,11 +154,50 @@ class _MachineItemWidgetState extends State<MachineItemWidget>
                           ),
                           SizedBox(width: AppSpacing.sm),
 
-                          AppCachedNetworkImage(
-                            imageUrl: widget.machine?.imageUrl ?? '',
-                            width: 120.w,
-                            fit: BoxFit.cover,
-                            borderRadius: BorderRadius.circular(AppSpacing.sm),
+                          Stack(
+                            alignment: AlignmentDirectional.topStart,
+                            children: [
+                              AppCachedNetworkImage(
+                                imageUrl: widget.machine?.imageUrl ?? '',
+                                width: 120.w,
+                                fit: BoxFit.cover,
+                                borderRadius: BorderRadius.circular(
+                                  AppSpacing.sm,
+                                ),
+                              ),
+                              Positioned(
+                                top: -10.h,
+                                right:
+                                    LogicUtilities.instance.isArabicLanguage()
+                                    ? null
+                                    : -10.w,
+
+                                left: LogicUtilities.instance.isArabicLanguage()
+                                    ? -10.w
+                                    : null,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          _showDeleteConfirmationDialog(
+                                            context,
+                                            () {
+                                              Navigator.of(context).pop();
+                                              widget.onDelete?.call();
+                                            },
+                                          ),
+                                    );
+                                  },
+                                  icon: Icon(
+                                    Icons.delete_forever_outlined,
+                                    size: 24.sp,
+                                  ),
+                                  color: context.theme.colorScheme.error,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -177,6 +222,48 @@ class _MachineItemWidgetState extends State<MachineItemWidget>
                   ),
         ),
       ),
+    );
+  }
+
+  AlertDialog _showDeleteConfirmationDialog(
+    BuildContext context,
+    VoidCallback onDelete,
+  ) {
+    return AlertDialog(
+      title: AppText(
+        'delete_machine'.tr,
+        color: context.theme.colorScheme.onSurface,
+        fontWeight: FontWeight.bold,
+        fontSize: 18.sp,
+      ),
+      content: AppText(
+        'delete_machine_confirmation'.tr,
+        color: context.theme.colorScheme.onSurface,
+        fontWeight: FontWeight.normal,
+        fontSize: 16.sp,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+          child: AppText(
+            'cancel'.tr,
+            color: context.theme.colorScheme.primary,
+            fontWeight: FontWeight.normal,
+            fontSize: 16.sp,
+          ),
+        ),
+        TextButton(
+          onPressed: onDelete,
+          child: AppText(
+            'delete'.tr,
+            color: context.theme.colorScheme.error,
+            fontWeight: FontWeight.bold,
+            fontSize: 16.sp,
+          ),
+        ),
+      ],
     );
   }
 }

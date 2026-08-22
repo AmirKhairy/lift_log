@@ -72,6 +72,7 @@ class _MainViewState extends State<_MainView> {
         context.read<HomeCubit>().refresh();
       case 1:
         context.read<MachinesCubit>().refresh();
+        context.read<HomeCubit>().refresh();
       case 2:
         context.read<VideosCubit>().refresh();
       case 3:
@@ -87,8 +88,16 @@ class _MainViewState extends State<_MainView> {
           padding: EdgeInsets.zero,
           floatingActionButton: state.selectedIndex == 1
               ? FloatingActionButton(
-                  onPressed: () {
-                    context.push(AppRoutes.addMachine);
+                  onPressed: () async {
+                    final added = await context.push<bool>(
+                      AppRoutes.addMachine,
+                    );
+
+                    if (!context.mounted) return;
+
+                    if (added == true) {
+                      await context.read<MachinesCubit>().refresh();
+                    }
                   },
                   backgroundColor: context.theme.colorScheme.primary,
                   foregroundColor: context.theme.colorScheme.onPrimary,
@@ -98,12 +107,7 @@ class _MainViewState extends State<_MainView> {
               : null,
           body: IndexedStack(
             index: state.selectedIndex,
-            children: const [
-              HomePage(),
-              MachinesPage(),
-              VideosPage(),
-              ProfilePage(),
-            ],
+            children: [HomePage(), MachinesPage(), VideosPage(), ProfilePage()],
           ),
           bottomNavigationBar: ClipRRect(
             borderRadius: const BorderRadius.vertical(

@@ -12,3 +12,5 @@ enum MuscleGroup {
   push,
   cardio,
 }
+
+enum TutorialVideoPlaybackType { youtube, directVideo, webPage, invalid }

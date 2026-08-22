@@ -55,6 +55,6 @@ extension MuscleGroupExtension on MuscleGroup {
   }
 
   String toJson() {
-    return displayName.toLowerCase();
+    return name;
   }
 }

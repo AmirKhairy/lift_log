@@ -1,5 +1,9 @@
+import 'package:image_picker/image_picker.dart';
+import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/models/machine_model.dart';
+import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/services/supabase_service.dart';
+import 'package:lift_log/core/utils/app_enums.dart';
 
 class MachinesService {
   MachinesService._();
@@ -7,6 +11,13 @@ class MachinesService {
   static final instance = MachinesService._();
 
   List<MachineModel>? machines;
+  final Map<MuscleGroup, List<TutorialVideosModel>> _tutorialVideosCache = {};
+
+  Map<MuscleGroup, List<TutorialVideosModel>> get tutorialVideosCache =>
+      Map.unmodifiable(_tutorialVideosCache);
+
+  List<TutorialVideosModel> get tutorialVideos =>
+      _tutorialVideosCache.values.expand((videos) => videos).toList();
 
   Future<void> getMachines() async {
     try {
@@ -36,5 +47,144 @@ class MachinesService {
     } catch (e) {
       throw Exception('Failed to fetch machines: $e');
     }
+  }
+
+  Future<List<TutorialVideosModel>> getTutorialVideosByMuscleGroup(
+    MuscleGroup muscleGroup, {
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh && _tutorialVideosCache.containsKey(muscleGroup)) {
+      return _tutorialVideosCache[muscleGroup] ?? [];
+    }
+
+    try {
+      final response = await SupabaseService.client
+          .from('tutorial_videos')
+          .select('''
+          id,
+          title,
+          description,
+          video_url,
+          thumbnail_url,
+          muscle_group,
+          created_at
+        ''')
+          .eq('muscle_group', muscleGroup.toJson())
+          .order('created_at', ascending: false);
+
+      final videos = response
+          .map((item) => TutorialVideosModel.fromJson(item))
+          .toList();
+
+      _tutorialVideosCache[muscleGroup] = videos;
+
+      return videos;
+    } catch (e) {
+      throw Exception('Failed to fetch tutorial videos: $e');
+    }
+  }
+
+  Future<MachineModel> addMachine({
+    required String name,
+    required String notes,
+    required MuscleGroup muscleGroup,
+    required XFile image,
+    String? tutorialVideoId,
+  }) async {
+    try {
+      final userId = SupabaseService.currentUser?.id;
+
+      if (userId == null) {
+        throw Exception('User is not logged in');
+      }
+
+      final imageUrl = await _uploadMachineImage(userId: userId, image: image);
+
+      final response = await SupabaseService.client
+          .from('machines')
+          .insert({
+            'user_id': userId,
+            'name': name.trim(),
+            'image_url': imageUrl,
+            'muscle_group': muscleGroup.toJson(),
+            'tutorial_video_id': tutorialVideoId,
+            'notes': notes.trim().isEmpty ? null : notes.trim(),
+          })
+          .select('''
+          id,
+          user_id,
+          name,
+          image_url,
+          muscle_group,
+          tutorial_video_id,
+          notes,
+          created_at,
+          updated_at
+        ''')
+          .single();
+
+      final machine = MachineModel.fromJson(response);
+      machines = [machine, ...?machines];
+
+      return machine;
+    } catch (e) {
+      throw Exception('Failed to add machine: $e');
+    }
+  }
+
+  Future<void> deleteMachine(String machineId, {String? imageUrl}) async {
+    try {
+      final userId = SupabaseService.currentUser?.id;
+
+      if (userId == null) {
+        throw Exception('User is not logged in');
+      }
+
+      await SupabaseService.client
+          .from('machines')
+          .delete()
+          .eq('id', machineId)
+          .eq('user_id', userId);
+
+      final imagePath = _machineImagePath(imageUrl);
+      if (imagePath != null) {
+        await SupabaseService.client.storage.from('machine-images').remove([
+          imagePath,
+        ]);
+      }
+
+      machines = machines?.where((machine) => machine.id != machineId).toList();
+    } catch (e) {
+      throw Exception('Failed to delete machine: $e');
+    }
+  }
+
+  String? _machineImagePath(String? imageUrl) {
+    if (imageUrl == null || imageUrl.trim().isEmpty) return null;
+
+    final segments = Uri.tryParse(imageUrl)?.pathSegments;
+    if (segments == null) return null;
+
+    final bucketIndex = segments.indexOf('machine-images');
+    if (bucketIndex == -1 || bucketIndex == segments.length - 1) return null;
+
+    return segments.sublist(bucketIndex + 1).join('/');
+  }
+
+  Future<String> _uploadMachineImage({
+    required String userId,
+    required XFile image,
+  }) async {
+    final bytes = await image.readAsBytes();
+    final extension = image.name.split('.').lastOrNull ?? 'jpg';
+    final path = '$userId/${DateTime.now().millisecondsSinceEpoch}.$extension';
+
+    await SupabaseService.client.storage
+        .from('machine-images')
+        .uploadBinary(path, bytes);
+
+    return SupabaseService.client.storage
+        .from('machine-images')
+        .getPublicUrl(path);
   }
 }

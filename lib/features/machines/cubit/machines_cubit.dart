@@ -32,6 +32,29 @@ class MachinesCubit extends Cubit<MachinesState> {
     await _loadMachine(isRefresh: true);
   }
 
+  Future<void> deleteMachine(MachineModel machine) async {
+    final machineId = machine.id;
+    if (machineId == null) return;
+
+    final updatedMachines = (machines ?? [])
+        .where((item) => item.id != machineId)
+        .toList();
+    machinesService.machines = updatedMachines;
+    emit(MachinesLoadedSuccess(machines: updatedMachines));
+
+    try {
+      await machinesService.deleteMachine(
+        machineId,
+        imageUrl: machine.imageUrl,
+      );
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s);
+      emit(MachinesError(e.toString()));
+      await refresh();
+      rethrow;
+    }
+  }
+
   Future<void> _loadMachine({required bool isRefresh}) async {
     emit(const MachinesLoding());
 
