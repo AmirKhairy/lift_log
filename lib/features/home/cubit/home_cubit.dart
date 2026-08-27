@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lift_log/core/models/user_model.dart';
 import 'package:lift_log/core/services/api_services/user_service.dart';
 import 'package:lift_log/core/services/api_services/workout_service.dart';
-import 'package:lift_log/core/models/user_model.dart';
 
 import 'home_state.dart';
 
@@ -73,6 +73,8 @@ class HomeCubit extends Cubit<HomeState> {
   DateTime? get lastWorkoutDate {
     if (workoutDates.isEmpty) return null;
 
-    return workoutDates.first;
+    return workoutDates.reduce(
+      (latest, date) => date.isAfter(latest) ? date : latest,
+    );
   }
 }

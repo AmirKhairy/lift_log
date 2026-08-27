@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 import 'package:lift_log/features/home/presentation/widgets/home_appbar.dart';
@@ -110,6 +112,8 @@ class _HomePageState extends State<HomePage>
                       lastWorkoutDate: context
                           .read<HomeCubit>()
                           .lastWorkoutDate,
+                      onViewHistory: () =>
+                          context.push(AppRoutes.workoutHistory),
                     ),
                   ),
                 ),
@@ -117,6 +121,12 @@ class _HomePageState extends State<HomePage>
                 HomeStatsSection(
                   machineCount: context.read<HomeCubit>().machineCount,
                   animation: _statsAnimation,
+                  onAddWorkout: () async {
+                    final saved = await context.push<bool>(AppRoutes.workout);
+                    if (saved == true && context.mounted) {
+                      await context.read<HomeCubit>().refresh();
+                    }
+                  },
                 ),
 
                 SizedBox(height: AppSpacing.md),

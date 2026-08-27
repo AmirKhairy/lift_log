@@ -18,7 +18,7 @@ class LocalizationService extends ChangeNotifier {
 
   Future<void> init() async {
     final language =
-        StorageService.getString(AppConstants.instance.languageKey) ?? 'en';
+        StorageService.getString(AppConstants.instance.languageKey) ?? 'ar';
 
     _locale = Locale(language);
 

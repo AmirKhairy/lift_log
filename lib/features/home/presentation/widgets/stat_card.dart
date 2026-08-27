@@ -11,14 +11,18 @@ class StatCard extends StatelessWidget {
     super.key,
     required this.icon,
     required this.value,
-    required this.label,
+    this.label,
     required this.animation,
+    this.backgroundColor,
+    this.iconColor,
   });
 
   final IconData icon;
   final String value;
-  final String label;
+  final String? label;
   final Animation<double> animation;
+  final Color? backgroundColor;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -27,23 +31,35 @@ class StatCard extends StatelessWidget {
       child: Container(
         padding: AppPadding.xs,
         decoration: BoxDecoration(
-          color: context.theme.colorScheme.surface,
+          color: backgroundColor ?? context.theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppRadius.xl),
         ),
         child: Column(
           children: [
-            Icon(icon, size: 30.sp, color: context.theme.colorScheme.primary),
+            Icon(
+              icon,
+              size: 30.sp,
+              color: iconColor ?? context.theme.colorScheme.primary,
+            ),
 
             SizedBox(height: AppSpacing.sm),
 
-            AppText(value, fontSize: 24.sp, fontWeight: FontWeight.w700),
+            AppText(
+              value,
+              fontSize: 24.sp,
+              fontWeight: FontWeight.w700,
+              textAlign: TextAlign.center,
+            ),
 
             SizedBox(height: AppSpacing.xs),
 
-            AppText(
-              label,
-              color: context.theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
+            if (label != null)
+              AppText(
+                label!,
+                color: context.theme.colorScheme.onSurface.withValues(
+                  alpha: 0.6,
+                ),
+              ),
           ],
         ),
       ),

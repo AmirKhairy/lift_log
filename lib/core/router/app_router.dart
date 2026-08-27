@@ -14,6 +14,8 @@ import 'package:lift_log/features/machine_details/presentation/pages/machine_det
 import 'package:lift_log/features/main/presentation/pages/main_page.dart';
 import 'package:lift_log/features/onBoarding/presentation/pages/onboarding_page.dart';
 import 'package:lift_log/features/tutorial_video_player/presentation/pages/tutorial_video_player_page.dart';
+import 'package:lift_log/features/workout/presentation/pages/workout_page.dart';
+import 'package:lift_log/features/workout_history/presentation/pages/workout_history_page.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -28,6 +30,7 @@ class AppRoutes {
   static const profile = '/profile';
   static const settings = '/settings';
   static const workout = '/workout';
+  static const workoutHistory = '/workout-history';
   static const addMachine = '/add-machine';
   static const machineDetails = '/machine-details';
   static const tutorialVideoPlayer = '/tutorial-video-player';
@@ -115,6 +118,18 @@ final GoRouter appRouter = GoRouter(
           builder: (_, _) => const ResetPasswordPage(),
         ),
         GoRoute(path: AppRoutes.home, builder: (_, _) => const MainPage()),
+        GoRoute(
+          path: AppRoutes.workout,
+          builder: (_, state) => WorkoutPage(
+            initialMachine: state.extra is MachineModel
+                ? state.extra as MachineModel
+                : null,
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.workoutHistory,
+          builder: (_, _) => const WorkoutHistoryPage(),
+        ),
         GoRoute(
           path: AppRoutes.addMachine,
           builder: (_, _) => const AddMachinePage(),

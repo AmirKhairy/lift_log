@@ -14,10 +14,12 @@ class WorkoutOverviewSection extends StatelessWidget {
     super.key,
     required this.workoutCount,
     required this.lastWorkoutDate,
+    required this.onViewHistory,
   });
 
   final int workoutCount;
   final DateTime? lastWorkoutDate;
+  final VoidCallback onViewHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +63,22 @@ class WorkoutOverviewSection extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Wrap(
+              children: [
+                TextButton.icon(
+                  onPressed: onViewHistory,
+                  style: TextButton.styleFrom(
+                    foregroundColor: context.theme.colorScheme.onPrimary,
+                  ),
+                  icon: const Icon(Icons.history),
+                  label: AppText('workout_history'.tr),
+                ),
+              ],
+            ),
           ),
         ],
       ),

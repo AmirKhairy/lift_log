@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 
@@ -27,6 +28,7 @@ class AppTextField extends StatefulWidget {
     this.hintColor,
     this.obscureIconColor,
     this.textColor,
+    this.inputFormatters,
   });
 
   final TextEditingController? controller;
@@ -62,6 +64,7 @@ class AppTextField extends StatefulWidget {
   final Color? hintColor;
   final Color? obscureIconColor;
   final Color? textColor;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -92,6 +95,7 @@ class _AppTextFieldState extends State<AppTextField> {
       enabled: widget.enabled,
       readOnly: widget.readOnly,
       autofocus: widget.autofocus,
+      inputFormatters: widget.inputFormatters,
       maxLines: widget.obscureText ? 1 : widget.maxLines,
       obscureText: _obscure,
       textCapitalization: widget.textCapitalization,
