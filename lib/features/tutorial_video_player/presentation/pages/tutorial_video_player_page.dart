@@ -1,42 +1,117 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
+import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/utils/video_url_helper.dart';
+import 'package:lift_log/core/widgets/app_cached_network_image.dart';
 import 'package:lift_log/core/widgets/app_scaffold.dart';
+import 'package:lift_log/core/widgets/app_staggered_animation.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/features/add_machine/presentation/widgets/tutorial_video_selector.dart';
 import 'package:video_player/video_player.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class TutorialVideoPlayerPage extends StatelessWidget {
-  const TutorialVideoPlayerPage({super.key, required this.video});
+  const TutorialVideoPlayerPage({
+    super.key,
+    required this.video,
+    this.relatedVideos = const [],
+  });
 
   final TutorialVideosModel video;
+  final List<TutorialVideosModel> relatedVideos;
 
   @override
   Widget build(BuildContext context) {
     final playbackType = VideoUrlHelper.playbackType(video.videoUrl);
 
+    final otherVideos = relatedVideos
+        .where(
+          (item) =>
+              !identical(item, video) &&
+              (item.id == null || video.id == null || item.id != video.id),
+        )
+        .toList(growable: false);
+
     return AppScaffold(
       title: video.title ?? 'tutorial_videos',
       padding: EdgeInsets.zero,
-      body: switch (playbackType) {
-        TutorialVideoPlaybackType.youtube => _YoutubeTutorialPlayer(
-          videoId: VideoUrlHelper.youtubeVideoId(video.videoUrl)!,
-        ),
-        TutorialVideoPlaybackType.directVideo => _DirectTutorialVideoPlayer(
-          videoUrl: VideoUrlHelper.normalize(video.videoUrl)!,
-        ),
-        TutorialVideoPlaybackType.webPage => _TutorialVideoWebView(
-          videoUrl: VideoUrlHelper.normalize(video.videoUrl)!,
-        ),
-        TutorialVideoPlaybackType.invalid => const _UnsupportedVideo(),
-      },
+      body: ListView(
+        padding: EdgeInsets.only(bottom: 16.h),
+        children: [
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Hero(
+                  tag: _videoHeroTag(video),
+                  child: AppCachedNetworkImage(
+                    imageUrl: video.thumbnailUrl ?? '',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                switch (playbackType) {
+                  TutorialVideoPlaybackType.youtube => _YoutubeTutorialPlayer(
+                    videoId: VideoUrlHelper.youtubeVideoId(video.videoUrl)!,
+                  ),
+                  TutorialVideoPlaybackType.directVideo =>
+                    _DirectTutorialVideoPlayer(
+                      videoUrl: VideoUrlHelper.normalize(video.videoUrl)!,
+                    ),
+                  TutorialVideoPlaybackType.webPage => _TutorialVideoWebView(
+                    videoUrl: VideoUrlHelper.normalize(video.videoUrl)!,
+                  ),
+                  TutorialVideoPlaybackType.invalid =>
+                    const _UnsupportedVideo(),
+                },
+              ],
+            ),
+          ),
+          if (otherVideos.isNotEmpty) ...[
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),
+              child: AppStaggeredAnimation(
+                index: 0,
+                child: AppText(
+                  'more_videos',
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: TutorialVideoSelector(
+                videos: otherVideos,
+                selectedVideo: null,
+                isLoading: false,
+                isVertical: true,
+                isNestedInScrollView: true,
+                onSelected: (nextVideo) => _openVideo(context, nextVideo),
+                onPlay: (nextVideo) => _openVideo(context, nextVideo),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
+
+  void _openVideo(BuildContext context, TutorialVideosModel nextVideo) {
+    context.pushReplacement(
+      AppRoutes.tutorialVideoPlayer,
+      extra: {'video': nextVideo, 'relatedVideos': relatedVideos},
+    );
+  }
+
+  String _videoHeroTag(TutorialVideosModel item) =>
+      'tutorial-video-${item.id ?? item.videoUrl ?? item.title}';
 }
 
 class _YoutubeTutorialPlayer extends StatefulWidget {

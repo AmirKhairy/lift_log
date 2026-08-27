@@ -36,7 +36,18 @@ class _VideosView extends StatelessWidget {
       return;
     }
 
-    context.push(AppRoutes.tutorialVideoPlayer, extra: video);
+    context.push(
+      AppRoutes.tutorialVideoPlayer,
+      extra: {'video': video, 'relatedVideos': _videosForVideo(context, video)},
+    );
+  }
+
+  List<TutorialVideosModel> _videosForVideo(
+    BuildContext context,
+    TutorialVideosModel video,
+  ) {
+    final state = context.read<VideosCubit>().state;
+    return state is VideosLoaded ? state.videos : [video];
   }
 
   @override

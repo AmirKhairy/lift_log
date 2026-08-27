@@ -17,6 +17,7 @@ class TutorialVideoSelector extends StatelessWidget {
     required this.onSelected,
     required this.onPlay,
     this.isVertical = false,
+    this.isNestedInScrollView = false,
   });
 
   final List<TutorialVideosModel> videos;
@@ -25,6 +26,7 @@ class TutorialVideoSelector extends StatelessWidget {
   final ValueChanged<TutorialVideosModel> onSelected;
   final ValueChanged<TutorialVideosModel> onPlay;
   final bool isVertical;
+  final bool isNestedInScrollView;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,10 @@ class TutorialVideoSelector extends StatelessWidget {
     return isVertical
         ? ListView.separated(
             padding: EdgeInsets.only(bottom: AppSpacing.md.h),
+            shrinkWrap: isNestedInScrollView,
+            physics: isNestedInScrollView
+                ? const NeverScrollableScrollPhysics()
+                : null,
             itemCount: videos.length,
             separatorBuilder: (_, _) => SizedBox(height: AppSpacing.md.h),
             itemBuilder: (context, index) {
@@ -116,7 +122,6 @@ class _TutorialVideoTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppSpacing.nm),
       child: InkWell(
         onTap: onTap,
-        onDoubleTap: onPlay,
         borderRadius: BorderRadius.circular(AppSpacing.nm),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
@@ -137,11 +142,14 @@ class _TutorialVideoTile extends StatelessWidget {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  AppCachedNetworkImage(
-                    imageUrl: video.thumbnailUrl ?? '',
-                    width: isVertical ? 104.w : 70.w,
-                    height: isVertical ? 118.h : 86.h,
-                    borderRadius: BorderRadius.circular(AppSpacing.sm),
+                  Hero(
+                    tag: _videoHeroTag(video),
+                    child: AppCachedNetworkImage(
+                      imageUrl: video.thumbnailUrl ?? '',
+                      width: isVertical ? 104.w : 70.w,
+                      height: isVertical ? 118.h : 86.h,
+                      borderRadius: BorderRadius.circular(AppSpacing.sm),
+                    ),
                   ),
                   GestureDetector(
                     onTap: onPlay,
@@ -198,6 +206,9 @@ class _TutorialVideoTile extends StatelessWidget {
       ),
     );
   }
+
+  String _videoHeroTag(TutorialVideosModel item) =>
+      'tutorial-video-${item.id ?? item.videoUrl ?? item.title}';
 }
 
 class _TutorialVideosLoading extends StatelessWidget {

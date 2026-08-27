@@ -106,6 +106,7 @@ const Map<String, String> arLanguage = {
   "muscle_group": "المجموعة العضلية",
   "primary_muscle_group": "المجموعة العضلية الأساسية",
   "tutorial_videos": "فيديوهات تعليمية",
+  "more_videos": "المزيد من الفيديوهات",
   "tutorial_videos_selection_label": "فيديوهات تعليمية (اختر فيديو لمساعدتك)",
   "no_tutorial_videos":
       "لم يتم العثور على فيديوهات تعليمية لهذه المجموعة العضلية.",

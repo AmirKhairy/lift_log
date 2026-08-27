@@ -106,6 +106,7 @@ const Map<String, String> enLanguage = {
   "muscle_group": "Muscle Group",
   "primary_muscle_group": "Primary Muscle Group",
   "tutorial_videos": "Tutorial Videos",
+  "more_videos": "More videos",
   "tutorial_videos_selection_label":
       "Tutorial Videos (select a video to help you)",
   "no_tutorial_videos": "No tutorial videos found for this muscle group.",

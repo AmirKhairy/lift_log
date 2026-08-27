@@ -129,8 +129,18 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.tutorialVideoPlayer,
           builder: (context, state) {
-            final video = state.extra as TutorialVideosModel;
-            return TutorialVideoPlayerPage(video: video);
+            final extra = state.extra;
+            final video = extra is Map<String, dynamic>
+                ? extra['video'] as TutorialVideosModel
+                : extra as TutorialVideosModel;
+            final relatedVideos = extra is Map<String, dynamic>
+                ? (extra['relatedVideos'] as List<TutorialVideosModel>?) ?? []
+                : const <TutorialVideosModel>[];
+
+            return TutorialVideoPlayerPage(
+              video: video,
+              relatedVideos: relatedVideos,
+            );
           },
         ),
       ],
