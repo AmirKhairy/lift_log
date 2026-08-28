@@ -1,0 +1,29 @@
+---
+description: Services, async I/O, errors, and logging
+globs: "**/services/**/*.dart,**/core/**/*.dart,**/*cubit*.dart,**/*bloc*.dart"
+alwaysApply: false
+---
+
+# Data Layer, Async, Errors, Logging
+
+`Cubit/Bloc → Service → remote/local source`. Put Supabase, APIs, and storage in services. Do not duplicate I/O across Cubits or widgets.
+
+## Async
+
+- `Future` for one-shot work; `Stream` for ongoing events.
+- Handle exceptions; never swallow without a reason.
+- Emit loading/success/error; avoid duplicate requests.
+- Never do expensive async or I/O in `build()`.
+- Do not emit after the Cubit/Bloc is closed.
+
+## Errors
+
+Cover network, database, invalid data, nulls, auth, and unexpected failures. Surface errors in Cubit/Bloc state when the UI must react. Use existing `AppException` / `Failure` types.
+
+## Logging
+
+Do not use `print()`. Use `AppLogger` (`lib/core/helpers/logger.dart`). Avoid noisy production logs.
+
+```dart
+AppLogger.error('Failed to load workouts: $error');
+```

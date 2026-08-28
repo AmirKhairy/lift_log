@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/helpers/validators.dart';
+import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
@@ -25,19 +26,23 @@ import 'package:lift_log/features/add_machine/presentation/widgets/performance_t
 import 'package:lift_log/features/add_machine/presentation/widgets/tutorial_video_selector.dart';
 
 class AddMachinePage extends StatelessWidget {
-  const AddMachinePage({super.key});
+  const AddMachinePage({super.key, this.machineToEdit});
+
+  final MachineModel? machineToEdit;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AddMachineCubit(),
-      child: const _AddMachineView(),
+      create: (_) => AddMachineCubit(machineToEdit: machineToEdit)..hydrate(),
+      child: _AddMachineView(machineToEdit: machineToEdit),
     );
   }
 }
 
 class _AddMachineView extends StatefulWidget {
-  const _AddMachineView();
+  const _AddMachineView({this.machineToEdit});
+
+  final MachineModel? machineToEdit;
 
   @override
   State<_AddMachineView> createState() => _AddMachineViewState();
@@ -49,6 +54,13 @@ class _AddMachineViewState extends State<_AddMachineView> {
   final _notesController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.machineToEdit?.name ?? '';
+    _notesController.text = widget.machineToEdit?.notes ?? '';
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _notesController.dispose();
@@ -58,7 +70,9 @@ class _AddMachineViewState extends State<_AddMachineView> {
   void _save(AddMachineLoaded state) {
     if (!_formKey.currentState!.validate()) return;
 
-    if (state.selectedImage == null) {
+    final hasExistingImage =
+        widget.machineToEdit?.imageUrl?.trim().isNotEmpty == true;
+    if (state.selectedImage == null && !hasExistingImage) {
       AppSnackbar.error(message: 'select_machine_image', context: context);
       return;
     }
@@ -130,12 +144,14 @@ class _AddMachineViewState extends State<_AddMachineView> {
         }
 
         if (state is AddMachineSuccess) {
-          context.pop(true);
+          context.pop(state.machine);
         }
       },
       builder: (context, state) {
         return AppScaffold(
-          title: 'add_new_machine',
+          title: widget.machineToEdit == null
+              ? 'add_new_machine'
+              : 'edit_machine',
           centerTitle: false,
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           body: state is AddMachineLoaded
@@ -147,6 +163,7 @@ class _AddMachineViewState extends State<_AddMachineView> {
                         index: 0,
                         child: MachineImagePicker(
                           image: state.selectedImage,
+                          existingImageUrl: widget.machineToEdit?.imageUrl,
                           onTap: _showImageSourceSheet,
                         ),
                       ),

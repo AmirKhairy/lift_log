@@ -1,0 +1,26 @@
+---
+description: Unit, widget, and integration testing conventions
+globs: "test/**/*.dart,integration_test/**/*.dart,**/*_test.dart"
+alwaysApply: false
+---
+
+# Testing
+
+Test important behavior. Do not skip architecture just to make tests easy; inject dependencies so classes are naturally testable.
+
+- Unit tests: domain, Cubit, services.
+- Widget tests: UI behavior.
+- Integration tests: full user flows.
+
+Follow **Arrange → Act → Assert**. Prefer fakes/stubs over hitting real APIs.
+
+```dart
+test('emits error when service fails', () async {
+  // arrange
+  final cubit = HomeCubit(FakeUserService()..fail = true);
+  // act
+  await cubit.refresh();
+  // assert
+  expect(cubit.state, isA<HomeError>());
+});
+```

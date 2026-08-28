@@ -108,6 +108,47 @@ class WorkoutService {
         .toList();
   }
 
+  Future<List<MachineWorkoutHistoryItem>> getLogsForMachine(
+    String machineId,
+  ) async {
+    final userId = SupabaseService.currentUser?.id;
+
+    if (userId == null) {
+      throw Exception('User is not logged in');
+    }
+
+    final response = await SupabaseService.client
+        .from('workout_logs')
+        .select('''
+          id,
+          notes,
+          created_at,
+          workout_sessions!inner(
+            performed_at,
+            notes,
+            user_id
+          ),
+          workout_sets(
+            set_number,
+            weight,
+            reps
+          )
+        ''')
+        .eq('machine_id', machineId)
+        .eq('workout_sessions.user_id', userId);
+
+    final items = response
+        .map(
+          (item) => MachineWorkoutHistoryItem.fromJson(
+            Map<String, dynamic>.from(item),
+          ),
+        )
+        .toList();
+
+    items.sort((a, b) => b.performedAt.compareTo(a.performedAt));
+    return items;
+  }
+
   Future<int> getMachineCount() async {
     final userId = SupabaseService.currentUser?.id;
 

@@ -89,6 +89,79 @@ class MachinesService {
     }
   }
 
+  static const _machineSelect = '''
+          id,
+          user_id,
+          name,
+          image_url,
+          muscle_group,
+          tutorial_video_id,
+          notes,
+          created_at,
+          updated_at
+        ''';
+
+  Future<MachineModel> updateMachine({
+    required MachineModel machine,
+    required String name,
+    required String notes,
+    required MuscleGroup muscleGroup,
+    String? tutorialVideoId,
+    XFile? image,
+  }) async {
+    try {
+      final userId = SupabaseService.currentUser?.id;
+      final machineId = machine.id;
+
+      if (userId == null) {
+        throw Exception('User is not logged in');
+      }
+
+      if (machineId == null) {
+        throw Exception('Machine is invalid');
+      }
+
+      var imageUrl = machine.imageUrl;
+      if (image != null) {
+        imageUrl = await _uploadMachineImage(userId: userId, image: image);
+      }
+
+      final response = await SupabaseService.client
+          .from('machines')
+          .update({
+            'name': name.trim(),
+            'image_url': imageUrl,
+            'muscle_group': muscleGroup.toJson(),
+            'tutorial_video_id': tutorialVideoId,
+            'notes': notes.trim().isEmpty ? null : notes.trim(),
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          })
+          .eq('id', machineId)
+          .eq('user_id', userId)
+          .select(_machineSelect)
+          .single();
+
+      if (image != null) {
+        final oldImagePath = _machineImagePath(machine.imageUrl);
+        if (oldImagePath != null) {
+          await SupabaseService.client.storage.from('machine-images').remove([
+            oldImagePath,
+          ]);
+        }
+      }
+
+      final updated = MachineModel.fromJson(response);
+      machines = [
+        for (final item in machines ?? const <MachineModel>[])
+          if (item.id == machineId) updated else item,
+      ];
+
+      return updated;
+    } catch (e) {
+      throw Exception('Failed to update machine: $e');
+    }
+  }
+
   Future<void> deleteMachine(String machineId, {String? imageUrl}) async {
     try {
       final userId = SupabaseService.currentUser?.id;

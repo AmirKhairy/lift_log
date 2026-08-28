@@ -1,0 +1,25 @@
+---
+description: Theme, layout, images, accessibility, and navigation
+globs: "**/presentation/**/*.dart,**/core/theme/**/*.dart,**/core/widgets/**/*.dart,**/core/router/**/*.dart,**/app.dart"
+alwaysApply: false
+---
+
+# UI, Theme, Navigation
+
+Use centralized `ThemeData` (light/dark/system as the app already does). Prefer Material 3 and existing `ColorScheme` / `ThemeExtension` (`app_theme.dart`, `app_theme_extension.dart`). Use `Theme.of(context)` and design tokens (`AppColors`, `text_styles`, padding/radius helpers). Do not scatter hardcoded colors, styles, or magic sizes.
+
+## Layout and performance
+
+Support varied screen sizes (`LayoutBuilder`, `MediaQuery`, `Expanded`/`Flexible`/`Wrap`). This project uses `flutter_screenutil`; follow nearby usage. Prefer `ListView.builder` / `GridView.builder` / slivers for long lists. `const` constructors. No heavy work in `build()`. Use `compute`/isolates only for real CPU-bound work.
+
+## Images
+
+Declare assets in `pubspec.yaml`. `Image.asset` locally; `AppCachedNetworkImage` / `cached_network_image` for remote. Handle loading and error states.
+
+## Accessibility
+
+Contrast, text scaling, semantics on interactive controls, keyboard/pointer on web/desktop where relevant.
+
+## Navigation
+
+Use **go_router** via `AppRouter` / `AppRoutes`. Guards/redirects for auth. `Navigator` only for dialogs and short-lived flows. No navigation in services.

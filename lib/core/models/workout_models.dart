@@ -76,6 +76,46 @@ class WorkoutDraft extends Equatable {
   List<Object?> get props => [performedAt, notes, machines];
 }
 
+class MachineWorkoutHistoryItem extends Equatable {
+  const MachineWorkoutHistoryItem({
+    required this.performedAt,
+    required this.sets,
+    this.logNotes,
+  });
+
+  final DateTime performedAt;
+  final String? logNotes;
+  final List<WorkoutSetModel> sets;
+
+  factory MachineWorkoutHistoryItem.fromJson(Map<String, dynamic> json) {
+    final sessionJson = json['workout_sessions'];
+    final session = sessionJson is Map
+        ? Map<String, dynamic>.from(sessionJson)
+        : <String, dynamic>{};
+    final performedAtRaw = session['performed_at'] as String?;
+    final setsJson = json['workout_sets'];
+
+    return MachineWorkoutHistoryItem(
+      performedAt: performedAtRaw != null
+          ? DateTime.parse(performedAtRaw).toLocal()
+          : DateTime.parse(json['created_at'] as String).toLocal(),
+      logNotes: json['notes'] as String?,
+      sets:
+          (setsJson as List<dynamic>? ?? [])
+              .map(
+                (item) => WorkoutSetModel.fromJson(
+                  Map<String, dynamic>.from(item as Map),
+                ),
+              )
+              .toList()
+            ..sort((a, b) => a.setNumber.compareTo(b.setNumber)),
+    );
+  }
+
+  @override
+  List<Object?> get props => [performedAt, logNotes, sets];
+}
+
 class WorkoutSetModel extends Equatable {
   const WorkoutSetModel({
     required this.setNumber,

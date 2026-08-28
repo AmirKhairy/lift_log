@@ -1,0 +1,38 @@
+---
+description: flutter_bloc Cubit/Bloc patterns, state, and UI wiring
+globs: "**/*cubit*.dart,**/*bloc*.dart,**/*state*.dart,**/*_page.dart,**/presentation/**/*.dart"
+alwaysApply: false
+---
+
+# State Management
+
+Use **Cubit + flutter_bloc** by default. Use **Bloc** only when events, transformers, or many event types add real clarity. Do not add another state-management package.
+
+## Cubit/Bloc
+
+Handle business logic, I/O via injected services, async coordination, and loading/success/empty/error. Prevent duplicate in-flight loads when needed. Never emit after `close()`.
+
+Prefer constructor injection:
+
+```dart
+class HomeCubit extends Cubit<HomeState> {
+  HomeCubit(this._userService) : super(const HomeState.initial());
+  final UserService _userService;
+}
+```
+
+Do not new up services inside Cubits when they can be injected. Pages must not call APIs or databases.
+
+## State
+
+Immutable state (Equatable as used in this project). Include only data the UI needs. Use Initial/Loading/Success/Empty/Error when relevant — no extra states.
+
+Keep **local UI state** in the widget: controllers, focus, expansion, animations, ephemeral visuals.
+
+## Bloc widgets
+
+- `BlocBuilder` for rebuilds
+- `BlocListener` for navigation, snackbars, dialogs
+- `BlocConsumer` only when both are required in one place
+
+Use `buildWhen`/`listenWhen` to cut noise. Keep rebuild scopes small.

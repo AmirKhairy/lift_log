@@ -89,13 +89,13 @@ class _MainViewState extends State<_MainView> {
           floatingActionButton: state.selectedIndex == 1
               ? FloatingActionButton(
                   onPressed: () async {
-                    final added = await context.push<bool>(
+                    final added = await context.push<Object>(
                       AppRoutes.addMachine,
                     );
 
                     if (!context.mounted) return;
 
-                    if (added == true) {
+                    if (added != null) {
                       await context.read<MachinesCubit>().refresh();
                     }
                   },

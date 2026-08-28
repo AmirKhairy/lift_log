@@ -19,11 +19,13 @@ class MachineItemWidget extends StatefulWidget {
     required this.machine,
     this.index = 0,
     this.onDelete,
+    this.onChanged,
   });
 
   final MachineModel? machine;
   final int index;
   final VoidCallback? onDelete;
+  final VoidCallback? onChanged;
   @override
   State<MachineItemWidget> createState() => _MachineItemWidgetState();
 }
@@ -84,11 +86,15 @@ class _MachineItemWidgetState extends State<MachineItemWidget>
           scale: _scaleAnimation,
           child:
               InkWell(
-                    onTap: () {
-                      context.push(
+                    onTap: () async {
+                      final result = await context.push(
                         AppRoutes.machineDetails,
                         extra: widget.machine,
                       );
+                      if (!mounted) return;
+                      if (result == true || result is MachineModel) {
+                        widget.onChanged?.call();
+                      }
                     },
                     child: Container(
                       padding: AppPadding.xs,

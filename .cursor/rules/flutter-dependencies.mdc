@@ -1,0 +1,16 @@
+---
+description: When to add packages and how to use codegen
+globs: "pubspec.yaml,pubspec.lock,**/*.dart"
+alwaysApply: false
+---
+
+# Dependencies and Codegen
+
+Do not add packages unless needed.
+
+1. Prefer Flutter/Dart SDK.
+2. Reuse an existing dependency (`flutter_bloc`, `go_router`, `supabase_flutter`, `cached_network_image`, `equatable`, etc.).
+3. If a new package is required, choose a maintained one and explain why.
+4. Never add a second package that solves the same problem (no extra state-management libs).
+
+When the project uses code generation, follow the existing setup. Run `build_runner` after changing annotated sources and verify generated output. This app currently has little codegen; do not introduce it without a clear need.

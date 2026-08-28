@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/services/api_services/machines_service.dart';
+import 'package:lift_log/core/utils/app_enums.dart';
 
 import 'machines_state.dart';
 
@@ -10,6 +11,7 @@ class MachinesCubit extends Cubit<MachinesState> {
 
   final MachinesService machinesService = MachinesService.instance;
 
+  MuscleGroup _selectedMuscleGroup = MuscleGroup.values.first;
   bool _hasLoaded = false;
   Future<void>? _loadingFuture;
   List<MachineModel>? get machines => machinesService.machines;
@@ -40,7 +42,12 @@ class MachinesCubit extends Cubit<MachinesState> {
         .where((item) => item.id != machineId)
         .toList();
     machinesService.machines = updatedMachines;
-    emit(MachinesLoadedSuccess(machines: updatedMachines));
+    emit(
+      MachinesLoadedSuccess(
+        machines: updatedMachines,
+        muscleGroup: _selectedMuscleGroup,
+      ),
+    );
 
     try {
       await machinesService.deleteMachine(
@@ -49,24 +56,47 @@ class MachinesCubit extends Cubit<MachinesState> {
       );
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
-      emit(MachinesError(e.toString()));
+      emit(MachinesError(e.toString(), muscleGroup: _selectedMuscleGroup));
       await refresh();
       rethrow;
     }
   }
 
+  void selectMuscleGroup(MuscleGroup muscleGroup) {
+    if (_selectedMuscleGroup == muscleGroup) return;
+
+    _selectedMuscleGroup = muscleGroup;
+    switch (state) {
+      case MachinesLoadedSuccess(:final machines):
+        emit(
+          MachinesLoadedSuccess(machines: machines, muscleGroup: muscleGroup),
+        );
+      case MachinesLoding():
+        emit(MachinesLoding(muscleGroup));
+      case MachinesError(:final message):
+        emit(MachinesError(message, muscleGroup: muscleGroup));
+      case MachinesInitial():
+        break;
+    }
+  }
+
   Future<void> _loadMachine({required bool isRefresh}) async {
-    emit(const MachinesLoding());
+    emit(MachinesLoding(_selectedMuscleGroup));
 
     try {
       await machinesService.getMachines();
 
       _hasLoaded = true;
-      emit(MachinesLoadedSuccess(machines: machines ?? []));
+      emit(
+        MachinesLoadedSuccess(
+          machines: machines ?? [],
+          muscleGroup: _selectedMuscleGroup,
+        ),
+      );
     } catch (e, s) {
       _hasLoaded = false;
       debugPrintStack(stackTrace: s);
-      emit(MachinesError(e.toString()));
+      emit(MachinesError(e.toString(), muscleGroup: _selectedMuscleGroup));
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/services/api_services/machines_service.dart';
 import 'package:lift_log/core/services/api_services/tutorial_videos_service.dart';
@@ -8,12 +9,35 @@ import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/features/add_machine/cubit/add_machine_state.dart';
 
 class AddMachineCubit extends Cubit<AddMachineState> {
-  AddMachineCubit() : super(const AddMachineLoaded());
+  AddMachineCubit({this.machineToEdit}) : super(const AddMachineLoaded());
 
+  final MachineModel? machineToEdit;
   final MachinesService _machinesService = MachinesService.instance;
   final TutorialVideosService _tutorialVideosService =
       TutorialVideosService.instance;
   final ImagePicker _imagePicker = ImagePicker();
+
+  bool get isEditing => machineToEdit != null;
+
+  Future<void> hydrate() async {
+    final muscleGroup = machineToEdit?.muscleGroup;
+    if (muscleGroup == null) return;
+
+    await selectMuscleGroup(muscleGroup);
+
+    final tutorialVideoId = machineToEdit?.tutorialVideoId;
+    if (tutorialVideoId == null || tutorialVideoId.isEmpty) return;
+
+    final currentState = state;
+    if (currentState is! AddMachineLoaded) return;
+
+    final match = currentState.tutorialVideos
+        .where((video) => video.id == tutorialVideoId)
+        .firstOrNull;
+    if (match == null) return;
+
+    selectTutorialVideo(match);
+  }
 
   Future<void> pickImage(ImageSource source) async {
     try {
@@ -83,7 +107,9 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     if (currentState is! AddMachineLoaded) return;
 
     final selectedImage = currentState.selectedImage;
-    if (selectedImage == null) {
+    final hasExistingImage =
+        machineToEdit?.imageUrl?.trim().isNotEmpty == true;
+    if (selectedImage == null && !hasExistingImage) {
       emit(const AddMachineError('select_machine_image'));
       emit(currentState);
       return;
@@ -99,13 +125,22 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     emit(currentState.copyWith(isSaving: true));
 
     try {
-      final machine = await _machinesService.addMachine(
-        name: name,
-        notes: notes,
-        muscleGroup: muscleGroup,
-        tutorialVideoId: currentState.selectedTutorialVideo?.id,
-        image: selectedImage,
-      );
+      final machine = isEditing
+          ? await _machinesService.updateMachine(
+              machine: machineToEdit!,
+              name: name,
+              notes: notes,
+              muscleGroup: muscleGroup,
+              tutorialVideoId: currentState.selectedTutorialVideo?.id,
+              image: selectedImage,
+            )
+          : await _machinesService.addMachine(
+              name: name,
+              notes: notes,
+              muscleGroup: muscleGroup,
+              tutorialVideoId: currentState.selectedTutorialVideo?.id,
+              image: selectedImage!,
+            );
 
       emit(AddMachineSuccess(machine));
     } catch (e, s) {

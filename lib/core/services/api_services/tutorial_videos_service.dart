@@ -46,4 +46,28 @@ class TutorialVideosService {
       throw Exception('Failed to fetch tutorial videos: $e');
     }
   }
+
+  Future<TutorialVideosModel?> getById(String id) async {
+    try {
+      final response = await SupabaseService.client
+          .from('tutorial_videos')
+          .select('''
+          id,
+          title,
+          description,
+          video_url,
+          thumbnail_url,
+          muscle_group,
+          created_at
+        ''')
+          .eq('id', id)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      return TutorialVideosModel.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to fetch tutorial video: $e');
+    }
+  }
 }

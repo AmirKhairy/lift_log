@@ -132,7 +132,11 @@ final GoRouter appRouter = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.addMachine,
-          builder: (_, _) => const AddMachinePage(),
+          builder: (_, state) => AddMachinePage(
+            machineToEdit: state.extra is MachineModel
+                ? state.extra as MachineModel
+                : null,
+          ),
         ),
         GoRoute(
           path: AppRoutes.machineDetails,

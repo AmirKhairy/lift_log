@@ -1,0 +1,36 @@
+---
+description: Effective Dart style, naming, and code quality
+globs: "**/*.dart"
+alwaysApply: false
+---
+
+# Dart Best Practices
+
+Follow Effective Dart. Sound null safety: prefer explicit `T`/`T?`; avoid `!` unless the value is guaranteed non-null.
+
+- `final` when there is no reassignment; `const` whenever possible.
+- Immutable data and widgets when practical.
+- Exhaustive `switch`; use patterns and records when they clarify code.
+- Arrow functions only for simple one-liners. One responsibility per function.
+- Prefer composition over inheritance. Meaningful names; avoid cryptic abbreviations.
+
+## Naming
+
+- Classes: `PascalCase`
+- Members: `camelCase`
+- Files/folders: `snake_case`
+
+Keep functions short. Flatten deep nesting. Comments explain **why**, not obvious **what**. Document public APIs when it helps callers.
+
+```dart
+// ❌ BAD
+try { await fetchData(); } catch (e) {}
+
+// ✅ GOOD
+try {
+  await fetchData();
+} catch (e, st) {
+  AppLogger.error('Failed to fetch: $e');
+  emit(HomeError(e.toString()));
+}
+```

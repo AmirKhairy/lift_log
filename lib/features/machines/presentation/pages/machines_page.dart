@@ -6,10 +6,11 @@ import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/features/add_machine/presentation/widgets/muscle_group_selector.dart';
 import 'package:lift_log/features/machines/cubit/machines_cubit.dart';
 import 'package:lift_log/features/machines/cubit/machines_state.dart';
-import 'package:lift_log/features/machines/presentation/widgets/machine_item_widget.dart';
-import 'package:lift_log/features/machines/presentation/widgets/machines_loading.dart';
+import 'package:lift_log/features/machines/presentation/widgets/machines_empty_view.dart';
+import 'package:lift_log/features/machines/presentation/widgets/machines_list.dart';
 
 class MachinesPage extends StatelessWidget {
   const MachinesPage({super.key});
@@ -33,32 +34,29 @@ class MachinesPage extends StatelessWidget {
         Expanded(
           child: BlocBuilder<MachinesCubit, MachinesState>(
             builder: (context, state) {
-              return switch (state) {
-                MachinesInitial() => AppText('machines_initial_state'.tr),
-                MachinesLoding() => ListView.builder(
-                  itemCount: 4,
-                  itemBuilder: (_, index) {
-                    return const MachineShimmer();
-                  },
-                ),
-                MachinesLoadedSuccess(:final machines) => ListView.builder(
-                  itemCount: machines.length,
-                  itemBuilder: (context, index) {
-                    return MachineItemWidget(
-                      machine: machines[index],
-                      index: index,
-                      onDelete: () {
-                        context.read<MachinesCubit>().deleteMachine(
-                          machines[index],
-                        );
-                      },
-                    );
-                  },
-                ),
-                MachinesError(:final message) => AppText(
-                  '${'machines_error'.tr}: $message',
-                ),
-              };
+              final hasNoMachines =
+                  state is MachinesLoadedSuccess && state.machines.isEmpty;
+
+              if (hasNoMachines) {
+                return const MachinesEmptyView(hasAnyMachines: false);
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: AppPadding.horizontal,
+                    child: MuscleGroupSelector(
+                      selectedMuscleGroup: state.selectedMuscleGroup,
+                      onSelected: context
+                          .read<MachinesCubit>()
+                          .selectMuscleGroup,
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.nm),
+                  Expanded(child: MachinesList(state: state)),
+                ],
+              );
             },
           ),
         ),

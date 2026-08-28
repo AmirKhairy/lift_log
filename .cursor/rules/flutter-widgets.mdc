@@ -1,0 +1,23 @@
+---
+description: Keep Flutter pages thin; extract public widget files
+globs: "**/presentation/**/*.dart,**/*_page.dart,**/*_view.dart"
+alwaysApply: false
+---
+
+# Widget Organization
+
+Keep page/screen files focused on composition and state wiring.
+
+- Do **not** declare private widget classes inside page files.
+- Do **not** use helper methods that return large or reusable `Widget` trees.
+- When a UI section is independent, substantial, or reusable, extract a **public** widget in `presentation/widgets/`.
+
+```text
+features/home/presentation/pages/home_page.dart
+features/home/presentation/widgets/home_appbar.dart
+features/home/presentation/widgets/home_stats_section.dart
+```
+
+Widgets should have one responsibility, meaningful names, and data via constructors when possible.
+
+Do not extract a file for every tiny snippet if it hurts navigation. Reuse `lib/core/widgets/` (`AppText`, `AppButton`, `AppCard`, `AppCachedNetworkImage`, etc.) before creating new primitives.

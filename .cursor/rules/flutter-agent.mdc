@@ -1,0 +1,17 @@
+---
+description: How the agent should change this Flutter app
+alwaysApply: true
+---
+
+# Agent Behavior
+
+Before implementing, inspect existing code and put the change in the matching layer. Follow this project's architecture; do not invent a new one.
+
+- Reuse existing widgets, Cubits, services, models, extensions, and helpers.
+- Do not duplicate functionality or restructure unrelated files.
+- Keep diffs focused on the requested task. Do not over-engineer simple features.
+- Prefer complete, production-ready Dart over pseudo-code.
+- If ambiguity would change architecture, state flow, or public API, ask before assuming.
+- New code should be clean, maintainable, testable, and consistent with nearby files.
+
+Target: **Clean + Maintainable + Testable + Performant + Scalable + Consistent with lift_log.**

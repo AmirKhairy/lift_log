@@ -1,0 +1,31 @@
+---
+description: Feature-based Flutter architecture for lift_log
+alwaysApply: true
+---
+
+# Project Architecture
+
+Keep Presentation, Domain (if present), Data, and Core separate. This repo is feature-based. Match existing folders; do not rename `pages`/`widgets` to `views`/`components`.
+
+```text
+lib/features/<feature>/
+  presentation/pages/
+  presentation/widgets/
+  cubit/
+lib/core/          # theme, widgets, services, models, errors, helpers
+```
+
+Larger features may add `domain/` and `data/` only when the feature needs them. Do not add empty layers.
+
+## Responsibilities
+
+- **Pages:** Compose the screen and wire Bloc/Cubit. No business logic or I/O.
+- **Widgets:** Independent UI sections. Constructor data in; no unnecessary app-state coupling.
+- **Cubit/Bloc:** Feature state, business logic, loading/empty/error, calls to services.
+- **Services:** APIs, Supabase, storage, and other I/O. Do not put navigation here.
+- **Models:** Application data.
+- **Core:** Shared utilities, extensions, constants, theme, common widgets.
+
+Preferred flow: `Page → Cubit/Bloc → Service → API/DB`.
+
+SOLID and separation of concerns apply. Prefer composition over inheritance. Do not introduce Provider, Riverpod, GetX, or ChangeNotifier for app state unless explicitly requested.
