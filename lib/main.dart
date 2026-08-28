@@ -6,12 +6,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/services/storage_service.dart';
+import 'core/services/theme_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await StorageService.init();
   await LocalizationService.instance.init();
+  await ThemeService.instance.init();
 
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',

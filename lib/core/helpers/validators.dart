@@ -52,6 +52,18 @@ class Validators {
     return null;
   }
 
+  static String? confirmPassword(String? value, String password) {
+    if (required(value) != null) {
+      return 'required'.tr;
+    }
+
+    if (value != password) {
+      return 'passwords_do_not_match'.tr;
+    }
+
+    return null;
+  }
+
   static String? age(int? value) {
     if (value == null) {
       return 'select_your_age'.tr;

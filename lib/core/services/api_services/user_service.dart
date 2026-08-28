@@ -30,6 +30,40 @@ class UserService {
     return user;
   }
 
+  Future<UserModel> updateProfile({
+    required String name,
+    required int age,
+    required String gender,
+    required double height,
+    required double weight,
+  }) async {
+    final userId = SupabaseService.currentUser?.id;
+
+    if (userId == null) {
+      throw Exception('User is not logged in');
+    }
+
+    final response = await SupabaseService.client
+        .from('profiles')
+        .update({
+          'name': name,
+          'age': age,
+          'gender': gender,
+          'height': height,
+          'weight': weight,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+
+    final user = UserModel.fromJson(response);
+
+    _user = user;
+
+    return user;
+  }
+
   void clearUser() {
     _user = null;
   }

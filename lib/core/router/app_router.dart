@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/constants/app_keys.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
+import 'package:lift_log/core/models/user_model.dart';
 import 'package:lift_log/core/services/storage_service.dart';
 import 'package:lift_log/features/add_machine/presentation/pages/add_machine_page.dart';
 import 'package:lift_log/features/auth/cubit/auth_cubit.dart';
@@ -13,6 +14,8 @@ import 'package:lift_log/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:lift_log/features/machine_details/presentation/pages/machine_details_page.dart';
 import 'package:lift_log/features/main/presentation/pages/main_page.dart';
 import 'package:lift_log/features/onBoarding/presentation/pages/onboarding_page.dart';
+import 'package:lift_log/features/profile/presentation/pages/change_password_page.dart';
+import 'package:lift_log/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:lift_log/features/tutorial_video_player/presentation/pages/tutorial_video_player_page.dart';
 import 'package:lift_log/features/workout/presentation/pages/workout_page.dart';
 import 'package:lift_log/features/workout_history/presentation/pages/workout_history_page.dart';
@@ -29,6 +32,8 @@ class AppRoutes {
   static const home = '/home';
   static const profile = '/profile';
   static const settings = '/settings';
+  static const editProfile = '/edit-profile';
+  static const changePassword = '/change-password';
   static const workout = '/workout';
   static const workoutHistory = '/workout-history';
   static const addMachine = '/add-machine';
@@ -161,6 +166,17 @@ final GoRouter appRouter = GoRouter(
               relatedVideos: relatedVideos,
             );
           },
+        ),
+        GoRoute(
+          path: AppRoutes.editProfile,
+          builder: (context, state) {
+            final user = state.extra as UserModel;
+            return EditProfilePage(user: user);
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.changePassword,
+          builder: (_, _) => const ChangePasswordPage(),
         ),
       ],
     ),

@@ -85,6 +85,15 @@ class AuthService {
     }
   }
 
+  Future<void> deleteAccount() async {
+    try {
+      await _client.rpc('delete_user');
+      await _client.auth.signOut();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<User> registerWithEmailAndPassword({
     required String email,
     required String password,

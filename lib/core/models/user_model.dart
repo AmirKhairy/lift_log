@@ -21,14 +21,14 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'],
-      name: json['name'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      age: json['age'],
-      height: json['height'],
-      weight: json['weight'],
-      gender: json['gender'],
+      id: json['id'] as String,
+      name: json['name'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+      age: (json['age'] as num).toInt(),
+      height: (json['height'] as num).toDouble(),
+      weight: (json['weight'] as num).toDouble(),
+      gender: json['gender'] as String,
     );
   }
 
@@ -36,12 +36,34 @@ class UserModel {
     return {
       'id': id,
       'name': name,
-      'createdAt': createdAt.toIso8601String(),
+      'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'age': age,
       'height': height,
       'weight': weight,
       'gender': gender,
     };
+  }
+
+  UserModel copyWith({
+    String? id,
+    String? name,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? age,
+    double? height,
+    double? weight,
+    String? gender,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      age: age ?? this.age,
+      height: height ?? this.height,
+      weight: weight ?? this.weight,
+      gender: gender ?? this.gender,
+    );
   }
 }

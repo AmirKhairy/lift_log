@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lift_log/core/constants/app_constants.dart';
+import 'package:lift_log/core/services/theme_service.dart';
 import 'package:lift_log/i18n/localization_service.dart';
 
 import 'core/router/app_router.dart';
@@ -18,7 +19,10 @@ class LiftLogApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (_, _) {
         return AnimatedBuilder(
-          animation: LocalizationService.instance,
+          animation: Listenable.merge([
+            LocalizationService.instance,
+            ThemeService.instance,
+          ]),
           builder: (_, _) {
             return MaterialApp.router(
               debugShowCheckedModeBanner: false,
@@ -28,7 +32,7 @@ class LiftLogApp extends StatelessWidget {
 
               darkTheme: AppTheme.dark,
 
-              themeMode: ThemeMode.dark,
+              themeMode: ThemeService.instance.themeMode,
 
               routerConfig: appRouter,
 

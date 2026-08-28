@@ -101,7 +101,7 @@ class _WorkoutCalendarState extends State<WorkoutCalendar> {
           shape: BoxShape.circle,
           border: Border.all(
             color: context.theme.colorScheme.primary,
-            width: 1.5,
+            width: 1.5.w,
           ),
         ),
 
