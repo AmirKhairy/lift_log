@@ -138,6 +138,7 @@ class _TutorialVideoTile extends StatelessWidget {
             ),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Stack(
                 alignment: Alignment.center,
@@ -175,27 +176,23 @@ class _TutorialVideoTile extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: AppText(
-                        video.title ?? '',
-                        color: context.theme.colorScheme.onSurface,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w700,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    AppText(
+                      video.title ?? '',
+                      color: context.theme.colorScheme.onSurface,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w700,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: AppSpacing.xs),
-                    Expanded(
-                      child: AppText(
-                        video.description ?? '',
-                        color: context.appColors.subtitle,
-                        fontSize: 11.sp,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    AppText(
+                      video.description ?? '',
+                      color: context.appColors.subtitle,
+                      fontSize: 11.sp,
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

@@ -112,6 +112,7 @@ class _MachineItemWidgetState extends State<MachineItemWidget>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     AppText(
@@ -122,11 +123,14 @@ class _MachineItemWidgetState extends State<MachineItemWidget>
                                       fontSize: 16.sp,
                                     ),
                                     SizedBox(width: AppSpacing.sm),
-                                    AppText(
-                                      widget.machine?.name ?? '',
-                                      color: context.theme.colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.sp,
+                                    Expanded(
+                                      child: AppText(
+                                        widget.machine?.name ?? '',
+                                        color:
+                                            context.theme.colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp,
+                                      ),
                                     ),
                                   ],
                                 ),

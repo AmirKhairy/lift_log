@@ -16,6 +16,8 @@ import 'package:lift_log/features/main/presentation/pages/main_page.dart';
 import 'package:lift_log/features/onBoarding/presentation/pages/onboarding_page.dart';
 import 'package:lift_log/features/profile/presentation/pages/change_password_page.dart';
 import 'package:lift_log/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:lift_log/features/timer/cubit/timer_cubit.dart';
+import 'package:lift_log/features/timer/presentation/pages/timer_page.dart';
 import 'package:lift_log/features/tutorial_video_player/presentation/pages/tutorial_video_player_page.dart';
 import 'package:lift_log/features/workout/presentation/pages/workout_page.dart';
 import 'package:lift_log/features/workout_history/presentation/pages/workout_history_page.dart';
@@ -39,6 +41,7 @@ class AppRoutes {
   static const addMachine = '/add-machine';
   static const machineDetails = '/machine-details';
   static const tutorialVideoPlayer = '/tutorial-video-player';
+  static const timer = '/timer';
 }
 
 bool get _isOnboardingCompleted =>
@@ -177,6 +180,15 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.changePassword,
           builder: (_, _) => const ChangePasswordPage(),
+        ),
+        GoRoute(
+          path: AppRoutes.timer,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (_) => TimerCubit(),
+              child: const TimerPage(),
+            );
+          },
         ),
       ],
     ),

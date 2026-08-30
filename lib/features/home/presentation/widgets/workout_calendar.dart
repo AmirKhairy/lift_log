@@ -70,7 +70,7 @@ class _WorkoutCalendarState extends State<WorkoutCalendar> {
           color: context.theme.colorScheme.onSurface,
         ),
       ),
-
+      daysOfWeekHeight: 30.h,
       daysOfWeekStyle: DaysOfWeekStyle(
         weekdayStyle: TextStyle(
           fontSize: 12.sp,

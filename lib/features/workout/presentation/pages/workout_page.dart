@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
+import 'package:lift_log/core/utils/app_radius.dart';
 import 'package:lift_log/core/utils/logic_utilities.dart';
 import 'package:lift_log/core/widgets/app_button.dart';
+import 'package:lift_log/core/widgets/app_cached_network_image.dart';
 import 'package:lift_log/core/widgets/app_scaffold.dart';
 import 'package:lift_log/core/widgets/app_snackbar.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
@@ -107,17 +110,61 @@ class _WorkoutView extends StatelessWidget {
                                       shrinkWrap: true,
                                       children: [
                                         for (final item in available)
-                                          ListTile(
-                                            leading: const Icon(
-                                              Icons.fitness_center,
-                                            ),
-                                            title: AppText(item.name ?? ''),
-                                            subtitle: AppText(
-                                              item.muscleGroup?.displayName ??
-                                                  '',
-                                            ),
+                                          InkWell(
                                             onTap: () =>
                                                 Navigator.pop(context, item),
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: AppSpacing.md,
+                                                vertical: AppSpacing.sm,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  AppCachedNetworkImage(
+                                                    imageUrl:
+                                                        item.imageUrl ?? '',
+                                                    width: 50.w,
+                                                    height: 50.h,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          AppRadius.md,
+                                                        ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: AppSpacing.sm,
+                                                  ),
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        AppText(
+                                                          item.name ?? '',
+                                                          fontSize: 17.sp,
+                                                        ),
+                                                        SizedBox(
+                                                          height: AppSpacing.xs,
+                                                        ),
+                                                        AppText(
+                                                          item
+                                                                  .muscleGroup
+                                                                  ?.displayName ??
+                                                              '',
+                                                          fontSize: 14.sp,
+                                                          color: context
+                                                              .theme
+                                                              .colorScheme
+                                                              .onSurface,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                       ],
                                     ),

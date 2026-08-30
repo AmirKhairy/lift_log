@@ -73,6 +73,30 @@ class TutorialVideoPlayerPage extends StatelessWidget {
               ],
             ),
           ),
+          if (video.description?.isNotEmpty ?? false)
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 8.h),
+              child: AppStaggeredAnimation(
+                index: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      'description',
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(height: 8.h),
+                    AppText(
+                      video.description!,
+                      fontSize: 14.sp,
+                      color: context.appColors.subtitle,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           if (otherVideos.isNotEmpty) ...[
             Padding(
               padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),

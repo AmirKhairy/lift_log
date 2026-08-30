@@ -59,14 +59,14 @@ class AppTheme {
           ? AppColors.backgroundDark
           : AppColors.backgroundLight,
 
-      fontFamily: 'BLKCHCRY',
-
       dividerColor: isDark ? AppColors.borderDark : AppColors.borderLight,
 
       cardTheme: CardThemeData(
         color: colorScheme.surface,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+        ),
       ),
 
       appBarTheme: AppBarTheme(

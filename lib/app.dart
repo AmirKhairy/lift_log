@@ -34,6 +34,7 @@ class LiftLogApp extends StatelessWidget {
 
               themeMode: ThemeService.instance.themeMode,
 
+              //  themeMode: ThemeMode.light,
               routerConfig: appRouter,
 
               locale: LocalizationService.instance.locale,

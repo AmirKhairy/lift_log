@@ -3,8 +3,10 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
@@ -77,6 +79,16 @@ class HomeAppBar extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+
+              const Spacer(),
+
+              InkWell(
+                onTap: () => context.push(AppRoutes.timer),
+                child: Icon(
+                  Icons.timer,
+                  color: context.theme.colorScheme.primary,
+                ),
               ),
             ],
           ),
