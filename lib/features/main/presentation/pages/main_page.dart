@@ -118,9 +118,7 @@ class _MainViewState extends State<_MainView> {
                 backgroundColor: context.theme.colorScheme.surface,
                 elevation: 0,
 
-                indicatorColor: context.theme.colorScheme.primary.withValues(
-                  alpha: 0.1,
-                ),
+                indicatorColor: context.theme.colorScheme.surface,
                 indicatorShape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
@@ -131,7 +129,7 @@ class _MainViewState extends State<_MainView> {
                   if (states.contains(WidgetState.selected)) {
                     return IconThemeData(
                       color: context.theme.colorScheme.primary,
-                      size: 28.sp,
+                      size: 24.sp,
                     );
                   }
 
@@ -139,7 +137,7 @@ class _MainViewState extends State<_MainView> {
                     color: context.theme.colorScheme.onSurface.withValues(
                       alpha: 0.5,
                     ),
-                    size: 28.sp,
+                    size: 24.sp,
                   );
                 }),
 
@@ -149,8 +147,9 @@ class _MainViewState extends State<_MainView> {
                   if (states.contains(WidgetState.selected)) {
                     return TextStyle(
                       color: context.theme.colorScheme.primary,
-                      fontSize: 16.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.alphabetic,
                     );
                   }
 
@@ -158,8 +157,9 @@ class _MainViewState extends State<_MainView> {
                     color: context.theme.colorScheme.onSurface.withValues(
                       alpha: 0.5,
                     ),
-                    fontSize: 16.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
+                    textBaseline: TextBaseline.alphabetic,
                   );
                 }),
               ),
@@ -168,6 +168,10 @@ class _MainViewState extends State<_MainView> {
                 height: 80.h,
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
                 selectedIndex: state.selectedIndex,
+                labelPadding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                  vertical: 4.h,
+                ),
                 onDestinationSelected: (index) {
                   if (index == state.selectedIndex) {
                     _refreshForIndex(index);

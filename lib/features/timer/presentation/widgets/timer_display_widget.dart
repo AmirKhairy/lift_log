@@ -41,13 +41,13 @@ class TimerDisplayWidget extends StatelessWidget {
           children: [
             SizedBox(
               width: 270.w,
-              height: 270.h,
+              height: 270.w,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   SizedBox(
                     width: 270.w,
-                    height: 270.h,
+                    height: 270.w,
                     child: CircularProgressIndicator(
                       value: state.mode == TimerMode.countDown
                           ? progress

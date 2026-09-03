@@ -1,5 +1,6 @@
 import UIKit
 import Lottie
+import Flutter
 
 class SplashViewController: UIViewController {
 
@@ -7,27 +8,66 @@ class SplashViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        view.backgroundColor = .white
+
         setupLottieAnimation()
     }
 
     private func setupLottieAnimation() {
-        animationView = LottieAnimationView(name: "splash_logo")
 
-        animationView?.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
-        animationView?.center = view.center
-        animationView?.contentMode = .scaleAspectFit
-        animationView?.loopMode = .playOnce
+        let animation = LottieAnimation.named("splash_logo")
 
-        view.addSubview(animationView!)
+        animationView = LottieAnimationView(animation: animation)
 
-        animationView?.play { [weak self] _ in
+        guard let animationView = animationView else {
+            print("❌ Failed to load splash_logo.json")
+            navigateToFlutter()
+            return
+        }
+
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        animationView.contentMode = .scaleAspectFit
+        animationView.loopMode = .playOnce
+
+        view.addSubview(animationView)
+
+        NSLayoutConstraint.activate([
+            animationView.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
+            ),
+
+            animationView.centerYAnchor.constraint(
+                equalTo: view.centerYAnchor
+            ),
+
+            animationView.widthAnchor.constraint(
+                equalToConstant: 300
+            ),
+
+            animationView.heightAnchor.constraint(
+                equalToConstant: 300
+            )
+        ])
+
+        animationView.play { [weak self] finished in
+            guard finished else {
+                return
+            }
+
             self?.navigateToFlutter()
         }
     }
 
     private func navigateToFlutter() {
+
         let flutterViewController = FlutterViewController()
+
         flutterViewController.modalPresentationStyle = .fullScreen
-        self.present(flutterViewController, animated: true, completion: nil)
+
+        present(
+            flutterViewController,
+            animated: false
+        )
     }
 }

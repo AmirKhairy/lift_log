@@ -187,12 +187,14 @@ class _TutorialVideoTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: AppSpacing.xs),
-                    AppText(
-                      video.description ?? '',
-                      color: context.appColors.subtitle,
-                      fontSize: 11.sp,
-                      maxLines: 5,
-                      overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      child: AppText(
+                        video.description ?? '',
+                        color: context.appColors.subtitle,
+                        fontSize: 11.sp,
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
