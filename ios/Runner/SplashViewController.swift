@@ -15,16 +15,15 @@ class SplashViewController: UIViewController {
     }
 
     private func setupLottieAnimation() {
-
-        let animation = LottieAnimation.named("splash_logo")
-
-        animationView = LottieAnimationView(animation: animation)
-
-        guard let animationView = animationView else {
+        guard let animation = LottieAnimation.named("splash_logo") else {
             print("❌ Failed to load splash_logo.json")
             navigateToFlutter()
             return
         }
+
+        let animationView = LottieAnimationView(animation: animation)
+
+        self.animationView = animationView
 
         animationView.translatesAutoresizingMaskIntoConstraints = false
         animationView.contentMode = .scaleAspectFit
@@ -36,15 +35,12 @@ class SplashViewController: UIViewController {
             animationView.centerXAnchor.constraint(
                 equalTo: view.centerXAnchor
             ),
-
             animationView.centerYAnchor.constraint(
                 equalTo: view.centerYAnchor
             ),
-
             animationView.widthAnchor.constraint(
                 equalToConstant: 300
             ),
-
             animationView.heightAnchor.constraint(
                 equalToConstant: 300
             )
@@ -60,9 +56,7 @@ class SplashViewController: UIViewController {
     }
 
     private func navigateToFlutter() {
-
         let flutterViewController = FlutterViewController()
-
         flutterViewController.modalPresentationStyle = .fullScreen
 
         present(
