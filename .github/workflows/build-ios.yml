@@ -31,11 +31,11 @@ jobs:
 
           echo "Checking for generated Runner.app..."
 
-          if [ -d "build/ios/iphoneos/Runner.app" ]; then
+          if [ -d "build/ios/Release-iphoneos/Runner.app" ]; then
             echo "Runner.app found successfully."
           else
             echo "Runner.app was not generated."
-            echo "Searching for any generated .app files..."
+            echo "Searching for generated .app files..."
             find build/ios -name "*.app" -print
             exit 1
           fi
@@ -47,15 +47,16 @@ jobs:
 
           mkdir -p Payload
 
-          cp -R build/ios/iphoneos/Runner.app Payload/Runner.app
+          cp -R build/ios/Release-iphoneos/Runner.app Payload/Runner.app
 
           zip -r Runner.ipa Payload
 
           echo "IPA created successfully."
+
           echo "IPA contents:"
           unzip -l Runner.ipa | head -40
 
-      # 6. Upload IPA as artifact
+      # 6. Upload IPA
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
