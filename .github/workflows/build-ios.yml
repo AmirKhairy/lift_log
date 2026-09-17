@@ -24,15 +24,26 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      # 4. بناء ملف التطبيق دون توقيع
+            # 4. Build iOS Application (manual xcodebuild, bypasses flutter's codesign check)
       - name: Build iOS Application
-        run: flutter build ios --release --no-codesign
+        run: |
+          flutter build ios --release --no-codesign --config-only
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath ../build/ios/archive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            clean build
 
       # 5. تجميع حزمة الـ IPA بالبنية الصحيحة
       - name: Package Payload to IPA
         run: |
           mkdir -p Payload
-          cp -R build/ios/iphoneos/Runner.app Payload/
+          cp -R build/ios/archive/Build/Products/Release-iphoneos/Runner.app Payload/
           zip -r Runner.ipa Payload
 
       # 6. رفع الملف الناتج كـ Artifact
