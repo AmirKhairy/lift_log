@@ -1,0 +1,44 @@
+name: Build iOS (IPA)
+
+on:
+  workflow_dispatch: # يتيح تشغيل البناء يدوياً بضغطة زر
+
+jobs:
+  build:
+    name: Build iOS IPA
+    runs-on: macos-latest
+
+    steps:
+      # 1. جلب الكود من المستودع
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. إعداد بيئة Flutter
+      - name: Setup Flutter Environment
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # 3. تثبيت الاعتماديات
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # 4. بناء ملف التطبيق دون توقيع
+      - name: Build iOS Application
+        run: flutter build ios --release --no-codesign
+
+      # 5. تجميع حزمة الـ IPA بالبنية الصحيحة
+      - name: Package Payload to IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -r Runner.ipa Payload
+
+      # 6. رفع الملف الناتج كـ Artifact
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Runner-ipa
+          path: Runner.ipa
+          retention-days: 7
