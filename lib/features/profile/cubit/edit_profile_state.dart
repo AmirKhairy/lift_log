@@ -8,14 +8,14 @@ sealed class EditProfileState extends Equatable {
   List<Object?> get props => [];
 }
 
-final class EditProfileInitial extends EditProfileState {
-  const EditProfileInitial({
+sealed class EditProfileFormState extends EditProfileState {
+  const EditProfileFormState({
     required this.name,
     required this.age,
     required this.gender,
     required this.height,
     required this.weight,
-    this.isSaving = false,
+    required this.isSaving,
   });
 
   final String name;
@@ -25,26 +25,38 @@ final class EditProfileInitial extends EditProfileState {
   final double? weight;
   final bool isSaving;
 
-  EditProfileInitial copyWith({
-    String? name,
-    int? age,
-    String? gender,
-    double? height,
-    double? weight,
-    bool? isSaving,
-  }) {
-    return EditProfileInitial(
-      name: name ?? this.name,
-      age: age ?? this.age,
-      gender: gender ?? this.gender,
-      height: height ?? this.height,
-      weight: weight ?? this.weight,
-      isSaving: isSaving ?? this.isSaving,
-    );
-  }
-
   @override
   List<Object?> get props => [name, age, gender, height, weight, isSaving];
+}
+
+final class EditProfileInitial extends EditProfileFormState {
+  const EditProfileInitial({
+    required super.name,
+    required super.age,
+    required super.gender,
+    required super.height,
+    required super.weight,
+  }) : super(isSaving: false);
+}
+
+final class EditProfileEditing extends EditProfileFormState {
+  const EditProfileEditing({
+    required super.name,
+    required super.age,
+    required super.gender,
+    required super.height,
+    required super.weight,
+  }) : super(isSaving: false);
+}
+
+final class EditProfileSaving extends EditProfileFormState {
+  const EditProfileSaving({
+    required super.name,
+    required super.age,
+    required super.gender,
+    required super.height,
+    required super.weight,
+  }) : super(isSaving: true);
 }
 
 final class EditProfileSuccess extends EditProfileState {

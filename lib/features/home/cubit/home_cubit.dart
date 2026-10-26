@@ -1,23 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lift_log/core/models/user_model.dart';
 import 'package:lift_log/core/services/api_services/user_service.dart';
 import 'package:lift_log/core/services/api_services/workout_service.dart';
 
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(const HomeInitial());
-  final UserService _userService = UserService.instance;
-  final WorkoutService _workoutService = WorkoutService.instance;
+  HomeCubit({UserService? userService, WorkoutService? workoutService})
+    : _userService = userService ?? UserService.instance,
+      _workoutService = workoutService ?? WorkoutService.instance,
+      super(const HomeInitial());
+
+  final UserService _userService;
+  final WorkoutService _workoutService;
 
   bool _hasLoaded = false;
   Future<void>? _loadingFuture;
-  UserModel? userModel;
-  List<DateTime> workoutDates = [];
-  int get workoutCount => workoutDates.length;
-  int machineCount = 0;
-
   Future<void> loadIfNeeded() {
     if (_hasLoaded) {
       return Future.value();
@@ -27,27 +25,30 @@ class HomeCubit extends Cubit<HomeState> {
       return _loadingFuture!;
     }
 
-    final future = _loadData(isRefresh: false);
+    final future = _loadData();
     _loadingFuture = future;
     return future.whenComplete(() => _loadingFuture = null);
   }
 
   Future<void> refresh() async {
-    await _loadData(isRefresh: true);
+    await _loadData();
   }
 
-  Future<void> _loadData({required bool isRefresh}) async {
+  Future<void> _loadData() async {
     emit(const HomeLoading());
 
     try {
-      if (isRefresh) {
-      } else {}
-
-      userModel = await _userService.getUserData();
-      await _loadWorkoutDates();
-      machineCount = await _workoutService.getMachineCount();
+      final user = await _userService.getUserData();
+      final workoutDates = await _loadWorkoutDates();
+      final machineCount = await _workoutService.getMachineCount();
       _hasLoaded = true;
-      emit(const HomeLoaded());
+      emit(
+        HomeLoaded(
+          user: user,
+          workoutDates: List.unmodifiable(workoutDates),
+          machineCount: machineCount,
+        ),
+      );
     } catch (e, s) {
       _hasLoaded = false;
 
@@ -58,23 +59,15 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> _loadWorkoutDates() async {
+  Future<List<DateTime>> _loadWorkoutDates() async {
     final now = DateTime.now();
 
     final startDate = DateTime(now.year, now.month, 1);
     final endDate = DateTime(now.year, now.month + 1, 1);
 
-    workoutDates = await _workoutService.getWorkoutDates(
+    return _workoutService.getWorkoutDates(
       startDate: startDate,
       endDate: endDate,
-    );
-  }
-
-  DateTime? get lastWorkoutDate {
-    if (workoutDates.isEmpty) return null;
-
-    return workoutDates.reduce(
-      (latest, date) => date.isAfter(latest) ? date : latest,
     );
   }
 }

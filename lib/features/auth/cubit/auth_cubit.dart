@@ -1,20 +1,25 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lift_log/core/constants/app_keys.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/helpers/logger.dart';
 import 'package:lift_log/core/services/storage_service.dart';
+import 'package:lift_log/core/services/api_services/auth_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/widgets/app_picker.dart';
 import 'package:lift_log/features/auth/cubit/auth_state.dart';
-import 'package:lift_log/core/services/api_services/auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial());
+  AuthCubit({AuthService? authService})
+    : _service = authService ?? AuthService(),
+      super(const AuthInitial());
 
-  final AuthService _service = AuthService();
+  final AuthService _service;
+
+  bool _isFormValid(GlobalKey<FormState> formKey) {
+    return formKey.currentState?.validate() ?? false;
+  }
 
   Future<void> _saveUserId(String userId) async {
     await StorageService.saveString(AppKeys.userId, userId);
@@ -28,13 +33,13 @@ class AuthCubit extends Cubit<AuthState> {
     required GlobalKey<FormState> formKey,
   }) async {
     try {
-      if (formKey.currentState!.validate()) {
-        emit(EmailAuthLoading());
+      if (!_isFormValid(formKey)) return;
 
-        final user = await _service.login(email: email, password: password);
-        await _saveUserId(user.id);
-        emit(EmailAuthSuccess(userId: user.id));
-      }
+      emit(const EmailAuthLoading());
+
+      final user = await _service.login(email: email, password: password);
+      await _saveUserId(user.id);
+      emit(EmailAuthSuccess(userId: user.id));
     } on AuthException catch (e) {
       emit(EmailAuthFailure(e.message));
     } catch (_) {
@@ -44,10 +49,10 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> loginWithGoogle() async {
     try {
-      emit(GoogleAuthLoading());
+      emit(const GoogleAuthLoading());
       final user = await _service.loginWithGoogle();
       if (user == null) {
-        emit(AuthInitial());
+        emit(const AuthInitial());
         return;
       }
       bool completed = await _service.isProfileCompleted(user.id);
@@ -66,9 +71,8 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } on AuthException catch (e) {
       emit(GoogleAuthFailure(e.message));
-    } catch (e, s) {
-      debugPrint(e.toString());
-      debugPrintStack(stackTrace: s);
+    } catch (e) {
+      AppLogger.error('Google login failed: $e');
       emit(GoogleAuthFailure(e.toString()));
     }
   }
@@ -81,25 +85,25 @@ class AuthCubit extends Cubit<AuthState> {
 
   void setAge(int value) {
     age = value;
-    emit(SelectAge());
+    emit(const SelectAge());
   }
 
   void setHeight(double value) {
     height = value;
-    emit(SelectHeight());
+    emit(const SelectHeight());
   }
 
   void setWeight(double value) {
     weight = value;
-    emit(SelectWeight());
+    emit(const SelectWeight());
   }
 
   void setGender(Gender value) {
     gender = value;
-    emit(SelectGender());
+    emit(const SelectGender());
   }
 
-  void openAgePicker(BuildContext context) async {
+  Future<void> openAgePicker(BuildContext context) async {
     final value = await AppPicker.show<int>(
       context: context,
       items: [for (var i = 10; i <= 70; i++) i],
@@ -113,7 +117,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void openGenderPicker(BuildContext context) async {
+  Future<void> openGenderPicker(BuildContext context) async {
     final value = await AppPicker.show<Gender>(
       context: context,
       items: Gender.values,
@@ -127,11 +131,11 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void openHeightPicker(BuildContext context) async {
+  Future<void> openHeightPicker(BuildContext context) async {
     final value = await AppPicker.show<double>(
       context: context,
       items: [for (var i = 100; i <= 250; i++) i / 1],
-      itemLabel: (e) => '$e cm',
+      itemLabel: (e) => '$e ${'height_unit'.tr}',
       initialValue: height,
       pickerTitle: 'height',
     );
@@ -141,11 +145,11 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void openWeightPicker(BuildContext context) async {
+  Future<void> openWeightPicker(BuildContext context) async {
     final value = await AppPicker.show<double>(
       context: context,
       items: [for (var i = 15; i <= 300; i++) i / 1],
-      itemLabel: (e) => '$e kg',
+      itemLabel: (e) => '$e ${'weight_unit'.tr}',
       initialValue: weight,
       pickerTitle: 'weight',
     );
@@ -162,26 +166,25 @@ class AuthCubit extends Cubit<AuthState> {
     required GlobalKey<FormState> formKey,
   }) async {
     try {
-      if (formKey.currentState!.validate()) {
-        emit(RegisterAuthLoading());
+      if (!_isFormValid(formKey)) return;
 
-        final user = await _service.registerWithEmailAndPassword(
-          email: email,
-          password: password,
-          name: name,
-          age: age!,
-          height: height!,
-          weight: weight!,
-          gender: gender!.name,
-        );
-        await _saveUserId(user.id);
-        emit(RegisterAuthSuccess(userId: user.id));
-      }
+      emit(const RegisterAuthLoading());
+
+      final user = await _service.registerWithEmailAndPassword(
+        email: email,
+        password: password,
+        name: name,
+        age: age!,
+        height: height!,
+        weight: weight!,
+        gender: gender!.name,
+      );
+      await _saveUserId(user.id);
+      emit(RegisterAuthSuccess(userId: user.id));
     } on AuthException catch (e) {
       emit(RegisterAuthFailure(e.message));
-    } catch (e, s) {
-      debugPrint(e.toString());
-      debugPrintStack(stackTrace: s);
+    } catch (e) {
+      AppLogger.error('Email registration failed: $e');
       emit(RegisterAuthFailure('something_went_wrong'.tr));
     }
   }
@@ -191,24 +194,23 @@ class AuthCubit extends Cubit<AuthState> {
     required GlobalKey<FormState> formKey,
   }) async {
     try {
-      if (formKey.currentState!.validate()) {
-        emit(GoogleRegisterAuthLoading());
+      if (!_isFormValid(formKey)) return;
 
-        await _service.registerWithGoogle(
-          userId: userId,
-          age: age!,
-          height: height!,
-          weight: weight!,
-          gender: gender!.name,
-        );
-        await _saveUserId(userId);
-        emit(GoogleRegisterAuthSuccess(userId: userId));
-      }
+      emit(const GoogleRegisterAuthLoading());
+
+      await _service.registerWithGoogle(
+        userId: userId,
+        age: age!,
+        height: height!,
+        weight: weight!,
+        gender: gender!.name,
+      );
+      await _saveUserId(userId);
+      emit(GoogleRegisterAuthSuccess(userId: userId));
     } on AuthException catch (e) {
       emit(GoogleRegisterAuthFailure(e.message));
-    } catch (e, s) {
-      debugPrint(e.toString());
-      debugPrintStack(stackTrace: s);
+    } catch (e) {
+      AppLogger.error('Google registration failed: $e');
       emit(GoogleRegisterAuthFailure('something_went_wrong'.tr));
     }
   }
@@ -218,12 +220,12 @@ class AuthCubit extends Cubit<AuthState> {
     required GlobalKey<FormState> formKey,
   }) async {
     try {
-      if (formKey.currentState!.validate()) {
-        emit(ResetPasswordEmailLoading());
+      if (!_isFormValid(formKey)) return;
 
-        await _service.sendResetPasswordEmail(email);
-        emit(ResetPasswordEmailSuccess());
-      }
+      emit(const ResetPasswordEmailLoading());
+
+      await _service.sendResetPasswordEmail(email);
+      emit(const ResetPasswordEmailSuccess());
     } on AuthException catch (e) {
       emit(ResetPasswordEmailFailure(e.message));
     } catch (_) {
@@ -236,12 +238,11 @@ class AuthCubit extends Cubit<AuthState> {
     required GlobalKey<FormState> formKey,
   }) async {
     try {
-      if (formKey.currentState!.validate()) {
-        emit(ResetPasswordLoading());
+      if (!_isFormValid(formKey)) return;
 
-        await _service.updatePassword(password);
-        emit(ResetPasswordSuccess());
-      }
+      emit(const ResetPasswordLoading());
+      await _service.updatePassword(password);
+      emit(const ResetPasswordSuccess());
     } on AuthException catch (e) {
       emit(ResetPasswordFailure(e.message));
     } catch (_) {

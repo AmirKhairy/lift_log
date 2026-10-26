@@ -32,7 +32,7 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
             child: AppTextField(
               enabled: userIdFromGoogle.isEmpty,
               controller: nameController,
-              hint: 'John Doe',
+              hint: 'full_name_hint'.tr,
               keyboardType: TextInputType.name,
               prefixIcon: Icon(
                 Icons.person_outline,
@@ -50,7 +50,7 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
             child: AppTextField(
               enabled: userIdFromGoogle.isEmpty,
               controller: emailController,
-              hint: 'name@example.com',
+              hint: 'email_hint'.tr,
               keyboardType: TextInputType.emailAddress,
               prefixIcon: Icon(
                 Icons.email_outlined,
@@ -68,7 +68,7 @@ class RegesterCardAccountDetailsSection extends StatelessWidget {
               label: 'password'.tr,
               child: AppTextField(
                 controller: passwordController,
-                hint: '••••••••',
+                hint: 'password_hint'.tr,
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: true,
                 prefixIcon: Icon(

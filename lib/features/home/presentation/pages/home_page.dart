@@ -92,13 +92,16 @@ class _HomePageState extends State<HomePage>
           child: switch (state) {
             HomeInitial() => AppText('home_initial_state'.tr),
             HomeLoading() => const HomeLoadingShimmer(),
-            HomeLoaded() => Column(
+            HomeLoaded loaded => Column(
               children: [
                 FadeTransition(
                   opacity: _appBarAnimation,
                   child: SlideTransition(
                     position: _appBarSlideAnimation,
-                    child: HomeAppBar(scrollController: _scrollController),
+                    child: HomeAppBar( 
+                      scrollController: _scrollController,
+                      userName: loaded.user.name,
+                    ),
                   ),
                 ),
 
@@ -108,10 +111,8 @@ class _HomePageState extends State<HomePage>
                   child: SlideTransition(
                     position: _overviewSlideAnimation,
                     child: WorkoutOverviewSection(
-                      workoutCount: context.read<HomeCubit>().workoutCount,
-                      lastWorkoutDate: context
-                          .read<HomeCubit>()
-                          .lastWorkoutDate,
+                      workoutCount: loaded.workoutCount,
+                      lastWorkoutDate: loaded.lastWorkoutDate,
                       onViewHistory: () =>
                           context.push(AppRoutes.workoutHistory),
                     ),
@@ -119,7 +120,7 @@ class _HomePageState extends State<HomePage>
                 ),
                 SizedBox(height: AppSpacing.md),
                 HomeStatsSection(
-                  machineCount: context.read<HomeCubit>().machineCount,
+                  machineCount: loaded.machineCount,
                   animation: _statsAnimation,
                   onAddWorkout: () async {
                     final saved = await context.push<bool>(AppRoutes.workout);
@@ -132,7 +133,7 @@ class _HomePageState extends State<HomePage>
                 SizedBox(height: AppSpacing.md),
 
                 WorkoutCalendar(
-                  workoutDates: context.read<HomeCubit>().workoutDates,
+                  workoutDates: loaded.workoutDates,
                 ),
                 SizedBox(height: AppSpacing.md),
               ],

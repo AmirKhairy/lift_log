@@ -16,41 +16,35 @@ final class ProfileLoading extends ProfileState {
   const ProfileLoading();
 }
 
-final class ProfileLoaded extends ProfileState {
-  const ProfileLoaded({
-    required this.user,
-    this.isLoggingOut = false,
-    this.isDeletingAccount = false,
-    this.actionError,
-  });
+sealed class ProfileUserState extends ProfileState {
+  const ProfileUserState(this.user);
 
   final UserModel user;
-  final bool isLoggingOut;
-  final bool isDeletingAccount;
-  final String? actionError;
-
-  ProfileLoaded copyWith({
-    UserModel? user,
-    bool? isLoggingOut,
-    bool? isDeletingAccount,
-    String? actionError,
-    bool clearActionError = false,
-  }) {
-    return ProfileLoaded(
-      user: user ?? this.user,
-      isLoggingOut: isLoggingOut ?? this.isLoggingOut,
-      isDeletingAccount: isDeletingAccount ?? this.isDeletingAccount,
-      actionError: clearActionError ? null : actionError ?? this.actionError,
-    );
-  }
 
   @override
-  List<Object?> get props => [
-    user,
-    isLoggingOut,
-    isDeletingAccount,
-    actionError,
-  ];
+  List<Object?> get props => [user];
+}
+
+final class ProfileLoaded extends ProfileUserState {
+  const ProfileLoaded(super.user);
+}
+
+final class ProfileLoggingOut extends ProfileUserState {
+  const ProfileLoggingOut(super.user);
+}
+
+final class ProfileDeletingAccount extends ProfileUserState {
+  const ProfileDeletingAccount(super.user);
+}
+
+final class ProfileActionError extends ProfileUserState {
+  const ProfileActionError({required UserModel user, required this.message})
+    : super(user);
+
+  final String message;
+
+  @override
+  List<Object?> get props => [user, message];
 }
 
 final class ProfileLoggedOut extends ProfileState {

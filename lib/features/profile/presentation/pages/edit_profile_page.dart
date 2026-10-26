@@ -60,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           }
         },
         builder: (context, state) {
-          final formState = state is EditProfileInitial ? state : null;
+          final formState = state is EditProfileFormState ? state : null;
           final isSaving = formState?.isSaving ?? false;
 
           return AppScaffold(
@@ -110,8 +110,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 : null,
                             fillColor:
                                 context.theme.inputDecorationTheme.fillColor,
-                            displayText: (g) =>
-                                g.name[0].toUpperCase() + g.name.substring(1),
+                            displayText: (g) => g.name == 'male'
+                                ? 'male'.tr
+                                : 'female'.tr,
                             validator: (value) => Validators.gender(value),
                             onTap: () => context
                                 .read<EditProfileCubit>()
@@ -130,7 +131,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             value: formState?.height,
                             fillColor:
                                 context.theme.inputDecorationTheme.fillColor,
-                            displayText: (h) => '${h.toInt()} cm',
+                            displayText: (h) =>
+                                '${h.toInt()} ${'height_unit'.tr}',
                             validator: (value) => Validators.height(value),
                             onTap: () => context
                                 .read<EditProfileCubit>()
@@ -145,7 +147,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             value: formState?.weight,
                             fillColor:
                                 context.theme.inputDecorationTheme.fillColor,
-                            displayText: (w) => '${w.toInt()} kg',
+                            displayText: (w) =>
+                                '${w.toInt()} ${'weight_unit'.tr}',
                             validator: (value) => Validators.weight(value),
                             onTap: () => context
                                 .read<EditProfileCubit>()

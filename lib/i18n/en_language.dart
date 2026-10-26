@@ -20,6 +20,11 @@ const Map<String, String> enLanguage = {
   "reset_password_description":
       "Enter your email address below and we'll send you a link to reset your password.",
   "email": "Email",
+  "email_hint": "name@example.com",
+  "full_name_hint": "John Doe",
+  "password_hint": "••••••••",
+  "height_unit": "cm",
+  "weight_unit": "kg",
   "reset_password_email_sent":
       "Password reset email sent successfully, Please check your inbox.",
   "send_reset_email": "Send Reset Email",
@@ -83,6 +88,7 @@ const Map<String, String> enLanguage = {
   "user": "User",
   "gyms": "Gyms",
   "machines": "Machines",
+  "all": "All",
   "workout_calendar": "Workout Calendar",
   "your_workout_summary": "Your Workout Summary",
   "workouts_this_month": "Workouts This Month",
@@ -229,4 +235,5 @@ const Map<String, String> enLanguage = {
   'thursday': 'Thu',
   'friday': 'Fri',
   'saturday': 'Sat',
+  'invalid_current_password': 'Invalid current password',
 };

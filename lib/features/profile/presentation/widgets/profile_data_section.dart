@@ -7,6 +7,7 @@ import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_card.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/features/profile/presentation/widgets/profile_info_row.dart';
 
 class ProfileDataSection extends StatelessWidget {
   const ProfileDataSection({
@@ -34,19 +35,19 @@ class ProfileDataSection extends StatelessWidget {
             color: context.theme.colorScheme.onSurface,
           ),
           SizedBox(height: AppSpacing.md),
-          _ProfileInfoRow(label: 'full_name'.tr, value: user.name),
-          _ProfileInfoRow(label: 'age'.tr, value: user.age.toString()),
-          _ProfileInfoRow(
+          ProfileInfoRow(label: 'full_name'.tr, value: user.name),
+          ProfileInfoRow(label: 'age'.tr, value: user.age.toString()),
+          ProfileInfoRow(
             label: 'gender'.tr,
-            value: user.gender[0].toUpperCase() + user.gender.substring(1),
+            value: user.gender == 'male' ? 'male'.tr : 'female'.tr,
           ),
-          _ProfileInfoRow(
+          ProfileInfoRow(
             label: 'height'.tr,
-            value: '${user.height.toInt()} cm',
+            value: '${user.height.toInt()} ${'height_unit'.tr}',
           ),
-          _ProfileInfoRow(
+          ProfileInfoRow(
             label: 'weight'.tr,
-            value: '${user.weight.toInt()} kg',
+            value: '${user.weight.toInt()} ${'weight_unit'.tr}',
           ),
           SizedBox(height: AppSpacing.md),
           OutlinedButton(
@@ -62,41 +63,6 @@ class ProfileDataSection extends StatelessWidget {
             child: AppText(
               'change_password'.tr,
               color: context.theme.colorScheme.primary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProfileInfoRow extends StatelessWidget {
-  const _ProfileInfoRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: AppSpacing.sm),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: AppText(
-              label,
-              color: context.appColors.subtitle,
-              fontSize: 14.sp,
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: AppText(
-              value,
-              fontWeight: FontWeight.w500,
-              fontSize: 14.sp,
-              color: context.theme.colorScheme.onSurface,
             ),
           ),
         ],

@@ -1,14 +1,21 @@
 import 'package:equatable/equatable.dart';
 
-class MainState extends Equatable {
-  const MainState({this.selectedIndex = 0});
+abstract class MainState extends Equatable {
+  const MainState({required this.selectedIndex});
 
   final int selectedIndex;
+}
 
-  MainState copyWith({int? selectedIndex}) {
-    return MainState(selectedIndex: selectedIndex ?? this.selectedIndex);
-  }
+class MainInitial extends MainState {
+  const MainInitial({super.selectedIndex = 0});
 
   @override
-  List<Object> get props => [selectedIndex];
+  List<Object?> get props => [selectedIndex];
+}
+
+class MainTabSelected extends MainState {
+  const MainTabSelected({required super.selectedIndex});
+
+  @override
+  List<Object?> get props => [selectedIndex];
 }

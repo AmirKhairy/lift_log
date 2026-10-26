@@ -1,96 +1,201 @@
-abstract class AuthState {}
+import 'package:equatable/equatable.dart';
 
-class AuthInitial extends AuthState {}
-
-class EmailAuthSuccess extends AuthState {
-  final String userId;
-  EmailAuthSuccess({required this.userId});
+abstract class AuthState extends Equatable {
+  const AuthState();
 }
 
-class EmailAuthLoading extends AuthState {}
+class AuthInitial extends AuthState {
+  const AuthInitial();
+
+  @override
+  List<Object?> get props => const [];
+}
+
+class EmailAuthSuccess extends AuthState {
+  const EmailAuthSuccess({required this.userId});
+
+  final String userId;
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class EmailAuthLoading extends AuthState {
+  const EmailAuthLoading();
+
+  @override
+  List<Object?> get props => const [];
+}
 
 class EmailAuthFailure extends AuthState {
+  const EmailAuthFailure(this.message);
+
   final String message;
 
-  EmailAuthFailure(this.message);
+  @override
+  List<Object?> get props => [message];
 }
 
 class GoogleAuthSuccess extends AuthState {
+  const GoogleAuthSuccess({required this.userId});
+
   final String userId;
-  GoogleAuthSuccess({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
 }
 
-class GoogleAuthLoading extends AuthState {}
+class GoogleAuthLoading extends AuthState {
+  const GoogleAuthLoading();
+
+  @override
+  List<Object?> get props => const [];
+}
 
 class GoogleAuthFailure extends AuthState {
+  const GoogleAuthFailure(this.message);
+
   final String message;
 
-  GoogleAuthFailure(this.message);
+  @override
+  List<Object?> get props => [message];
 }
 
 class GoogleNewUserAuthSuccess extends AuthState {
-  final String userId;
-  final String userName;
-  final String userEmail;
-  GoogleNewUserAuthSuccess({
+  const GoogleNewUserAuthSuccess({
     required this.userName,
     required this.userEmail,
     required this.userId,
   });
+
+  final String userId;
+  final String userName;
+  final String userEmail;
+
+  @override
+  List<Object?> get props => [userId, userName, userEmail];
 }
 
-// ========================================== Register ==========================================
+class SelectAge extends AuthState {
+  const SelectAge();
 
-class SelectAge extends AuthState {}
+  @override
+  List<Object?> get props => const [];
+}
 
-class SelectGender extends AuthState {}
+class SelectGender extends AuthState {
+  const SelectGender();
 
-class SelectWeight extends AuthState {}
+  @override
+  List<Object?> get props => const [];
+}
 
-class SelectHeight extends AuthState {}
+class SelectWeight extends AuthState {
+  const SelectWeight();
+
+  @override
+  List<Object?> get props => const [];
+}
+
+class SelectHeight extends AuthState {
+  const SelectHeight();
+
+  @override
+  List<Object?> get props => const [];
+}
 
 class RegisterAuthSuccess extends AuthState {
+  const RegisterAuthSuccess({required this.userId});
+
   final String userId;
-  RegisterAuthSuccess({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
 }
 
-class RegisterAuthLoading extends AuthState {}
+class RegisterAuthLoading extends AuthState {
+  const RegisterAuthLoading();
+
+  @override
+  List<Object?> get props => const [];
+}
 
 class RegisterAuthFailure extends AuthState {
+  const RegisterAuthFailure(this.message);
+
   final String message;
 
-  RegisterAuthFailure(this.message);
+  @override
+  List<Object?> get props => [message];
 }
 
 class GoogleRegisterAuthSuccess extends AuthState {
+  const GoogleRegisterAuthSuccess({required this.userId});
+
   final String userId;
-  GoogleRegisterAuthSuccess({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
 }
 
-class GoogleRegisterAuthLoading extends AuthState {}
+class GoogleRegisterAuthLoading extends AuthState {
+  const GoogleRegisterAuthLoading();
+
+  @override
+  List<Object?> get props => const [];
+}
 
 class GoogleRegisterAuthFailure extends AuthState {
+  const GoogleRegisterAuthFailure(this.message);
+
   final String message;
 
-  GoogleRegisterAuthFailure(this.message);
+  @override
+  List<Object?> get props => [message];
 }
 
-class ResetPasswordEmailSuccess extends AuthState {}
+class ResetPasswordEmailSuccess extends AuthState {
+  const ResetPasswordEmailSuccess();
 
-class ResetPasswordEmailLoading extends AuthState {}
+  @override
+  List<Object?> get props => const [];
+}
+
+class ResetPasswordEmailLoading extends AuthState {
+  const ResetPasswordEmailLoading();
+
+  @override
+  List<Object?> get props => const [];
+}
 
 class ResetPasswordEmailFailure extends AuthState {
+  const ResetPasswordEmailFailure(this.message);
+
   final String message;
 
-  ResetPasswordEmailFailure(this.message);
+  @override
+  List<Object?> get props => [message];
 }
 
-class ResetPasswordSuccess extends AuthState {}
+class ResetPasswordSuccess extends AuthState {
+  const ResetPasswordSuccess();
 
-class ResetPasswordLoading extends AuthState {}
+  @override
+  List<Object?> get props => const [];
+}
+
+class ResetPasswordLoading extends AuthState {
+  const ResetPasswordLoading();
+
+  @override
+  List<Object?> get props => const [];
+}
 
 class ResetPasswordFailure extends AuthState {
+  const ResetPasswordFailure(this.message);
+
   final String message;
 
-  ResetPasswordFailure(this.message);
+  @override
+  List<Object?> get props => [message];
 }

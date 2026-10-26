@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
-import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_labeled_text_field.dart';
 import 'package:lift_log/core/widgets/app_scaffold.dart';
@@ -20,35 +18,6 @@ import '../../cubit/videos_state.dart';
 
 class VideosPage extends StatelessWidget {
   const VideosPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const _VideosView();
-  }
-}
-
-class _VideosView extends StatelessWidget {
-  const _VideosView();
-
-  void _playVideo(BuildContext context, TutorialVideosModel video) {
-    if (video.videoUrl?.trim().isEmpty ?? true) {
-      AppSnackbar.error(message: 'video_link_not_available', context: context);
-      return;
-    }
-
-    context.push(
-      AppRoutes.tutorialVideoPlayer,
-      extra: {'video': video, 'relatedVideos': _videosForVideo(context, video)},
-    );
-  }
-
-  List<TutorialVideosModel> _videosForVideo(
-    BuildContext context,
-    TutorialVideosModel video,
-  ) {
-    final state = context.read<VideosCubit>().state;
-    return state is VideosLoaded ? state.videos : [video];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,8 +64,12 @@ class _VideosView extends StatelessWidget {
                           selectedVideo: null,
                           isLoading: false,
                           isVertical: true,
-                          onSelected: (video) => _playVideo(context, video),
-                          onPlay: (video) => _playVideo(context, video),
+                          onSelected: (video) => context
+                              .read<VideosCubit>()
+                              .playVideo(context, video),
+                          onPlay: (video) => context
+                              .read<VideosCubit>()
+                              .playVideo(context, video),
                         ),
                 ),
               ),

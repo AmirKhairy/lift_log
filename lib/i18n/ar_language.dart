@@ -20,6 +20,11 @@ const Map<String, String> arLanguage = {
   "reset_password_description":
       "أدخل بريدك الإلكتروني أدناه وسنرسل إليك رابطًا لإعادة تعيين كلمة المرور.",
   "email": "البريد الإلكتروني",
+  "email_hint": "name@example.com",
+  "full_name_hint": "أحمد محمد",
+  "password_hint": "••••••••",
+  "height_unit": "سم",
+  "weight_unit": "كجم",
   "reset_password_email_sent":
       "تم إرسال رابط إعادة تعيين كلمة المرور بنجاح، يرجى التحقق من بريدك الإلكتروني.",
   "send_reset_email": "إرسال رابط إعادة التعيين",
@@ -82,6 +87,7 @@ const Map<String, String> arLanguage = {
   "user": "المستخدم",
   "gyms": "صالات الجيم",
   "machines": "الأجهزة",
+  "all": "الكل",
   "workout_calendar": "تقويم التمارين",
   "your_workout_summary": "ملخص تمارينك",
   "workouts_this_month": "تمارين هذا الشهر",
@@ -228,4 +234,5 @@ const Map<String, String> arLanguage = {
   'thursday': 'الخميس',
   'friday': 'الجمعة',
   'saturday': 'السبت',
+  'invalid_current_password': 'كلمة المرور الحالية غير صحيحة',
 };

@@ -1,8 +1,6 @@
 enum Gender { male, female }
 
 enum MuscleGroup {
-  push,
-  pull,
   legs,
   chest,
   back,

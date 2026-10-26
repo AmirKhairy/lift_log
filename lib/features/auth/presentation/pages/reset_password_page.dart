@@ -98,7 +98,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   label: 'new_password'.tr,
                   child: AppTextField(
                     controller: newPasswordController,
-                    hint: '••••••••',
+                    hint: 'password_hint'.tr,
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: true,
                     prefixIcon: Icon(

@@ -48,9 +48,14 @@ class MachinesPage extends StatelessWidget {
                     padding: AppPadding.horizontal,
                     child: MuscleGroupSelector(
                       selectedMuscleGroup: state.selectedMuscleGroup,
+                      showAll: true,
+                      isAllSelected: state.selectedMuscleGroup == null,
                       onSelected: context
                           .read<MachinesCubit>()
                           .selectMuscleGroup,
+                      onAllSelected: context
+                          .read<MachinesCubit>()
+                          .selectAllMuscleGroups,
                     ),
                   ),
                   SizedBox(height: AppSpacing.nm),

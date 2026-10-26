@@ -26,11 +26,12 @@ class MachineItemWidget extends StatefulWidget {
   final int index;
   final VoidCallback? onDelete;
   final VoidCallback? onChanged;
+
   @override
-  State<MachineItemWidget> createState() => _MachineItemWidgetState();
+  State<MachineItemWidget> createState() => MachineItemWidgetState();
 }
 
-class _MachineItemWidgetState extends State<MachineItemWidget>
+class MachineItemWidgetState extends State<MachineItemWidget>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 

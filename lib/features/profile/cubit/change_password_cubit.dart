@@ -14,6 +14,7 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
   final AuthService _authService;
 
   Future<void> changePassword({
+    required String currentPassword,
     required String password,
     required GlobalKey<FormState> formKey,
   }) async {
@@ -22,6 +23,7 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
     emit(const ChangePasswordLoading());
 
     try {
+      await _authService.verifyCurrentPassword(currentPassword);
       await _authService.updatePassword(password);
       emit(const ChangePasswordSuccess());
     } on AuthException catch (e) {

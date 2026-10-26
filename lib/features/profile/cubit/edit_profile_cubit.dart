@@ -27,42 +27,37 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
   void setName(String value) {
     final current = state;
-    if (current is EditProfileInitial) {
-      emit(current.copyWith(name: value));
-    }
+    if (current is! EditProfileFormState || current.isSaving) return;
+    _emitEditing(current, name: value);
   }
 
   void setAge(int value) {
     final current = state;
-    if (current is EditProfileInitial) {
-      emit(current.copyWith(age: value));
-    }
+    if (current is! EditProfileFormState || current.isSaving) return;
+    _emitEditing(current, age: value);
   }
 
   void setGender(String value) {
     final current = state;
-    if (current is EditProfileInitial) {
-      emit(current.copyWith(gender: value));
-    }
+    if (current is! EditProfileFormState || current.isSaving) return;
+    _emitEditing(current, gender: value);
   }
 
   void setHeight(double value) {
     final current = state;
-    if (current is EditProfileInitial) {
-      emit(current.copyWith(height: value));
-    }
+    if (current is! EditProfileFormState || current.isSaving) return;
+    _emitEditing(current, height: value);
   }
 
   void setWeight(double value) {
     final current = state;
-    if (current is EditProfileInitial) {
-      emit(current.copyWith(weight: value));
-    }
+    if (current is! EditProfileFormState || current.isSaving) return;
+    _emitEditing(current, weight: value);
   }
 
   Future<void> openAgePicker(BuildContext context) async {
     final current = state;
-    if (current is! EditProfileInitial) return;
+    if (current is! EditProfileFormState || current.isSaving) return;
 
     final value = await AppPicker.show<int>(
       context: context,
@@ -79,7 +74,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
   Future<void> openGenderPicker(BuildContext context) async {
     final current = state;
-    if (current is! EditProfileInitial) return;
+    if (current is! EditProfileFormState || current.isSaving) return;
 
     final initialGender = current.gender != null
         ? Gender.values.firstWhere(
@@ -91,7 +86,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     final value = await AppPicker.show<Gender>(
       context: context,
       items: Gender.values,
-      itemLabel: (e) => e.name[0].toUpperCase() + e.name.substring(1),
+      itemLabel: (e) => e.name == 'male' ? 'male'.tr : 'female'.tr,
       initialValue: initialGender,
       pickerTitle: 'gender',
     );
@@ -103,12 +98,12 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
   Future<void> openHeightPicker(BuildContext context) async {
     final current = state;
-    if (current is! EditProfileInitial) return;
+    if (current is! EditProfileFormState || current.isSaving) return;
 
     final value = await AppPicker.show<double>(
       context: context,
       items: [for (var i = 100; i <= 250; i++) i / 1],
-      itemLabel: (e) => '$e cm',
+      itemLabel: (e) => '$e ${'height_unit'.tr}',
       initialValue: current.height,
       pickerTitle: 'height',
     );
@@ -120,12 +115,12 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
   Future<void> openWeightPicker(BuildContext context) async {
     final current = state;
-    if (current is! EditProfileInitial) return;
+    if (current is! EditProfileFormState || current.isSaving) return;
 
     final value = await AppPicker.show<double>(
       context: context,
       items: [for (var i = 15; i <= 300; i++) i / 1],
-      itemLabel: (e) => '$e kg',
+      itemLabel: (e) => '$e ${'weight_unit'.tr}',
       initialValue: current.weight,
       pickerTitle: 'weight',
     );
@@ -137,11 +132,19 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
   Future<void> save({required GlobalKey<FormState> formKey}) async {
     final current = state;
-    if (current is! EditProfileInitial) return;
+    if (current is! EditProfileFormState || current.isSaving) return;
 
     if (!formKey.currentState!.validate()) return;
 
-    emit(current.copyWith(isSaving: true));
+    emit(
+      EditProfileSaving(
+        name: current.name,
+        age: current.age,
+        gender: current.gender,
+        height: current.height,
+        weight: current.weight,
+      ),
+    );
 
     try {
       final user = await _userService.updateProfile(
@@ -154,8 +157,26 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
       emit(EditProfileSuccess(user));
     } catch (_) {
-      emit(current.copyWith(isSaving: false));
       emit(EditProfileFailure('something_went_wrong'.tr));
     }
+  }
+
+  void _emitEditing(
+    EditProfileFormState current, {
+    String? name,
+    int? age,
+    String? gender,
+    double? height,
+    double? weight,
+  }) {
+    emit(
+      EditProfileEditing(
+        name: name ?? current.name,
+        age: age ?? current.age,
+        gender: gender ?? current.gender,
+        height: height ?? current.height,
+        weight: weight ?? current.weight,
+      ),
+    );
   }
 }

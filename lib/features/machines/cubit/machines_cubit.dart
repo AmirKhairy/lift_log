@@ -11,7 +11,7 @@ class MachinesCubit extends Cubit<MachinesState> {
 
   final MachinesService machinesService = MachinesService.instance;
 
-  MuscleGroup _selectedMuscleGroup = MuscleGroup.values.first;
+  MuscleGroup? _selectedMuscleGroup;
   bool _hasLoaded = false;
   Future<void>? _loadingFuture;
   List<MachineModel>? get machines => machinesService.machines;
@@ -75,6 +75,24 @@ class MachinesCubit extends Cubit<MachinesState> {
         emit(MachinesLoding(muscleGroup));
       case MachinesError(:final message):
         emit(MachinesError(message, muscleGroup: muscleGroup));
+      case MachinesInitial():
+        break;
+    }
+  }
+
+  void selectAllMuscleGroups() {
+    if (_selectedMuscleGroup == null) return;
+
+    _selectedMuscleGroup = null;
+    switch (state) {
+      case MachinesLoadedSuccess(:final machines):
+        emit(
+          MachinesLoadedSuccess(machines: machines, muscleGroup: null),
+        );
+      case MachinesLoding():
+        emit(const MachinesLoding(null));
+      case MachinesError(:final message):
+        emit(MachinesError(message, muscleGroup: null));
       case MachinesInitial():
         break;
     }

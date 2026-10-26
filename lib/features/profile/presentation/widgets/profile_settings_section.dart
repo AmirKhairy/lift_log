@@ -9,6 +9,7 @@ import 'package:lift_log/core/widgets/app_card.dart';
 import 'package:lift_log/core/widgets/app_picker.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 import 'package:lift_log/i18n/localization_service.dart';
+import 'package:lift_log/features/profile/presentation/widgets/profile_settings_row.dart';
 
 class ProfileSettingsSection extends StatelessWidget {
   const ProfileSettingsSection({super.key});
@@ -27,13 +28,13 @@ class ProfileSettingsSection extends StatelessWidget {
             color: context.theme.colorScheme.onSurface,
           ),
           SizedBox(height: AppSpacing.md),
-          _SettingsRow(
+          ProfileSettingsRow(
             label: 'language'.tr,
             value: _currentLanguageLabel(),
             onTap: () => _openLanguagePicker(context),
           ),
           SizedBox(height: AppSpacing.sm),
-          _SettingsRow(
+          ProfileSettingsRow(
             label: 'theme'.tr,
             value: _currentThemeLabel(),
             onTap: () => _openThemePicker(context),
@@ -86,50 +87,5 @@ class ProfileSettingsSection extends StatelessWidget {
     if (selected != null) {
       await ThemeService.instance.setThemeMode(selected);
     }
-  }
-}
-
-class _SettingsRow extends StatelessWidget {
-  const _SettingsRow({
-    required this.label,
-    required this.value,
-    required this.onTap,
-  });
-
-  final String label;
-  final String value;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        child: Row(
-          children: [
-            Expanded(
-              child: AppText(
-                label,
-                fontSize: 14.sp,
-                color: context.theme.colorScheme.onSurface,
-              ),
-            ),
-            AppText(
-              value,
-              fontSize: 14.sp,
-              color: context.appColors.subtitle,
-            ),
-            SizedBox(width: AppSpacing.xs),
-            Icon(
-              Icons.chevron_right,
-              color: context.appColors.subtitle,
-              size: 20.sp,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

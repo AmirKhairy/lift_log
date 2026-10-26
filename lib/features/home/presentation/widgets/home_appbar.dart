@@ -1,7 +1,6 @@
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/context_extension.dart';
@@ -11,19 +10,24 @@ import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
-import '../../cubit/home_cubit.dart';
-
 class HomeAppBar extends StatelessWidget {
-  const HomeAppBar({super.key, required this.scrollController});
+  const HomeAppBar({
+    super.key,
+    required this.scrollController,
+    required this.userName,
+  });
 
   final ScrollController scrollController;
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: scrollController,
       builder: (context, child) {
-        final progress = (scrollController.offset / 100).clamp(0.0, 1.0);
+        final progress = (scrollController.offset / 100)
+            .clamp(0.0, 1.0)
+            .toDouble();
 
         final avatarSize = lerpDouble(40.sp, 32.sp, progress)!;
 
@@ -74,7 +78,7 @@ class HomeAppBar extends StatelessWidget {
                   Transform.translate(
                     offset: Offset(0, -6 * progress),
                     child: AppText(
-                      context.read<HomeCubit>().userModel?.name ?? 'user'.tr,
+                      userName.isEmpty ? 'user'.tr : userName,
                       color: context.theme.colorScheme.secondary,
                     ),
                   ),

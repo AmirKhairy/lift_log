@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:lift_log/core/models/user_model.dart';
 
 sealed class HomeState extends Equatable {
   const HomeState();
@@ -16,7 +17,28 @@ final class HomeLoading extends HomeState {
 }
 
 final class HomeLoaded extends HomeState {
-  const HomeLoaded();
+  const HomeLoaded({
+    required this.user,
+    required this.workoutDates,
+    required this.machineCount,
+  });
+
+  final UserModel user;
+  final List<DateTime> workoutDates;
+  final int machineCount;
+
+  int get workoutCount => workoutDates.length;
+
+  DateTime? get lastWorkoutDate {
+    if (workoutDates.isEmpty) return null;
+
+    return workoutDates.reduce(
+      (latest, date) => date.isAfter(latest) ? date : latest,
+    );
+  }
+
+  @override
+  List<Object?> get props => [user, workoutDates, machineCount];
 }
 
 final class HomeError extends HomeState {

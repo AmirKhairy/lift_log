@@ -23,6 +23,7 @@ class ChangePasswordPage extends StatefulWidget {
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   late final TextEditingController _passwordController;
   late final TextEditingController _confirmPasswordController;
+  late final TextEditingController _currentPasswordController;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -30,12 +31,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     super.initState();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
+    _currentPasswordController = TextEditingController();
   }
 
   @override
   void dispose() {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _currentPasswordController.dispose();
     super.dispose();
   }
 
@@ -69,10 +72,27 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 child: Column(
                   children: [
                     LabeledTextField(
+                      label: 'current_password'.tr,
+                      child: AppTextField(
+                        controller: _currentPasswordController,
+                        hint: 'password_hint'.tr,
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: true,
+                        filled: true,
+                        prefixIcon: Icon(
+                          Icons.lock_outline,
+                          color: context.theme.colorScheme.onSurface,
+                        ),
+                        validator: (value) =>
+                            Validators.password(value, skip: false),
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+                    LabeledTextField(
                       label: 'new_password'.tr,
                       child: AppTextField(
                         controller: _passwordController,
-                        hint: '••••••••',
+                        hint: 'password_hint'.tr,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: true,
                         filled: true,
@@ -89,7 +109,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       label: 'confirm_password'.tr,
                       child: AppTextField(
                         controller: _confirmPasswordController,
-                        hint: '••••••••',
+                        hint: 'password_hint'.tr,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: true,
                         filled: true,
@@ -112,6 +132,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           : () => context
                                 .read<ChangePasswordCubit>()
                                 .changePassword(
+                                  currentPassword: _currentPasswordController
+                                      .text
+                                      .trim(),
                                   password: _passwordController.text.trim(),
                                   formKey: _formKey,
                                 ),

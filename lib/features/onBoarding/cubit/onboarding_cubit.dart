@@ -5,12 +5,16 @@ import 'package:lift_log/core/services/storage_service.dart';
 import 'onboarding_states.dart';
 
 class OnboardingCubit extends Cubit<OnboardingState> {
-  OnboardingCubit() : super(const OnboardingState());
+  OnboardingCubit() : super(const OnboardingInitial());
 
   static const int pageCount = 4;
 
   void pageChanged(int index) {
-    emit(state.copyWith(currentIndex: index));
+    if (index < 0 || index >= pageCount || state is OnboardingCompleted) {
+      return;
+    }
+
+    emit(OnboardingPageChanged(currentIndex: index));
   }
 
   void nextPressed() {
@@ -19,11 +23,11 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       return;
     }
 
-    emit(state.copyWith(currentIndex: state.currentIndex + 1));
+    emit(OnboardingPageChanged(currentIndex: state.currentIndex + 1));
   }
 
   void complete() {
     StorageService.saveBool(AppKeys.onboardingCompleted, true);
-    emit(state.copyWith(isCompleted: true));
+    emit(OnboardingCompleted(currentIndex: state.currentIndex));
   }
 }

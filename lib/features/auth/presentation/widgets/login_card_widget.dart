@@ -50,7 +50,7 @@ class LoginCardWidget extends StatelessWidget {
                 label: 'email'.tr,
                 child: AppTextField(
                   controller: emailController,
-                  hint: 'name@example.com',
+                  hint: 'email_hint'.tr,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icon(
                     Icons.email_outlined,
@@ -67,7 +67,7 @@ class LoginCardWidget extends StatelessWidget {
                 label: 'password'.tr,
                 child: AppTextField(
                   controller: passwordController,
-                  hint: '••••••••',
+                  hint: 'password_hint'.tr,
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: true,
                   prefixIcon: Icon(

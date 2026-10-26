@@ -1,7 +1,11 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lift_log/core/models/tutorial_videos_model.dart';
+import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/services/api_services/tutorial_videos_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
+import 'package:lift_log/core/widgets/app_snackbar.dart';
 
 import 'videos_state.dart';
 
@@ -61,5 +65,25 @@ class VideosCubit extends Cubit<VideosState> {
       debugPrintStack(stackTrace: s);
       emit(VideosError(e.toString(), muscleGroup: muscleGroup));
     }
+  }
+
+  void playVideo(BuildContext context, TutorialVideosModel video) {
+    if (video.videoUrl?.trim().isEmpty ?? true) {
+      AppSnackbar.error(message: 'video_link_not_available', context: context);
+      return;
+    }
+
+    context.push(
+      AppRoutes.tutorialVideoPlayer,
+      extra: {'video': video, 'relatedVideos': videosForVideo(context, video)},
+    );
+  }
+
+  List<TutorialVideosModel> videosForVideo(
+    BuildContext context,
+    TutorialVideosModel video,
+  ) {
+    final state = context.read<VideosCubit>().state;
+    return state is VideosLoaded ? state.videos : [video];
   }
 }

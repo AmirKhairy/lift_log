@@ -61,7 +61,7 @@ class RegesterCardPhysicalSection extends StatelessWidget {
                   hint: 'select'.tr,
                   value: context.read<AuthCubit>().height,
                   fillColor: context.theme.inputDecorationTheme.fillColor,
-                  displayText: (h) => '${h.toInt()} cm',
+                  displayText: (h) => '${h.toInt()} ${'height_unit'.tr}',
                   validator: (value) => Validators.height(value),
                   onTap: () =>
                       context.read<AuthCubit>().openHeightPicker(context),
@@ -74,7 +74,7 @@ class RegesterCardPhysicalSection extends StatelessWidget {
                   hint: 'select'.tr,
                   value: context.read<AuthCubit>().weight,
                   fillColor: context.theme.inputDecorationTheme.fillColor,
-                  displayText: (w) => '${w.toInt()} kg',
+                  displayText: (w) => '${w.toInt()} ${'weight_unit'.tr}',
                   validator: (value) => Validators.weight(value),
                   onTap: () =>
                       context.read<AuthCubit>().openWeightPicker(context),

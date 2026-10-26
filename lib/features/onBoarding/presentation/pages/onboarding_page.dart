@@ -20,10 +20,10 @@ class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
   @override
-  State<OnboardingPage> createState() => _OnboardingPageState();
+  State<OnboardingPage> createState() => OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> {
+class OnboardingPageState extends State<OnboardingPage> {
   late final PageController _pageController;
 
   @override
@@ -43,11 +43,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return BlocProvider(
       create: (_) => OnboardingCubit(),
       child: BlocConsumer<OnboardingCubit, OnboardingState>(
-        listenWhen: (previous, current) =>
-            previous.currentIndex != current.currentIndex ||
-            previous.isCompleted != current.isCompleted,
+        listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
-          if (state.isCompleted) {
+          if (state is OnboardingCompleted) {
             context.go(AppRoutes.login);
             return;
           }

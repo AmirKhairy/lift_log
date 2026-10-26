@@ -162,4 +162,19 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<void> verifyCurrentPassword(String password) async {
+    try {
+      final email = currentUser?.email;
+      if (email == null) {
+        throw StateError('The current user does not have an email address.');
+      }
+
+      await _client.auth.signInWithPassword(email: email, password: password);
+    } on AuthException catch (_) {
+      throw AuthException('invalid_current_password'.tr);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

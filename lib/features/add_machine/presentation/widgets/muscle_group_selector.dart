@@ -11,10 +11,16 @@ class MuscleGroupSelector extends StatelessWidget {
     super.key,
     required this.selectedMuscleGroup,
     required this.onSelected,
+    this.showAll = false,
+    this.isAllSelected = false,
+    this.onAllSelected,
   });
 
   final MuscleGroup? selectedMuscleGroup;
   final ValueChanged<MuscleGroup> onSelected;
+  final bool showAll;
+  final bool isAllSelected;
+  final VoidCallback? onAllSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +28,20 @@ class MuscleGroupSelector extends StatelessWidget {
       height: 40.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: MuscleGroup.values.length,
+        itemCount: MuscleGroup.values.length + (showAll ? 1 : 0),
         separatorBuilder: (_, _) => SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, index) {
-          final muscleGroup = MuscleGroup.values[index];
-          final isSelected = muscleGroup == selectedMuscleGroup;
+          final isAll = showAll && index == 0;
+          final muscleGroup = isAll
+              ? null
+              : MuscleGroup.values[index - (showAll ? 1 : 0)];
+          final isSelected = isAll
+              ? isAllSelected
+              : muscleGroup == selectedMuscleGroup;
 
           return ChoiceChip(
             label: AppText(
-              muscleGroup.displayName,
+              isAll ? 'all' : muscleGroup!.displayName,
               color: isSelected
                   ? context.theme.colorScheme.onPrimary
                   : context.theme.colorScheme.onSurface,
@@ -38,7 +49,13 @@ class MuscleGroupSelector extends StatelessWidget {
             ),
             selected: isSelected,
             showCheckmark: false,
-            onSelected: (_) => onSelected(muscleGroup),
+            onSelected: (_) {
+              if (isAll) {
+                onAllSelected?.call();
+              } else {
+                onSelected(muscleGroup!);
+              }
+            },
             selectedColor: context.theme.colorScheme.primary,
             backgroundColor: context.theme.colorScheme.surface,
             side: BorderSide(

@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:lift_log/core/extensions/context_extension.dart';
-import 'package:lift_log/core/extensions/localization_extension.dart';
-import 'package:lift_log/core/router/app_router.dart';
-import 'package:lift_log/core/utils/app_radius.dart';
-import 'package:lift_log/core/widgets/app_scaffold.dart';
 import 'package:lift_log/features/home/cubit/home_cubit.dart';
-import 'package:lift_log/features/home/presentation/pages/home_page.dart';
 import 'package:lift_log/features/machines/cubit/machines_cubit.dart';
-import 'package:lift_log/features/machines/presentation/pages/machines_page.dart';
 import 'package:lift_log/features/main/cubit/main_cubit.dart';
-import 'package:lift_log/features/main/cubit/main_state.dart';
+import 'package:lift_log/features/main/presentation/pages/main_view.dart';
 import 'package:lift_log/features/profile/cubit/profile_cubit.dart';
-import 'package:lift_log/features/profile/presentation/pages/profile_page.dart';
 import 'package:lift_log/features/videos/cubit/videos_cubit.dart';
-import 'package:lift_log/features/videos/presentation/pages/videos_page.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -25,189 +14,26 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => MainCubit()),
         BlocProvider(create: (_) => HomeCubit()),
         BlocProvider(create: (_) => VideosCubit()),
         BlocProvider(create: (_) => MachinesCubit()),
         BlocProvider(create: (_) => ProfileCubit()),
+        BlocProvider(
+          create: (context) => MainCubit(
+            loadHome: () => context.read<HomeCubit>().loadIfNeeded(),
+            loadMachines: () => context.read<MachinesCubit>().loadIfNeeded(),
+            loadVideos: () => context.read<VideosCubit>().loadIfNeeded(),
+            loadProfile: () => context.read<ProfileCubit>().loadIfNeeded(),
+            refreshHome: () => context.read<HomeCubit>().refresh(),
+            refreshMachines: () => context.read<MachinesCubit>().refresh(),
+            refreshVideos: () => context.read<VideosCubit>().refresh(),
+            refreshProfile: () => context.read<ProfileCubit>().refresh(),
+            refreshAfterMachineAdded: () =>
+                context.read<MachinesCubit>().refresh(),
+          ),
+        ),
       ],
-      child: const _MainView(),
-    );
-  }
-}
-
-class _MainView extends StatefulWidget {
-  const _MainView();
-
-  @override
-  State<_MainView> createState() => _MainViewState();
-}
-
-class _MainViewState extends State<_MainView> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _loadForIndex(0);
-    });
-  }
-
-  void _loadForIndex(int index) {
-    switch (index) {
-      case 0:
-        context.read<HomeCubit>().loadIfNeeded();
-      case 1:
-        context.read<MachinesCubit>().loadIfNeeded();
-      case 2:
-        context.read<VideosCubit>().loadIfNeeded();
-      case 3:
-        context.read<ProfileCubit>().loadIfNeeded();
-    }
-  }
-
-  void _refreshForIndex(int index) {
-    switch (index) {
-      case 0:
-        context.read<HomeCubit>().refresh();
-      case 1:
-        context.read<MachinesCubit>().refresh();
-        context.read<HomeCubit>().refresh();
-      case 2:
-        context.read<VideosCubit>().refresh();
-      case 3:
-        context.read<ProfileCubit>().refresh();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MainCubit, MainState>(
-      builder: (context, state) {
-        return AppScaffold(
-          padding: EdgeInsets.zero,
-          floatingActionButton: state.selectedIndex == 1
-              ? FloatingActionButton(
-                  onPressed: () async {
-                    final added = await context.push<Object>(
-                      AppRoutes.addMachine,
-                    );
-
-                    if (!context.mounted) return;
-
-                    if (added != null) {
-                      await context.read<MachinesCubit>().refresh();
-                    }
-                  },
-                  backgroundColor: context.theme.colorScheme.primary,
-                  foregroundColor: context.theme.colorScheme.onPrimary,
-                  shape: const CircleBorder(),
-                  child: const Icon(Icons.add),
-                )
-              : null,
-          body: IndexedStack(
-            index: state.selectedIndex,
-            children: [HomePage(), MachinesPage(), VideosPage(), ProfilePage()],
-          ),
-          bottomNavigationBar: ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppRadius.xl),
-            ),
-            child: NavigationBarTheme(
-              data: NavigationBarThemeData(
-                backgroundColor: context.theme.colorScheme.surface,
-                elevation: 0,
-
-                indicatorColor: context.theme.colorScheme.surface,
-                indicatorShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-
-                iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((
-                  states,
-                ) {
-                  if (states.contains(WidgetState.selected)) {
-                    return IconThemeData(
-                      color: context.theme.colorScheme.primary,
-                      size: 24.sp,
-                    );
-                  }
-
-                  return IconThemeData(
-                    color: context.theme.colorScheme.onSurface.withValues(
-                      alpha: 0.5,
-                    ),
-                    size: 24.sp,
-                  );
-                }),
-
-                labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((
-                  states,
-                ) {
-                  if (states.contains(WidgetState.selected)) {
-                    return TextStyle(
-                      color: context.theme.colorScheme.primary,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      textBaseline: TextBaseline.alphabetic,
-                    );
-                  }
-
-                  return TextStyle(
-                    color: context.theme.colorScheme.onSurface.withValues(
-                      alpha: 0.5,
-                    ),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
-                    textBaseline: TextBaseline.alphabetic,
-                  );
-                }),
-              ),
-
-              child: NavigationBar(
-                height: 80.h,
-                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-                selectedIndex: state.selectedIndex,
-                labelPadding: EdgeInsets.symmetric(
-                  horizontal: 8.w,
-                  vertical: 4.h,
-                ),
-                onDestinationSelected: (index) {
-                  if (index == state.selectedIndex) {
-                    _refreshForIndex(index);
-                    return;
-                  }
-
-                  context.read<MainCubit>().selectTab(index);
-                  _loadForIndex(index);
-                },
-                destinations: [
-                  NavigationDestination(
-                    icon: const Icon(Icons.home_outlined),
-                    selectedIcon: const Icon(Icons.home),
-                    label: 'home'.tr,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.precision_manufacturing_outlined),
-                    selectedIcon: const Icon(Icons.precision_manufacturing),
-                    label: 'machines'.tr,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.play_circle_outline),
-                    selectedIcon: const Icon(Icons.play_circle),
-                    label: 'videos'.tr,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.person_outline),
-                    selectedIcon: const Icon(Icons.person),
-                    label: 'profile'.tr,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+      child: const MainView(),
     );
   }
 }

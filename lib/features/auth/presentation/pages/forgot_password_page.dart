@@ -97,7 +97,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   label: 'email'.tr,
                   child: AppTextField(
                     controller: emailController,
-                    hint: 'name@example.com',
+                    hint: 'email_hint'.tr,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icon(
                       Icons.email_outlined,

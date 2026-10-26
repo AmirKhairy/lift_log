@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/models/user_model.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
@@ -28,15 +29,15 @@ class ProfilePage extends StatelessWidget {
       listenWhen: (previous, current) =>
           current is ProfileLoggedOut ||
           current is ProfileAccountDeleted ||
-          (current is ProfileLoaded && current.actionError != null),
+          current is ProfileActionError,
       listener: (context, state) {
         if (state is ProfileLoggedOut || state is ProfileAccountDeleted) {
           context.go(AppRoutes.login);
           return;
         }
 
-        if (state is ProfileLoaded && state.actionError != null) {
-          AppSnackbar.error(message: state.actionError!, context: context);
+        if (state is ProfileActionError) {
+          AppSnackbar.error(message: state.message, context: context);
         }
       },
       builder: (context, state) {
@@ -62,80 +63,108 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context, ProfileState state) {
-    return switch (state) {
-      ProfileInitial() => const Center(
-        child: Loading(),
-      ),
-      ProfileLoading() => const Center(child: Loading()),
-      ProfileLoaded(:final user, :final isLoggingOut, :final isDeletingAccount) =>
-        RefreshIndicator(
-          onRefresh: () => context.read<ProfileCubit>().refresh(),
-          child: ListView(
-            padding: EdgeInsets.only(bottom: AppSpacing.xl),
-            children: [
-              ProfileDataSection(
-                user: user,
-                onEditProfile: () async {
-                  final updated = await context.push<bool>(
-                    AppRoutes.editProfile,
-                    extra: user,
-                  );
+    if (state is ProfileInitial || state is ProfileLoading) {
+      return const Center(child: Loading());
+    }
 
-                  if (!context.mounted) return;
+    if (state is ProfileLoaded) {
+      return _buildLoadedBody(context, state.user, false, false);
+    }
 
-                  if (updated == true) {
-                    await context.read<ProfileCubit>().refresh();
-                    if (context.mounted) {
-                      await context.read<HomeCubit>().refresh();
-                    }
-                  }
-                },
-                onChangePassword: () {
-                  context.push(AppRoutes.changePassword);
-                },
-              ),
-              SizedBox(height: AppSpacing.md),
-              const ProfileSettingsSection(),
-              SizedBox(height: AppSpacing.md),
-              ProfileDangerSection(
-                isLoggingOut: isLoggingOut,
-                isDeletingAccount: isDeletingAccount,
-                onLogout: () => _confirmLogout(context),
-                onDeleteAccount: () => _confirmDeleteAccount(context),
-              ),
-            ],
-          ),
-        ),
-      ProfileError(:final message) => Center(
-        child: Padding(
-          padding: AppPadding.horizontal,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AppText(
-                'profile_error'.tr,
-                fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
-                color: context.theme.colorScheme.onSurface,
-              ),
-              SizedBox(height: AppSpacing.sm),
-              AppText(
-                message,
-                textAlign: TextAlign.center,
-                color: context.appColors.subtitle,
-              ),
-              SizedBox(height: AppSpacing.md),
-              AppButton(
-                title: 'retry',
-                width: 160,
-                onPressed: () => context.read<ProfileCubit>().refresh(),
-              ),
-            ],
-          ),
+    if (state is ProfileLoggingOut) {
+      return _buildLoadedBody(context, state.user, true, false);
+    }
+
+    if (state is ProfileDeletingAccount) {
+      return _buildLoadedBody(context, state.user, false, true);
+    }
+
+    if (state is ProfileActionError) {
+      return _buildLoadedBody(context, state.user, false, false);
+    }
+
+    if (state is ProfileError) {
+      return _buildErrorBody(context, state.message);
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildErrorBody(BuildContext context, String message) {
+    return Center(
+      child: Padding(
+        padding: AppPadding.horizontal,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppText(
+              'profile_error'.tr,
+              fontWeight: FontWeight.bold,
+              fontSize: 16.sp,
+              color: context.theme.colorScheme.onSurface,
+            ),
+            SizedBox(height: AppSpacing.sm),
+            AppText(
+              message,
+              textAlign: TextAlign.center,
+              color: context.appColors.subtitle,
+            ),
+            SizedBox(height: AppSpacing.md),
+            AppButton(
+              title: 'retry',
+              width: 160,
+              onPressed: () => context.read<ProfileCubit>().refresh(),
+            ),
+          ],
         ),
       ),
-      ProfileLoggedOut() || ProfileAccountDeleted() => const SizedBox.shrink(),
-    };
+    );
+  }
+
+  Widget _buildLoadedBody(
+    BuildContext context,
+    UserModel user,
+    bool isLoggingOut,
+    bool isDeletingAccount,
+  ) {
+    return RefreshIndicator(
+      onRefresh: () => context.read<ProfileCubit>().refresh(),
+      child: ListView(
+        padding: EdgeInsets.only(bottom: AppSpacing.xl),
+        children: [
+          ProfileDataSection(
+            user: user,
+            onEditProfile: () async {
+              final updated = await context.push<bool>(
+                AppRoutes.editProfile,
+                extra: user,
+              );
+
+              if (!context.mounted) return;
+
+              if (updated == true) {
+                await context.read<ProfileCubit>().refresh();
+                if (context.mounted) {
+                  await context.read<HomeCubit>().refresh();
+                }
+              }
+            },
+            onChangePassword: () {
+              context.push(AppRoutes.changePassword);
+            },
+          ),
+          SizedBox(height: AppSpacing.md),
+          const ProfileSettingsSection(),
+          SizedBox(height: AppSpacing.md),
+          ProfileDangerSection(
+            isLoggingOut: isLoggingOut,
+            isDeletingAccount: isDeletingAccount,
+            onLogout: () => _confirmLogout(context),
+            onDeleteAccount: () => _confirmDeleteAccount(context),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _confirmLogout(BuildContext context) async {

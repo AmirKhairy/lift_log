@@ -27,17 +27,26 @@ class ProfileCubit extends Cubit<ProfileState> {
       return Future.value();
     }
 
-    if (_loadingFuture != null) {
-      return _loadingFuture!;
+    return _loadOnce();
+  }
+
+  Future<void> refresh() => _loadOnce();
+
+  Future<void> _loadOnce() {
+    final loadingFuture = _loadingFuture;
+    if (loadingFuture != null) {
+      return loadingFuture;
     }
 
     final future = _loadData();
-    _loadingFuture = future;
-    return future.whenComplete(() => _loadingFuture = null);
-  }
-
-  Future<void> refresh() async {
-    await _loadData();
+    late final Future<void> trackedFuture;
+    trackedFuture = future.whenComplete(() {
+      if (identical(_loadingFuture, trackedFuture)) {
+        _loadingFuture = null;
+      }
+    });
+    _loadingFuture = trackedFuture;
+    return trackedFuture;
   }
 
   Future<void> _loadData() async {
@@ -47,7 +56,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       final user = await _userService.getUserData();
 
       _hasLoaded = true;
-      emit(ProfileLoaded(user: user));
+      emit(ProfileLoaded(user));
     } catch (e, s) {
       _hasLoaded = false;
       debugPrintStack(stackTrace: s);
@@ -57,9 +66,9 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> logout() async {
     final currentState = state;
-    if (currentState is! ProfileLoaded) return;
+    if (currentState is! ProfileUserState) return;
 
-    emit(currentState.copyWith(isLoggingOut: true, clearActionError: true));
+    emit(ProfileLoggingOut(currentState.user));
 
     try {
       await _authService.logout();
@@ -68,9 +77,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
       emit(
-        currentState.copyWith(
-          isLoggingOut: false,
-          actionError: 'something_went_wrong'.tr,
+        ProfileActionError(
+          user: currentState.user,
+          message: 'something_went_wrong'.tr,
         ),
       );
     }
@@ -78,11 +87,9 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> deleteAccount() async {
     final currentState = state;
-    if (currentState is! ProfileLoaded) return;
+    if (currentState is! ProfileUserState) return;
 
-    emit(
-      currentState.copyWith(isDeletingAccount: true, clearActionError: true),
-    );
+    emit(ProfileDeletingAccount(currentState.user));
 
     try {
       await _authService.deleteAccount();
@@ -91,9 +98,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
       emit(
-        currentState.copyWith(
-          isDeletingAccount: false,
-          actionError: 'something_went_wrong'.tr,
+        ProfileActionError(
+          user: currentState.user,
+          message: 'something_went_wrong'.tr,
         ),
       );
     }
