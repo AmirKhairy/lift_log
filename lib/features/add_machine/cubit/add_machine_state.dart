@@ -36,28 +36,6 @@ final class AddMachineLoaded extends AddMachineState {
   final bool isTutorialVideosLoading;
   final bool isSaving;
 
-  AddMachineLoaded copyWith({
-    XFile? selectedImage,
-    MuscleGroup? selectedMuscleGroup,
-    TutorialVideosModel? selectedTutorialVideo,
-    List<TutorialVideosModel>? tutorialVideos,
-    bool clearSelectedTutorialVideo = false,
-    bool? isTutorialVideosLoading,
-    bool? isSaving,
-  }) {
-    return AddMachineLoaded(
-      selectedImage: selectedImage ?? this.selectedImage,
-      selectedMuscleGroup: selectedMuscleGroup ?? this.selectedMuscleGroup,
-      selectedTutorialVideo: clearSelectedTutorialVideo
-          ? null
-          : selectedTutorialVideo ?? this.selectedTutorialVideo,
-      tutorialVideos: tutorialVideos ?? this.tutorialVideos,
-      isTutorialVideosLoading:
-          isTutorialVideosLoading ?? this.isTutorialVideosLoading,
-      isSaving: isSaving ?? this.isSaving,
-    );
-  }
-
   @override
   List<Object?> get props => [
     selectedImage,

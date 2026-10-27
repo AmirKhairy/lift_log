@@ -31,7 +31,9 @@ class MachineDetailsCubit extends Cubit<MachineDetailsState> {
        super(const MachineDetailsInitial());
 
   MachineModel _machine;
-  bool didMutate = false;
+  bool _didMutate = false;
+
+  bool get didMutate => _didMutate;
 
   final Future<TutorialVideosModel?> Function(String id) _getTutorialById;
   final Future<List<MachineWorkoutHistoryItem>> Function(String machineId)
@@ -44,9 +46,31 @@ class MachineDetailsCubit extends Cubit<MachineDetailsState> {
     await _loadDetails();
   }
 
+  Future<bool> editMachine({
+    required Future<MachineModel?> Function(MachineModel machine) openEditor,
+  }) async {
+    final updatedMachine = await openEditor(_machine);
+    if (updatedMachine == null) return false;
+
+    await replaceMachine(updatedMachine);
+    return true;
+  }
+
+  bool openTutorial({
+    required TutorialVideosModel? tutorial,
+    required void Function(TutorialVideosModel tutorial) openPlayer,
+  }) {
+    if (tutorial == null || (tutorial.videoUrl?.trim().isEmpty ?? true)) {
+      return false;
+    }
+
+    openPlayer(tutorial);
+    return true;
+  }
+
   Future<void> replaceMachine(MachineModel machine) async {
     _machine = machine;
-    didMutate = true;
+    _didMutate = true;
     await load();
   }
 
@@ -61,7 +85,15 @@ class MachineDetailsCubit extends Cubit<MachineDetailsState> {
       return;
     }
 
-    emit(currentState.copyWith(isDeleting: true));
+    emit(
+      MachineDetailsDeleting(
+        machine: currentState.machine,
+        tutorial: currentState.tutorial,
+        history: currentState.history,
+        tutorialError: currentState.tutorialError,
+        historyError: currentState.historyError,
+      ),
+    );
 
     try {
       await _deleteMachineFn(
@@ -69,13 +101,13 @@ class MachineDetailsCubit extends Cubit<MachineDetailsState> {
         imageUrl: currentState.machine.imageUrl,
       );
       if (isClosed) return;
-      didMutate = true;
+      _didMutate = true;
       emit(const MachineDetailsDeleted());
     } catch (e) {
       AppLogger.error('Failed to delete machine: $e');
       if (isClosed) return;
       emit(MachineDetailsError(e.toString()));
-      emit(currentState.copyWith(isDeleting: false));
+      emit(currentState);
     }
   }
 

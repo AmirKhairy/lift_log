@@ -24,26 +24,6 @@ final class WorkoutEditing extends WorkoutState {
   final bool isLoadingMachines;
   final String? machinesError;
 
-  WorkoutEditing copyWith({
-    WorkoutDraft? draft,
-    String? error,
-    bool clearError = false,
-    List<MachineModel>? availableMachines,
-    bool? isLoadingMachines,
-    String? machinesError,
-    bool clearMachinesError = false,
-  }) {
-    return WorkoutEditing(
-      draft ?? this.draft,
-      error: clearError ? null : error ?? this.error,
-      availableMachines: availableMachines ?? this.availableMachines,
-      isLoadingMachines: isLoadingMachines ?? this.isLoadingMachines,
-      machinesError: clearMachinesError
-          ? null
-          : machinesError ?? this.machinesError,
-    );
-  }
-
   @override
   List<Object?> get props => [
     draft,
@@ -92,10 +72,16 @@ extension WorkoutDraftValidation on WorkoutDraft {
       if (machineLog.sets.isEmpty) return 'workout_empty_sets';
 
       for (final set in machineLog.sets) {
-        if (set.weight == null || set.weight! <= 0) {
+        if (set.weight == null) {
+          return 'workout_weight_required';
+        }
+        if (!set.weight!.isFinite || set.weight! <= 0) {
           return 'workout_invalid_weight';
         }
-        if (set.reps == null || set.reps! <= 0) {
+        if (set.reps == null) {
+          return 'workout_reps_required';
+        }
+        if (set.reps! <= 0) {
           return 'workout_invalid_reps';
         }
       }

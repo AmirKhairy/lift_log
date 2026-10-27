@@ -18,14 +18,13 @@ final class MachineDetailsLoading extends MachineDetailsState {
   const MachineDetailsLoading();
 }
 
-final class MachineDetailsLoaded extends MachineDetailsState {
-  const MachineDetailsLoaded({
+sealed class MachineDetailsContentState extends MachineDetailsState {
+  const MachineDetailsContentState({
     required this.machine,
     this.tutorial,
     this.history = const [],
     this.tutorialError,
     this.historyError,
-    this.isDeleting = false,
   });
 
   final MachineModel machine;
@@ -33,32 +32,6 @@ final class MachineDetailsLoaded extends MachineDetailsState {
   final List<MachineWorkoutHistoryItem> history;
   final String? tutorialError;
   final String? historyError;
-  final bool isDeleting;
-
-  MachineDetailsLoaded copyWith({
-    MachineModel? machine,
-    TutorialVideosModel? tutorial,
-    List<MachineWorkoutHistoryItem>? history,
-    String? tutorialError,
-    String? historyError,
-    bool clearTutorial = false,
-    bool clearTutorialError = false,
-    bool clearHistoryError = false,
-    bool? isDeleting,
-  }) {
-    return MachineDetailsLoaded(
-      machine: machine ?? this.machine,
-      tutorial: clearTutorial ? null : tutorial ?? this.tutorial,
-      history: history ?? this.history,
-      tutorialError: clearTutorialError
-          ? null
-          : tutorialError ?? this.tutorialError,
-      historyError: clearHistoryError
-          ? null
-          : historyError ?? this.historyError,
-      isDeleting: isDeleting ?? this.isDeleting,
-    );
-  }
 
   @override
   List<Object?> get props => [
@@ -67,8 +40,27 @@ final class MachineDetailsLoaded extends MachineDetailsState {
     history,
     tutorialError,
     historyError,
-    isDeleting,
   ];
+}
+
+final class MachineDetailsLoaded extends MachineDetailsContentState {
+  const MachineDetailsLoaded({
+    required super.machine,
+    super.tutorial,
+    super.history,
+    super.tutorialError,
+    super.historyError,
+  });
+}
+
+final class MachineDetailsDeleting extends MachineDetailsContentState {
+  const MachineDetailsDeleting({
+    required super.machine,
+    super.tutorial,
+    super.history,
+    super.tutorialError,
+    super.historyError,
+  });
 }
 
 final class MachineDetailsError extends MachineDetailsState {

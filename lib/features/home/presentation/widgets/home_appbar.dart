@@ -94,6 +94,8 @@ class HomeAppBar extends StatelessWidget {
                   color: context.theme.colorScheme.primary,
                 ),
               ),
+
+              SizedBox(width: AppSpacing.sm),
             ],
           ),
         );

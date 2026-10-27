@@ -5,9 +5,9 @@ import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
-import 'package:lift_log/core/widgets/app_cached_network_image.dart';
 import 'package:lift_log/core/widgets/app_card.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/core/models/machine_image.dart';
 
 class MachineDetailsHeader extends StatelessWidget {
   const MachineDetailsHeader({super.key, required this.machine});
@@ -26,8 +26,8 @@ class MachineDetailsHeader extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppSpacing.nm),
           child: ColoredBox(
             color: context.theme.colorScheme.surfaceContainerHighest,
-            child: AppCachedNetworkImage(
-              imageUrl: machine.imageUrl ?? '',
+            child: MachineImage(
+              imageUrl: machine.imageUrl,
               width: double.infinity,
               height: 200.h,
               fit: BoxFit.contain,

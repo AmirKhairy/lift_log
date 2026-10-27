@@ -138,10 +138,14 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     double? weight,
     int? reps,
   }) {
+    final parsedWeight = weight?.isFinite == true ? weight : null;
     final machines = [...draft.machines];
     final machineLog = machines[machineIndex];
     final sets = [...machineLog.sets];
-    sets[setIndex] = sets[setIndex].copyWith(weight: weight, reps: reps);
+    sets[setIndex] = sets[setIndex].copyWith(
+      weight: parsedWeight,
+      reps: reps,
+    );
     machines[machineIndex] = machineLog.copyWith(sets: sets);
     _emitDraft(draft.copyWith(machines: machines));
   }
@@ -170,7 +174,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   }
 
   void _emitDraft(WorkoutDraft nextDraft) {
-    _emitEditing(nextDraft);
+    _emitEditing(nextDraft, clearError: true);
   }
 
   void _emitEditing(

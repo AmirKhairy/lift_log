@@ -16,7 +16,7 @@ void main() {
     expect(WorkoutDraft().validate(), 'workout_empty_machines');
 
     final draft = WorkoutDraft(machines: [workoutMachineDraft(machine)]);
-    expect(draft.validate(), 'workout_invalid_weight');
+    expect(draft.validate(), 'workout_weight_required');
   });
 
   test('adds machines and renumbers sets after removal', () {

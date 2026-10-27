@@ -15,6 +15,8 @@ class StatCard extends StatelessWidget {
     required this.animation,
     this.backgroundColor,
     this.iconColor,
+    this.textColor,
+    this.onTap,
   });
 
   final IconData icon;
@@ -23,58 +25,85 @@ class StatCard extends StatelessWidget {
   final Animation<double> animation;
   final Color? backgroundColor;
   final Color? iconColor;
+  final Color? textColor;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
+    final foreground = textColor ?? context.theme.colorScheme.onSurface;
+    final accent = iconColor ?? context.theme.colorScheme.primary;
+
     return AnimatedBuilder(
       animation: animation,
-      child: Container(
-        padding: AppPadding.xs,
-        decoration: BoxDecoration(
-          color: backgroundColor ?? context.theme.colorScheme.surface,
+      child: Material(
+        color: backgroundColor ?? context.theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(AppRadius.xl),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              size: 30.sp,
-              color: iconColor ?? context.theme.colorScheme.primary,
+          child: Container(
+            height: 190.h,
+            padding: AppPadding.card,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppRadius.xl),
+              border: Border.all(color: accent.withValues(alpha: 0.16)),
             ),
-
-            SizedBox(height: AppSpacing.sm),
-
-            AppText(
-              value,
-              fontSize: 24.sp,
-              fontWeight: FontWeight.w700,
-              textAlign: TextAlign.center,
-            ),
-
-            SizedBox(height: AppSpacing.xs),
-
-            if (label != null)
-              AppText(
-                label!,
-                color: context.theme.colorScheme.onSurface.withValues(
-                  alpha: 0.6,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: accent.withValues(alpha: 0.14),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(icon, size: 24.sp, color: accent),
+                      ),
+                    ),
+                    if (onTap != null)
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 20.sp,
+                        color: foreground.withValues(alpha: 0.55),
+                      ),
+                  ],
                 ),
-              ),
-          ],
+                SizedBox(height: AppSpacing.md),
+                AppText(
+                  value,
+                  color: textColor,
+                  fontSize: label == null ? 16.sp : 26.sp,
+                  fontWeight: FontWeight.w700,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (label != null) ...[
+                  SizedBox(height: AppSpacing.xs),
+                  AppText(
+                    label!,
+                    color: foreground.withValues(alpha: 0.65),
+                    fontSize: 13.sp,
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
       builder: (context, child) {
-        final scale = Tween<double>(begin: 0.9, end: 1.0).evaluate(animation);
-
-        final opacity = Tween<double>(begin: 0, end: 1).evaluate(animation);
-
-        final offset = Tween<double>(begin: 20, end: 0).evaluate(animation);
-
+        final progress = animation.value;
         return Opacity(
-          opacity: opacity,
+          opacity: progress,
           child: Transform.translate(
-            offset: Offset(0, offset),
-            child: Transform.scale(scale: scale, child: child),
+            offset: Offset(0, 20 * (1 - progress)),
+            child: Transform.scale(
+              scale: 0.94 + (0.06 * progress),
+              child: child,
+            ),
           ),
         );
       },

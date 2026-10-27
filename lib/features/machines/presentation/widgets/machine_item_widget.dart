@@ -10,8 +10,8 @@ import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/utils/logic_utilities.dart';
-import 'package:lift_log/core/widgets/app_cached_network_image.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/core/models/machine_image.dart';
 
 class MachineItemWidget extends StatefulWidget {
   const MachineItemWidget({
@@ -168,8 +168,8 @@ class MachineItemWidgetState extends State<MachineItemWidget>
                           Stack(
                             alignment: AlignmentDirectional.topStart,
                             children: [
-                              AppCachedNetworkImage(
-                                imageUrl: widget.machine?.imageUrl ?? '',
+                              MachineImage(
+                                imageUrl: widget.machine?.imageUrl,
                                 width: 120.w,
                                 fit: BoxFit.cover,
                                 borderRadius: BorderRadius.circular(

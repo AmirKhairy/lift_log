@@ -45,7 +45,7 @@ class MachinesService {
     required String name,
     required String notes,
     required MuscleGroup muscleGroup,
-    required XFile image,
+    XFile? image,
     String? tutorialVideoId,
   }) async {
     try {
@@ -55,7 +55,9 @@ class MachinesService {
         throw Exception('User is not logged in');
       }
 
-      final imageUrl = await _uploadMachineImage(userId: userId, image: image);
+      final imageUrl = image == null
+          ? null
+          : await _uploadMachineImage(userId: userId, image: image);
 
       final response = await SupabaseService.client
           .from('machines')

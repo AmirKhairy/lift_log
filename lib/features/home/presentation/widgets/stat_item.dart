@@ -38,6 +38,7 @@ class StatItem extends StatelessWidget {
                   alpha: 0.7,
                 ),
                 fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
               ),
             ],
           ),

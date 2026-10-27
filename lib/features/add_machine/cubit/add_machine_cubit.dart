@@ -48,7 +48,8 @@ class AddMachineCubit extends Cubit<AddMachineState> {
 
       if (image == null || state is! AddMachineLoaded) return;
 
-      emit((state as AddMachineLoaded).copyWith(selectedImage: image));
+      final currentState = state as AddMachineLoaded;
+      emit(_loaded(currentState, selectedImage: image));
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
       emit(AddMachineError(e.toString()));
@@ -61,7 +62,8 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     if (currentState is! AddMachineLoaded) return;
 
     emit(
-      currentState.copyWith(
+      _loaded(
+        currentState,
         selectedMuscleGroup: muscleGroup,
         selectedTutorialVideo: null,
         clearSelectedTutorialVideo: true,
@@ -77,7 +79,8 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       if (latestState is! AddMachineLoaded) return;
 
       emit(
-        latestState.copyWith(
+        _loaded(
+          latestState,
           tutorialVideos: videos,
           isTutorialVideosLoading: false,
         ),
@@ -87,7 +90,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       final latestState = state;
       emit(AddMachineError(e.toString()));
       if (latestState is AddMachineLoaded) {
-        emit(latestState.copyWith(isTutorialVideosLoading: false));
+        emit(_loaded(latestState, isTutorialVideosLoading: false));
       }
     }
   }
@@ -96,7 +99,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     final currentState = state;
     if (currentState is! AddMachineLoaded) return;
 
-    emit(currentState.copyWith(selectedTutorialVideo: video));
+    emit(_loaded(currentState, selectedTutorialVideo: video));
   }
 
   Future<void> saveMachine({
@@ -107,14 +110,6 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     if (currentState is! AddMachineLoaded) return;
 
     final selectedImage = currentState.selectedImage;
-    final hasExistingImage =
-        machineToEdit?.imageUrl?.trim().isNotEmpty == true;
-    if (selectedImage == null && !hasExistingImage) {
-      emit(const AddMachineError('select_machine_image'));
-      emit(currentState);
-      return;
-    }
-
     final muscleGroup = currentState.selectedMuscleGroup;
     if (muscleGroup == null) {
       emit(const AddMachineError('select_muscle_group'));
@@ -122,7 +117,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       return;
     }
 
-    emit(currentState.copyWith(isSaving: true));
+    emit(_loaded(currentState, isSaving: true));
 
     try {
       final machine = isEditing
@@ -139,7 +134,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
               notes: notes,
               muscleGroup: muscleGroup,
               tutorialVideoId: currentState.selectedTutorialVideo?.id,
-              image: selectedImage!,
+              image: selectedImage,
             );
 
       emit(AddMachineSuccess(machine));
@@ -147,7 +142,30 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       debugPrint(e.toString());
       debugPrintStack(stackTrace: s);
       emit(AddMachineError(e.toString()));
-      emit(currentState.copyWith(isSaving: false));
+      emit(_loaded(currentState, isSaving: false));
     }
+  }
+
+  AddMachineLoaded _loaded(
+    AddMachineLoaded current, {
+    XFile? selectedImage,
+    MuscleGroup? selectedMuscleGroup,
+    TutorialVideosModel? selectedTutorialVideo,
+    List<TutorialVideosModel>? tutorialVideos,
+    bool clearSelectedTutorialVideo = false,
+    bool? isTutorialVideosLoading,
+    bool? isSaving,
+  }) {
+    return AddMachineLoaded(
+      selectedImage: selectedImage ?? current.selectedImage,
+      selectedMuscleGroup: selectedMuscleGroup ?? current.selectedMuscleGroup,
+      selectedTutorialVideo: clearSelectedTutorialVideo
+          ? null
+          : selectedTutorialVideo ?? current.selectedTutorialVideo,
+      tutorialVideos: tutorialVideos ?? current.tutorialVideos,
+      isTutorialVideosLoading:
+          isTutorialVideosLoading ?? current.isTutorialVideosLoading,
+      isSaving: isSaving ?? current.isSaving,
+    );
   }
 }

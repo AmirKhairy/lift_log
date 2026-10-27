@@ -132,6 +132,7 @@ final GoRouter appRouter = GoRouter(
             initialMachine: state.extra is MachineModel
                 ? state.extra as MachineModel
                 : null,
+            machineOnly: state.extra is MachineModel,
           ),
         ),
         GoRoute(

@@ -10,11 +10,13 @@ class HomeStatsSection extends StatelessWidget {
     super.key,
     required this.machineCount,
     required this.animation,
+    this.onViewMachines,
     required this.onAddWorkout,
   });
 
   final int machineCount;
   final Animation<double> animation;
+  final VoidCallback? onViewMachines;
   final VoidCallback onAddWorkout;
   @override
   Widget build(BuildContext context) {
@@ -28,19 +30,19 @@ class HomeStatsSection extends StatelessWidget {
               value: machineCount.toString(),
               label: 'machines'.tr,
               animation: animation,
+              onTap: onViewMachines,
             ),
           ),
           SizedBox(width: AppSpacing.sm),
           Expanded(
-            child: InkWell(
+            child: StatCard(
+              icon: Icons.fitness_center,
+              value: 'add_new_workout'.tr,
+              animation: animation,
+              backgroundColor: context.theme.colorScheme.primary,
+              iconColor: context.theme.colorScheme.onPrimary,
+              textColor: context.theme.colorScheme.onPrimary,
               onTap: onAddWorkout,
-              child: StatCard(
-                icon: Icons.fitness_center,
-                value: 'add_new_workout'.tr,
-                animation: animation,
-                backgroundColor: context.theme.colorScheme.primary,
-                iconColor: context.theme.colorScheme.onPrimary,
-              ),
             ),
           ),
         ],

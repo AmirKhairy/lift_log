@@ -88,6 +88,45 @@ void main() {
     expect(cubit.didMutate, isTrue);
   });
 
+  test('editMachine opens the editor and replaces the machine', () async {
+    final cubit = buildCubit();
+    await cubit.load();
+
+    var editorMachineId = '';
+    final updated = machine.copyWith(name: 'Seated Leg Press');
+    final didEdit = await cubit.editMachine(
+      openEditor: (currentMachine) async {
+        editorMachineId = currentMachine.id!;
+        return updated;
+      },
+    );
+
+    expect(didEdit, isTrue);
+    expect(editorMachineId, 'machine-1');
+    expect(
+      (cubit.state as MachineDetailsLoaded).machine.name,
+      'Seated Leg Press',
+    );
+  });
+
+  test('openTutorial only opens tutorials with a video link', () {
+    final cubit = buildCubit();
+    TutorialVideosModel? openedTutorial;
+
+    expect(
+      cubit.openTutorial(
+        tutorial: tutorial,
+        openPlayer: (value) => openedTutorial = value,
+      ),
+      isTrue,
+    );
+    expect(openedTutorial, tutorial);
+    expect(
+      cubit.openTutorial(tutorial: null, openPlayer: (_) {}),
+      isFalse,
+    );
+  });
+
   test('deleteMachine emits deleted after a successful load', () async {
     var deletedId = '';
     final cubit = buildCubit(
@@ -110,12 +149,16 @@ void main() {
         throw Exception('delete failed');
       },
     );
+    final states = <MachineDetailsState>[];
+    final subscription = cubit.stream.listen(states.add);
 
     await cubit.load();
     await cubit.deleteMachine();
+    await subscription.cancel();
 
     final state = cubit.state as MachineDetailsLoaded;
-    expect(state.isDeleting, isFalse);
+    expect(states, contains(isA<MachineDetailsDeleting>()));
+    expect(state, isA<MachineDetailsLoaded>());
     expect(cubit.didMutate, isFalse);
   });
 }

@@ -38,8 +38,10 @@ class _MainViewState extends State<MainView> {
               : null,
           body: IndexedStack(
             index: state.selectedIndex,
-            children: const [
-              HomePage(),
+            children: [
+              HomePage(
+                onViewMachines: () => context.read<MainCubit>().selectTab(1),
+              ),
               MachinesPage(),
               VideosPage(),
               ProfilePage(),

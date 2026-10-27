@@ -45,6 +45,8 @@ class _WorkoutCalendarState extends State<WorkoutCalendar> {
     return TableCalendar(
       key: ValueKey('${_focusedDay.year}-${_focusedDay.month}'),
 
+      locale: Localizations.localeOf(context).toLanguageTag(),
+
       firstDay: DateTime(2020),
       lastDay: DateTime(2030),
       focusedDay: _focusedDay,

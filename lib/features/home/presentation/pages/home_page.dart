@@ -15,7 +15,9 @@ import '../../cubit/home_cubit.dart';
 import '../../cubit/home_state.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.onViewMachines});
+
+  final VoidCallback? onViewMachines;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -98,7 +100,7 @@ class _HomePageState extends State<HomePage>
                   opacity: _appBarAnimation,
                   child: SlideTransition(
                     position: _appBarSlideAnimation,
-                    child: HomeAppBar( 
+                    child: HomeAppBar(
                       scrollController: _scrollController,
                       userName: loaded.user.name,
                     ),
@@ -122,6 +124,7 @@ class _HomePageState extends State<HomePage>
                 HomeStatsSection(
                   machineCount: loaded.machineCount,
                   animation: _statsAnimation,
+                  onViewMachines: widget.onViewMachines,
                   onAddWorkout: () async {
                     final saved = await context.push<bool>(AppRoutes.workout);
                     if (saved == true && context.mounted) {
@@ -132,9 +135,7 @@ class _HomePageState extends State<HomePage>
 
                 SizedBox(height: AppSpacing.md),
 
-                WorkoutCalendar(
-                  workoutDates: loaded.workoutDates,
-                ),
+                WorkoutCalendar(workoutDates: loaded.workoutDates),
                 SizedBox(height: AppSpacing.md),
               ],
             ),
