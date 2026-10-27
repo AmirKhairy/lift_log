@@ -1,4 +1,6 @@
 const Map<String, String> enLanguage = {
+  'network_offline': 'No internet connection',
+  'network_restored': 'Internet connection restored',
   "info": "Info",
   "error": "Error",
   "required": "Required",

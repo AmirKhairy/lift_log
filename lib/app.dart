@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lift_log/core/constants/app_constants.dart';
 import 'package:lift_log/core/services/theme_service.dart';
+import 'package:lift_log/core/widgets/network_status_banner.dart';
 import 'package:lift_log/i18n/localization_service.dart';
 
 import 'core/router/app_router.dart';
@@ -46,6 +47,14 @@ class LiftLogApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
+              builder: (context, child) {
+                return Stack(
+                  children: [
+                    child ?? const SizedBox.shrink(),
+                    const NetworkStatusBanner(),
+                  ],
+                );
+              },
             );
           },
         );

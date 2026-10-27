@@ -1,4 +1,6 @@
 const Map<String, String> arLanguage = {
+  'network_offline': 'لا يوجد اتصال بالإنترنت',
+  'network_restored': 'تمت استعادة اتصال الإنترنت',
   "info": "معلومات",
   "error": "خطأ",
   "required": "مطلوب",

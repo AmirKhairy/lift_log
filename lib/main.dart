@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/theme_service.dart';
+import 'core/services/network_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ Future<void> main() async {
   await StorageService.init();
   await LocalizationService.instance.init();
   await ThemeService.instance.init();
+  await NetworkService.instance.start();
 
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
