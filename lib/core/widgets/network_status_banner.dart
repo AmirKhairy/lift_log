@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/services/network_service.dart';
 import 'package:lift_log/core/theme/app_colors.dart';
+import 'package:lift_log/core/widgets/app_text.dart';
 
 class NetworkStatusBanner extends StatefulWidget {
   const NetworkStatusBanner({super.key});
@@ -66,21 +68,16 @@ class NetworkStatusBannerState extends State<NetworkStatusBanner> {
           child: SizedBox(
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 10,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
               child: Row(
                 children: [
-                  Icon(icon, color: Colors.white),
+                  Icon(icon, color: AppColors.surfaceLight, size: 24),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text(
+                    child: AppText(
                       message,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.surfaceLight,
                     ),
                   ),
                 ],
