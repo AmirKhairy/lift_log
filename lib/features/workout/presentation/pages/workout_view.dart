@@ -7,6 +7,7 @@ import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/models/machine_image.dart';
 import 'package:lift_log/core/models/machine_model.dart';
+import 'package:lift_log/core/models/workout_models.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_radius.dart';
@@ -18,7 +19,9 @@ import 'package:lift_log/features/workout/cubit/workout_cubit.dart';
 import 'package:lift_log/features/workout/cubit/workout_state.dart';
 import 'package:lift_log/features/workout/presentation/widgets/machine_log_card.dart';
 import 'package:lift_log/features/workout/presentation/widgets/performed_at_card.dart';
-import 'package:lift_log/features/workout/presentation/widgets/workout_intro_card.dart';
+import 'package:lift_log/features/workout/presentation/widgets/routine_actions.dart';
+import 'package:lift_log/features/workout/presentation/widgets/routine_delete_dialog.dart';
+import 'package:lift_log/features/workout/presentation/widgets/routine_name_dialog.dart';
 import 'package:lift_log/features/workout/presentation/widgets/workout_notes_field.dart';
 
 class WorkoutView extends StatelessWidget {
@@ -45,14 +48,21 @@ class WorkoutView extends StatelessWidget {
 
           return ListView(
             children: [
-              WorkoutIntroCard(machineOnly: machineOnly),
-              SizedBox(height: AppSpacing.md),
               PerformedAtCard(
                 performedAt: draft.performedAt,
                 enabled: !saving,
                 onChanged: cubit.updatePerformedDateTime,
               ),
               SizedBox(height: AppSpacing.lg),
+              if (cubit.routines.isNotEmpty)
+                RoutineActions(
+                  routines: cubit.routines,
+                  enabled: !saving,
+                  onSelect: () => _selectRoutine(context, cubit),
+                  onSave: () => _saveRoutine(context, cubit),
+                  showSave: false,
+                ),
+              SizedBox(height: AppSpacing.sm),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,17 +72,17 @@ class WorkoutView extends StatelessWidget {
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w700,
                   ),
-                  if (!machineOnly)
-                    TextButton.icon(
-                      onPressed: saving || cubit.isLoadingMachines
-                          ? null
-                          : () => _selectMachine(context, cubit),
-                      icon: const Icon(Icons.add_rounded),
-                      label: AppText('add_machine'),
-                    ),
+                  TextButton.icon(
+                    onPressed: saving || cubit.isLoadingMachines
+                        ? null
+                        : () => _selectMachine(context, cubit),
+                    icon: const Icon(Icons.add_rounded),
+                    label: AppText('add_machine'),
+                  ),
                 ],
               ),
               SizedBox(height: AppSpacing.sm),
+
               if (draft.machines.isEmpty)
                 Card(
                   child: Padding(
@@ -101,8 +111,16 @@ class WorkoutView extends StatelessWidget {
                 MachineLogCard(
                   key: ValueKey(draft.machines[machineIndex].machine.id),
                   machineIndex: machineIndex,
-                  canRemove: !machineOnly,
+                  canRemove: true,
                   onRemove: () => cubit.removeMachine(machineIndex),
+                ),
+              if (draft.machines.isNotEmpty)
+                RoutineActions(
+                  routines: cubit.routines,
+                  enabled: !saving,
+                  onSelect: () => _selectRoutine(context, cubit),
+                  onSave: () => _saveRoutine(context, cubit),
+                  showSelect: false,
                 ),
               if (error != null)
                 Padding(
@@ -112,10 +130,8 @@ class WorkoutView extends StatelessWidget {
                     style: TextStyle(color: context.colors.error),
                   ),
                 ),
-              if (!machineOnly) ...[
-                SizedBox(height: AppSpacing.sm),
-                WorkoutNotesField(onChanged: cubit.updateNotes),
-              ],
+              SizedBox(height: AppSpacing.sm),
+              WorkoutNotesField(onChanged: cubit.updateNotes),
               SizedBox(height: AppSpacing.lg),
               AppButton(
                 title: 'save_workout',
@@ -129,6 +145,87 @@ class WorkoutView extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _selectRoutine(BuildContext context, WorkoutCubit cubit) async {
+    final routine = await showModalBottomSheet<RoutineModel>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          children: cubit.routines.isEmpty
+              ? [
+                  Padding(
+                    padding: EdgeInsets.all(AppSpacing.lg),
+                    child: AppText('no_routines', textAlign: TextAlign.center),
+                  ),
+                ]
+              : [
+                  for (final routine in cubit.routines)
+                    ListTile(
+                      leading: const Icon(Icons.playlist_play_rounded),
+                      title: AppText(routine.name),
+                      subtitle: AppText(
+                        '${routine.exercises.length} ${'exercises'.tr}',
+                      ),
+                      trailing: IconButton(
+                        tooltip: 'delete_routine'.tr,
+                        icon: Icon(
+                          Icons.delete_outline_rounded,
+                          color: Theme.of(sheetContext).colorScheme.error,
+                        ),
+                        onPressed: () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (_) =>
+                                RoutineDeleteDialog(routineName: routine.name),
+                          );
+                          if (confirmed != true || !context.mounted) return;
+                          Navigator.pop(sheetContext);
+                          try {
+                            await cubit.deleteRoutine(routine.id);
+                            if (context.mounted) {
+                              AppSnackbar.success(
+                                message: 'routine_deleted'.tr,
+                                context: context,
+                              );
+                            }
+                          } catch (error) {
+                            if (context.mounted) {
+                              AppSnackbar.error(
+                                message: error.toString(),
+                                context: context,
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      onTap: () => Navigator.pop(sheetContext, routine),
+                    ),
+                ],
+        ),
+      ),
+    );
+    if (routine != null && context.mounted) cubit.applyRoutine(routine);
+  }
+
+  Future<void> _saveRoutine(BuildContext context, WorkoutCubit cubit) async {
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => const RoutineNameDialog(),
+    );
+    if (name == null || !context.mounted) return;
+    try {
+      final saved = await cubit.saveRoutine(name);
+      if (saved && context.mounted) {
+        AppSnackbar.success(message: 'routine_saved'.tr, context: context);
+      }
+    } catch (error) {
+      if (context.mounted) {
+        AppSnackbar.error(message: error.toString(), context: context);
+      }
+    }
   }
 
   Future<void> _selectMachine(BuildContext context, WorkoutCubit cubit) async {

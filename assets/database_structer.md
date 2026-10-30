@@ -67,3 +67,29 @@ CREATE TABLE public.workout_sessions (
   CONSTRAINT workout_sessions_pkey PRIMARY KEY (id),
   CONSTRAINT workout_sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
 );
+
+-- Routines saved by a user. Apply these tables in Supabase before enabling
+-- routine persistence in the app.
+CREATE TABLE public.workout_routines (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES public.profiles(id),
+  name text NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT workout_routines_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.workout_routine_exercises (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  routine_id uuid NOT NULL REFERENCES public.workout_routines(id) ON DELETE CASCADE,
+  machine_id uuid NOT NULL REFERENCES public.machines(id),
+  notes text,
+  CONSTRAINT workout_routine_exercises_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.workout_routine_sets (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  routine_exercise_id uuid NOT NULL REFERENCES public.workout_routine_exercises(id) ON DELETE CASCADE,
+  set_number integer NOT NULL,
+  weight numeric NOT NULL,
+  reps integer NOT NULL,
+  CONSTRAINT workout_routine_sets_pkey PRIMARY KEY (id)
+);

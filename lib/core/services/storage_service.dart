@@ -5,8 +5,13 @@ class StorageService {
 
   static late SharedPreferences _prefs;
 
+  static bool get isInitialized => _prefsInitialized;
+
+  static bool _prefsInitialized = false;
+
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    _prefsInitialized = true;
   }
 
   static Future<void> saveString(String key, String value) async {

@@ -35,6 +35,10 @@ class MachineDetailsCubit extends Cubit<MachineDetailsState> {
 
   bool get didMutate => _didMutate;
 
+  void markWorkoutLogged() {
+    _didMutate = true;
+  }
+
   final Future<TutorialVideosModel?> Function(String id) _getTutorialById;
   final Future<List<MachineWorkoutHistoryItem>> Function(String machineId)
   _getLogsForMachine;

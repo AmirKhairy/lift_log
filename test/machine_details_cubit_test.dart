@@ -88,6 +88,14 @@ void main() {
     expect(cubit.didMutate, isTrue);
   });
 
+  test('markWorkoutLogged marks details as mutated for the parent route', () {
+    final cubit = buildCubit();
+
+    cubit.markWorkoutLogged();
+
+    expect(cubit.didMutate, isTrue);
+  });
+
   test('editMachine opens the editor and replaces the machine', () async {
     final cubit = buildCubit();
     await cubit.load();

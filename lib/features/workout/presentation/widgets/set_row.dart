@@ -40,6 +40,16 @@ class _SetRowState extends State<SetRow> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant SetRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final set = _currentSet;
+    if (!FocusScope.of(context).hasFocus) {
+      _weightController.text = set.weight?.toString() ?? '';
+      _repsController.text = set.reps?.toString() ?? '';
+    }
+  }
+
   WorkoutSetDraft get _currentSet => context
       .read<WorkoutCubit>()
       .draft
@@ -65,9 +75,9 @@ class _SetRowState extends State<SetRow> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [
               TextInputFormatter.withFunction((oldValue, newValue) {
-                final isDecimal = RegExp(r'^\d*\.?\d*$').hasMatch(
-                  newValue.text,
-                );
+                final isDecimal = RegExp(
+                  r'^\d*\.?\d*$',
+                ).hasMatch(newValue.text);
                 return isDecimal ? newValue : oldValue;
               }),
             ],

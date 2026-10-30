@@ -197,7 +197,9 @@ class MachineDetailsView extends StatelessWidget {
                             extra: machine,
                           );
                           if (saved == true && context.mounted) {
-                            await context.read<MachineDetailsCubit>().load();
+                            final cubit = context.read<MachineDetailsCubit>();
+                            cubit.markWorkoutLogged();
+                            await cubit.load();
                           }
                         },
                       ),

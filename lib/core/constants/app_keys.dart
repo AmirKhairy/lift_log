@@ -5,4 +5,5 @@ class AppKeys {
   static const String language = 'language';
   static const String onboardingCompleted = 'onboarding_completed';
   static const String userId = 'user_id';
+  static const String workoutDraft = 'workout_draft';
 }

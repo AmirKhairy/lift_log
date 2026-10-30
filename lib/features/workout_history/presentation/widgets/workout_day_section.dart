@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/models/workout_models.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
@@ -22,7 +21,6 @@ class WorkoutDaySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final dateLabel = DateFormat('EEEE, MMMM d, y', locale).format(date);
-    final workoutLabel = sessions.length == 1 ? 'workout'.tr : 'workouts'.tr;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,12 +53,6 @@ class WorkoutDaySection extends StatelessWidget {
                     dateLabel,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(height: AppSpacing.xs),
-                  AppText(
-                    '${sessions.length} $workoutLabel',
-                    fontWeight: FontWeight.w700,
-                    color: context.appColors.subtitle,
                   ),
                 ],
               ),

@@ -87,11 +87,94 @@ class AuthService {
 
   Future<void> deleteAccount() async {
     try {
+      final userId = currentUser?.id;
+      if (userId == null) {
+        throw StateError('There is no authenticated user to delete.');
+      }
+
+      await _deleteUserMachineImages(userId);
       await _client.rpc('delete_user');
       await _client.auth.signOut();
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> _deleteUserMachineImages(String userId) async {
+    const bucketName = 'machine-images';
+    final storage = _client.storage.from(bucketName);
+    final filePaths = <String>{};
+
+    final machines = await _client
+        .from('machines')
+        .select('image_url')
+        .eq('user_id', userId);
+
+    for (final machine in machines) {
+      final imagePath = _machineImagePath(machine['image_url'] as String?);
+      if (imagePath != null && imagePath.startsWith('$userId/')) {
+        filePaths.add(imagePath);
+      }
+    }
+
+    filePaths.addAll(await _listStorageFilePaths(storage, userId));
+
+    final paths = filePaths.toList();
+    for (var start = 0; start < paths.length; start += 100) {
+      final end = (start + 100).clamp(0, paths.length);
+      await storage.remove(paths.sublist(start, end));
+    }
+
+    final remainingFiles = await _listStorageFilePaths(storage, userId);
+    if (remainingFiles.isNotEmpty) {
+      throw StateError(
+        'Could not delete all machine images for the current user.',
+      );
+    }
+  }
+
+  String? _machineImagePath(String? imageUrl) {
+    if (imageUrl == null || imageUrl.trim().isEmpty) return null;
+
+    final segments = Uri.tryParse(imageUrl)?.pathSegments;
+    if (segments == null) return null;
+
+    final bucketIndex = segments.indexOf('machine-images');
+    if (bucketIndex == -1 || bucketIndex == segments.length - 1) return null;
+
+    return segments.sublist(bucketIndex + 1).join('/');
+  }
+
+  Future<List<String>> _listStorageFilePaths(
+    StorageFileApi storage,
+    String directory,
+  ) async {
+    const pageSize = 100;
+    final paths = <String>[];
+    var offset = 0;
+
+    while (true) {
+      final entries = await storage.list(
+        path: directory,
+        searchOptions: SearchOptions(limit: pageSize, offset: offset),
+      );
+
+      if (entries.isEmpty) break;
+
+      for (final entry in entries) {
+        final entryPath = '$directory/${entry.name}';
+        if (entry.id == null) {
+          paths.addAll(await _listStorageFilePaths(storage, entryPath));
+        } else {
+          paths.add(entryPath);
+        }
+      }
+
+      if (entries.length < pageSize) break;
+      offset += entries.length;
+    }
+
+    return paths;
   }
 
   Future<User> registerWithEmailAndPassword({

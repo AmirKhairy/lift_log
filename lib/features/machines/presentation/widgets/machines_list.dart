@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/features/home/cubit/home_cubit.dart';
 import 'package:lift_log/features/machines/cubit/machines_cubit.dart';
 import 'package:lift_log/features/machines/cubit/machines_state.dart';
 import 'package:lift_log/features/machines/presentation/widgets/machine_item_widget.dart';
@@ -35,6 +36,7 @@ class MachinesList extends StatelessWidget {
             index: index,
             onChanged: () {
               context.read<MachinesCubit>().refresh();
+              context.read<HomeCubit>().refresh();
             },
             onDelete: () {
               context.read<MachinesCubit>().deleteMachine(machine);

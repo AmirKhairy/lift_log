@@ -1,27 +1,40 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/workout_models.dart';
 import 'package:lift_log/core/services/api_services/machines_service.dart';
 import 'package:lift_log/core/services/api_services/workout_service.dart';
+import 'package:lift_log/core/services/api_services/routine_service.dart';
+import 'package:lift_log/core/services/workout_draft_storage.dart';
 
 import 'workout_state.dart';
 
 class WorkoutCubit extends Cubit<WorkoutState> {
-  WorkoutCubit({MachineModel? initialMachine, WorkoutService? workoutService})
-    : _workoutService = workoutService ?? WorkoutService.instance,
-      super(
-        WorkoutEditing(
-          WorkoutDraft(
-            machines: initialMachine == null
-                ? const []
-                : [workoutMachineDraft(initialMachine)],
-          ),
-          isLoadingMachines: true,
-        ),
-      );
+  WorkoutCubit({
+    MachineModel? initialMachine,
+    WorkoutService? workoutService,
+    RoutineService? routineService,
+  }) : _initialMachine = initialMachine,
+       _workoutService = workoutService ?? WorkoutService.instance,
+       _routineService = routineService ?? RoutineService.instance,
+       super(
+         WorkoutEditing(
+           WorkoutDraft(
+             machines: initialMachine == null
+                 ? const []
+                 : [workoutMachineDraft(initialMachine)],
+           ),
+           isLoadingMachines: true,
+         ),
+       );
 
   final WorkoutService _workoutService;
+  final RoutineService _routineService;
+  final WorkoutDraftStorage _draftStorage = WorkoutDraftStorage.instance;
+  final MachineModel? _initialMachine;
+  String? _appliedRoutineId;
   final MachinesService _machinesService = MachinesService.instance;
 
   WorkoutDraft get draft => switch (state) {
@@ -35,6 +48,13 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     WorkoutEditing(:final availableMachines) => availableMachines,
     WorkoutSaving(:final availableMachines) => availableMachines,
     WorkoutError(:final availableMachines) => availableMachines,
+    WorkoutSaved() => const [],
+  };
+
+  List<RoutineModel> get routines => switch (state) {
+    WorkoutEditing(:final routines) => routines,
+    WorkoutSaving(:final routines) => routines,
+    WorkoutError(:final routines) => routines,
     WorkoutSaved() => const [],
   };
 
@@ -52,8 +72,25 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       state is WorkoutEditing && (state as WorkoutEditing).isLoadingMachines;
 
   Future<void> loadMachines() async {
+    final cachedDraft = await _draftStorage.load();
+    var restoredDraft = cachedDraft ?? draft;
+    if (_initialMachine != null &&
+        !restoredDraft.machines.any(
+          (item) => item.machine.id == _initialMachine.id,
+        )) {
+      restoredDraft = restoredDraft.copyWith(
+        machines: [
+          ...restoredDraft.machines,
+          workoutMachineDraft(_initialMachine),
+        ],
+      );
+    }
+    if (cachedDraft != null || _initialMachine != null) {
+      _emitEditing(restoredDraft);
+    }
+
     try {
-      await _machinesService.getMachines();
+      await Future.wait([_machinesService.getMachines(), _loadRoutines()]);
       final machines = _machinesService.machines ?? const <MachineModel>[];
       _emitEditing(
         draft,
@@ -68,6 +105,37 @@ class WorkoutCubit extends Cubit<WorkoutState> {
         machinesError: error.toString(),
       );
     }
+  }
+
+  Future<void> _loadRoutines() async {
+    try {
+      final loaded = await _routineService.getRoutines();
+      _emitEditing(draft, routines: loaded);
+    } catch (_) {}
+  }
+
+  void applyRoutine(RoutineModel routine) {
+    _appliedRoutineId = routine.id;
+    _emitDraft(draft.copyWith(machines: routine.exercises));
+  }
+
+  Future<bool> saveRoutine(String name) async {
+    final error = draft.validate();
+    if (error != null) {
+      _emitEditing(draft, error: error);
+      return false;
+    }
+    await _routineService.saveRoutine(name, draft, id: _appliedRoutineId);
+    final loaded = await _routineService.getRoutines();
+    _emitEditing(draft, routines: loaded, clearError: true);
+    return true;
+  }
+
+  Future<void> deleteRoutine(String routineId) async {
+    await _routineService.deleteRoutine(routineId);
+    if (_appliedRoutineId == routineId) _appliedRoutineId = null;
+    final loaded = await _routineService.getRoutines();
+    _emitEditing(draft, routines: loaded, clearError: true);
   }
 
   void updatePerformedAt(DateTime value) {
@@ -87,7 +155,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   void addMachine(MachineModel machine) {
     if (draft.machines.any((item) => item.machine.id == machine.id)) return;
 
-    _emitEditing(
+    _emitDraft(
       draft.copyWith(
         machines: [...draft.machines, workoutMachineDraft(machine)],
       ),
@@ -142,10 +210,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     final machines = [...draft.machines];
     final machineLog = machines[machineIndex];
     final sets = [...machineLog.sets];
-    sets[setIndex] = sets[setIndex].copyWith(
-      weight: parsedWeight,
-      reps: reps,
-    );
+    sets[setIndex] = sets[setIndex].copyWith(weight: parsedWeight, reps: reps);
     machines[machineIndex] = machineLog.copyWith(sets: sets);
     _emitDraft(draft.copyWith(machines: machines));
   }
@@ -157,9 +222,23 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       return;
     }
 
-    emit(WorkoutSaving(draft, availableMachines: availableMachines));
+    emit(
+      WorkoutSaving(
+        draft,
+        availableMachines: availableMachines,
+        routines: routines,
+      ),
+    );
     try {
       await _workoutService.saveWorkout(draft);
+      if (_appliedRoutineId != null) {
+        final routine = routines.firstWhere(
+          (item) => item.id == _appliedRoutineId,
+        );
+        await _routineService.saveRoutine(routine.name, draft, id: routine.id);
+      }
+
+      await _draftStorage.clear();
 
       emit(const WorkoutSaved());
     } catch (error) {
@@ -168,6 +247,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
           error.toString(),
           draft,
           availableMachines: availableMachines,
+          routines: routines,
         ),
       );
     }
@@ -175,6 +255,11 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
   void _emitDraft(WorkoutDraft nextDraft) {
     _emitEditing(nextDraft, clearError: true);
+    _persistDraft(nextDraft);
+  }
+
+  void _persistDraft(WorkoutDraft nextDraft) {
+    unawaited(_draftStorage.save(nextDraft));
   }
 
   void _emitEditing(
@@ -183,6 +268,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     bool? isLoadingMachines,
     String? machinesError,
     String? error,
+    List<RoutineModel>? routines,
     bool clearError = false,
     bool clearMachinesError = false,
   }) {
@@ -198,6 +284,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
         machinesError: clearMachinesError
             ? null
             : machinesError ?? current?.machinesError,
+        routines: routines ?? current?.routines ?? const [],
       ),
     );
   }

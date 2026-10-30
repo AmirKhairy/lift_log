@@ -16,6 +16,7 @@ final class WorkoutEditing extends WorkoutState {
     this.availableMachines = const [],
     this.isLoadingMachines = false,
     this.machinesError,
+    this.routines = const [],
   });
 
   final WorkoutDraft draft;
@@ -23,6 +24,7 @@ final class WorkoutEditing extends WorkoutState {
   final List<MachineModel> availableMachines;
   final bool isLoadingMachines;
   final String? machinesError;
+  final List<RoutineModel> routines;
 
   @override
   List<Object?> get props => [
@@ -31,17 +33,23 @@ final class WorkoutEditing extends WorkoutState {
     availableMachines,
     isLoadingMachines,
     machinesError,
+    routines,
   ];
 }
 
 final class WorkoutSaving extends WorkoutState {
-  const WorkoutSaving(this.draft, {this.availableMachines = const []});
+  const WorkoutSaving(
+    this.draft, {
+    this.availableMachines = const [],
+    this.routines = const [],
+  });
 
   final WorkoutDraft draft;
   final List<MachineModel> availableMachines;
+  final List<RoutineModel> routines;
 
   @override
-  List<Object?> get props => [draft, availableMachines];
+  List<Object?> get props => [draft, availableMachines, routines];
 }
 
 final class WorkoutSaved extends WorkoutState {
@@ -53,14 +61,16 @@ final class WorkoutError extends WorkoutState {
     this.message,
     this.draft, {
     this.availableMachines = const [],
+    this.routines = const [],
   });
 
   final String message;
   final WorkoutDraft draft;
   final List<MachineModel> availableMachines;
+  final List<RoutineModel> routines;
 
   @override
-  List<Object?> get props => [message, draft, availableMachines];
+  List<Object?> get props => [message, draft, availableMachines, routines];
 }
 
 extension WorkoutDraftValidation on WorkoutDraft {

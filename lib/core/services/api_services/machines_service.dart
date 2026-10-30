@@ -179,17 +179,17 @@ class MachinesService {
         throw Exception('User is not logged in');
       }
 
-      await SupabaseService.client.rpc(
-        'delete_machine_with_workouts',
-        params: {'p_machine_id': machineId},
-      );
-
       final imagePath = _machineImagePath(imageUrl);
       if (imagePath != null) {
         await SupabaseService.client.storage.from('machine-images').remove([
           imagePath,
         ]);
       }
+
+      await SupabaseService.client.rpc(
+        'delete_machine_with_workouts',
+        params: {'p_machine_id': machineId},
+      );
 
       machines = machines?.where((machine) => machine.id != machineId).toList();
     } catch (e) {

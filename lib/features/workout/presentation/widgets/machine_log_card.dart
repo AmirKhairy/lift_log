@@ -45,6 +45,15 @@ class _MachineLogCardState extends State<MachineLogCard> {
   }
 
   @override
+  void didUpdateWidget(covariant MachineLogCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final notes = _log.notes;
+    if (_notesController.text != notes && !FocusScope.of(context).hasFocus) {
+      _notesController.text = notes;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final log = _log;
     final cubit = context.read<WorkoutCubit>();

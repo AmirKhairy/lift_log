@@ -8,6 +8,20 @@ class WorkoutSetDraft extends Equatable {
   final double? weight;
   final int? reps;
 
+  factory WorkoutSetDraft.fromJson(Map<String, dynamic> json) {
+    return WorkoutSetDraft(
+      setNumber: (json['set_number'] as num).toInt(),
+      weight: (json['weight'] as num?)?.toDouble(),
+      reps: (json['reps'] as num?)?.toInt(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'set_number': setNumber,
+    'weight': weight,
+    'reps': reps,
+  };
+
   WorkoutSetDraft copyWith({int? setNumber, double? weight, int? reps}) {
     return WorkoutSetDraft(
       setNumber: setNumber ?? this.setNumber,
@@ -30,6 +44,28 @@ class WorkoutMachineDraft extends Equatable {
   final MachineModel machine;
   final String notes;
   final List<WorkoutSetDraft> sets;
+
+  factory WorkoutMachineDraft.fromJson(Map<String, dynamic> json) {
+    return WorkoutMachineDraft(
+      machine: MachineModel.fromJson(
+        Map<String, dynamic>.from(json['machine'] as Map),
+      ),
+      notes: json['notes'] as String? ?? '',
+      sets: (json['sets'] as List<dynamic>? ?? [])
+          .map(
+            (item) => WorkoutSetDraft.fromJson(
+              Map<String, dynamic>.from(item as Map),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'machine': machine.toJson(),
+    'notes': notes,
+    'sets': sets.map((set) => set.toJson()).toList(),
+  };
 
   WorkoutMachineDraft copyWith({
     MachineModel? machine,
@@ -60,6 +96,26 @@ class WorkoutDraft extends Equatable {
   final String notes;
   final List<WorkoutMachineDraft> machines;
 
+  factory WorkoutDraft.fromJson(Map<String, dynamic> json) {
+    return WorkoutDraft(
+      performedAt: DateTime.parse(json['performed_at'] as String),
+      notes: json['notes'] as String? ?? '',
+      machines: (json['machines'] as List<dynamic>? ?? [])
+          .map(
+            (item) => WorkoutMachineDraft.fromJson(
+              Map<String, dynamic>.from(item as Map),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'performed_at': performedAt.toIso8601String(),
+    'notes': notes,
+    'machines': machines.map((machine) => machine.toJson()).toList(),
+  };
+
   WorkoutDraft copyWith({
     DateTime? performedAt,
     String? notes,
@@ -74,6 +130,51 @@ class WorkoutDraft extends Equatable {
 
   @override
   List<Object?> get props => [performedAt, notes, machines];
+}
+
+class RoutineModel extends Equatable {
+  const RoutineModel({
+    required this.id,
+    required this.name,
+    required this.exercises,
+  });
+
+  final String id;
+  final String name;
+  final List<WorkoutMachineDraft> exercises;
+
+  factory RoutineModel.fromJson(Map<String, dynamic> json) {
+    final exerciseJson =
+        json['workout_routine_exercises'] as List<dynamic>? ?? [];
+    return RoutineModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      exercises: exerciseJson.map((raw) {
+        final item = Map<String, dynamic>.from(raw as Map);
+        final machine = MachineModel.fromJson(
+          Map<String, dynamic>.from(item['machines'] as Map),
+        );
+        final sets = (item['workout_routine_sets'] as List<dynamic>? ?? []).map(
+          (rawSet) {
+            final set = Map<String, dynamic>.from(rawSet as Map);
+            return WorkoutSetDraft(
+              setNumber: (set['set_number'] as num).toInt(),
+              weight: (set['weight'] as num).toDouble(),
+              reps: (set['reps'] as num).toInt(),
+            );
+          },
+        ).toList()..sort((a, b) => a.setNumber.compareTo(b.setNumber));
+        return WorkoutMachineDraft(
+          machine: machine,
+          notes: item['notes'] as String? ?? '',
+          sets: sets.isEmpty ? const [WorkoutSetDraft(setNumber: 1)] : sets,
+        );
+      }).toList(),
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, name, exercises];
 }
 
 class MachineWorkoutHistoryItem extends Equatable {

@@ -17,9 +17,6 @@ class WorkoutSessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final time = DateFormat.jm(locale).format(session.performedAt);
-    final exerciseLabel = session.logs.length == 1
-        ? 'exercise'.tr
-        : 'exercises'.tr;
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -40,7 +37,6 @@ class WorkoutSessionCard extends StatelessWidget {
           ),
         ),
         title: AppText(time),
-        subtitle: AppText('${session.logs.length} $exerciseLabel'),
         childrenPadding: EdgeInsets.fromLTRB(
           AppSpacing.md,
           0,
