@@ -6,7 +6,9 @@ import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/muscle_group_selector.dart';
+import 'package:lift_log/features/add_machine/presentation/widgets/target_muscle_selector.dart';
 import 'package:lift_log/features/machines/cubit/machines_cubit.dart';
 import 'package:lift_log/features/machines/cubit/machines_state.dart';
 import 'package:lift_log/features/machines/presentation/widgets/machines_empty_view.dart';
@@ -58,6 +60,20 @@ class MachinesPage extends StatelessWidget {
                           .selectAllMuscleGroups,
                     ),
                   ),
+                  if (state.selectedMuscleGroup != null) ...[
+                    SizedBox(height: AppSpacing.sm),
+                    TargetMuscleSelector(
+                      options: targetMusclesFor(state.selectedMuscleGroup!),
+                      selected: state.selectedTargetMuscle,
+                      showAll: true,
+                      onSelected: context
+                          .read<MachinesCubit>()
+                          .selectTargetMuscle,
+                      onAllSelected: () => context
+                          .read<MachinesCubit>()
+                          .selectTargetMuscle(null),
+                    ),
+                  ],
                   SizedBox(height: AppSpacing.nm),
                   Expanded(child: MachinesList(state: state)),
                 ],

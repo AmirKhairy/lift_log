@@ -5,6 +5,7 @@ import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/services/api_services/tutorial_videos_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/core/widgets/app_snackbar.dart';
 
 import 'videos_state.dart';
@@ -16,6 +17,7 @@ class VideosCubit extends Cubit<VideosState> {
 
   final TutorialVideosService _service;
   MuscleGroup _selectedMuscleGroup = MuscleGroup.values.first;
+  TargetMuscle? _selectedTargetMuscle;
   bool _hasLoaded = false;
   Future<void>? _loadingFuture;
 
@@ -30,6 +32,7 @@ class VideosCubit extends Cubit<VideosState> {
 
     final future = _loadData(
       muscleGroup: _selectedMuscleGroup,
+      targetMuscle: _selectedTargetMuscle,
       forceRefresh: false,
     );
     _loadingFuture = future;
@@ -37,33 +40,66 @@ class VideosCubit extends Cubit<VideosState> {
   }
 
   Future<void> refresh() async {
-    await _loadData(muscleGroup: _selectedMuscleGroup, forceRefresh: true);
+    await _loadData(
+      muscleGroup: _selectedMuscleGroup,
+      targetMuscle: _selectedTargetMuscle,
+      forceRefresh: true,
+    );
   }
 
   Future<void> selectMuscleGroup(MuscleGroup muscleGroup) async {
     _selectedMuscleGroup = muscleGroup;
+    _selectedTargetMuscle = null;
     _hasLoaded = false;
-    await _loadData(muscleGroup: muscleGroup, forceRefresh: false);
+    await _loadData(
+      muscleGroup: muscleGroup,
+      targetMuscle: null,
+      forceRefresh: false,
+    );
+  }
+
+  Future<void> selectTargetMuscle(TargetMuscle? targetMuscle) async {
+    _selectedTargetMuscle = targetMuscle;
+    _hasLoaded = false;
+    await _loadData(
+      muscleGroup: _selectedMuscleGroup,
+      targetMuscle: targetMuscle,
+      forceRefresh: false,
+    );
   }
 
   Future<void> _loadData({
     required MuscleGroup muscleGroup,
+    required TargetMuscle? targetMuscle,
     required bool forceRefresh,
   }) async {
-    emit(VideosLoading(muscleGroup));
+    emit(VideosLoading(muscleGroup, targetMuscle));
 
     try {
       final videos = await _service.getByMuscleGroup(
         muscleGroup,
+        targetMuscle: targetMuscle,
         forceRefresh: forceRefresh,
       );
 
       _hasLoaded = true;
-      emit(VideosLoaded(muscleGroup: muscleGroup, videos: videos));
+      emit(
+        VideosLoaded(
+          muscleGroup: muscleGroup,
+          targetMuscle: targetMuscle,
+          videos: videos,
+        ),
+      );
     } catch (e, s) {
       _hasLoaded = false;
       debugPrintStack(stackTrace: s);
-      emit(VideosError(e.toString(), muscleGroup: muscleGroup));
+      emit(
+        VideosError(
+          e.toString(),
+          muscleGroup: muscleGroup,
+          targetMuscle: targetMuscle,
+        ),
+      );
     }
   }
 

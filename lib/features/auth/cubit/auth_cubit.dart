@@ -78,10 +78,10 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // ========================================== Register ==========================================
-  int? age;
-  double? height;
-  double? weight;
-  Gender? gender;
+  int? age = 20;
+  double? height = 170.0;
+  double? weight = 65.0;
+  Gender? gender = Gender.male;
 
   void setAge(int value) {
     age = value;

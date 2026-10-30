@@ -47,20 +47,37 @@ class WorkoutLogTile extends StatelessWidget {
                     ),
                     if (log.machine.muscleGroup != null) ...[
                       SizedBox(height: AppSpacing.xs),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm,
-                          vertical: AppSpacing.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.colors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(999.r),
-                        ),
-                        child: AppText(
-                          log.machine.muscleGroup!.displayName,
-                          fontWeight: FontWeight.w700,
-                          color: context.colors.primary,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: context.colors.primary.withValues(
+                                alpha: 0.1,
+                              ),
+                              borderRadius: BorderRadius.circular(999.r),
+                            ),
+                            child: AppText(
+                              log.machine.muscleGroup!.displayName,
+                              fontWeight: FontWeight.w700,
+                              color: context.colors.primary,
+                            ),
+                          ),
+                          if (log.machine.targetMuscle != null &&
+                              log.machine.targetMuscle!.name.isNotEmpty) ...[
+                            SizedBox(width: AppSpacing.xs),
+                            Expanded(
+                              child: AppText(
+                                log.machine.targetMuscle!.name.tr,
+                                fontWeight: FontWeight.w700,
+                                color: context.colors.primary,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ],

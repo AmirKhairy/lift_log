@@ -3,11 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
+import 'package:lift_log/core/models/machine_image.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_card.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
-import 'package:lift_log/core/models/machine_image.dart';
 
 class MachineDetailsHeader extends StatelessWidget {
   const MachineDetailsHeader({super.key, required this.machine});
@@ -18,6 +18,7 @@ class MachineDetailsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final notes = machine.notes?.trim();
     final muscleGroup = machine.muscleGroup?.displayName;
+    final targetMuscle = machine.targetMuscle?.name;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,6 +58,37 @@ class MachineDetailsHeader extends StatelessWidget {
                 ),
                 child: AppText(
                   muscleGroup,
+                  color: context.theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ],
+          ),
+        ],
+        if (targetMuscle != null && targetMuscle.isNotEmpty) ...[
+          SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              AppText(
+                '${"target_muscle".tr}: ',
+                fontWeight: FontWeight.w700,
+                fontSize: 16.sp,
+              ),
+              SizedBox(width: AppSpacing.xs),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md.w,
+                  vertical: AppSpacing.xs.h,
+                ),
+                decoration: BoxDecoration(
+                  color: context.theme.colorScheme.primary.withValues(
+                    alpha: 0.12,
+                  ),
+                  borderRadius: BorderRadius.circular(AppSpacing.nm),
+                ),
+                child: AppText(
+                  targetMuscle.tr,
                   color: context.theme.colorScheme.primary,
                   fontWeight: FontWeight.w600,
                   fontSize: 14.sp,

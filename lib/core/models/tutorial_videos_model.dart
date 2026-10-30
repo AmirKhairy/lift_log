@@ -1,5 +1,6 @@
 import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 
 class TutorialVideosModel {
   final String? id;
@@ -8,6 +9,7 @@ class TutorialVideosModel {
   final String? videoUrl;
   final String? thumbnailUrl;
   final MuscleGroup? muscleGroup;
+  final TargetMuscle? targetMuscle;
   final DateTime? createdAt;
 
   TutorialVideosModel({
@@ -17,6 +19,7 @@ class TutorialVideosModel {
     this.videoUrl,
     this.thumbnailUrl,
     this.muscleGroup,
+    this.targetMuscle,
     this.createdAt,
   });
 
@@ -29,6 +32,9 @@ class TutorialVideosModel {
       thumbnailUrl: json['thumbnail_url'] as String?,
       muscleGroup: json['muscle_group'] != null
           ? MuscleGroupExtension.fromString(json['muscle_group'])
+          : null,
+      targetMuscle: json['target_muscle'] != null
+          ? TargetMuscleExtension.fromString(json['target_muscle'])
           : null,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
@@ -44,6 +50,7 @@ class TutorialVideosModel {
       'video_url': videoUrl,
       'thumbnail_url': thumbnailUrl,
       'muscle_group': muscleGroup?.toJson(),
+      'target_muscle': targetMuscle?.toJson(),
       'created_at': createdAt?.toIso8601String(),
     };
   }
@@ -55,6 +62,7 @@ class TutorialVideosModel {
     String? videoUrl,
     String? thumbnailUrl,
     MuscleGroup? muscleGroup,
+    TargetMuscle? targetMuscle,
     DateTime? createdAt,
   }) {
     return TutorialVideosModel(
@@ -64,6 +72,7 @@ class TutorialVideosModel {
       videoUrl: videoUrl ?? this.videoUrl,
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       muscleGroup: muscleGroup ?? this.muscleGroup,
+      targetMuscle: targetMuscle ?? this.targetMuscle,
       createdAt: createdAt ?? this.createdAt,
     );
   }

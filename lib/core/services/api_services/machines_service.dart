@@ -3,6 +3,7 @@ import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/services/supabase_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 
 class MachinesService {
   MachinesService._();
@@ -27,6 +28,7 @@ class MachinesService {
           name,
           image_url,
           muscle_group,
+          target_muscle,
           tutorial_video_id,
           notes,
           created_at,
@@ -45,6 +47,7 @@ class MachinesService {
     required String name,
     required String notes,
     required MuscleGroup muscleGroup,
+    TargetMuscle? targetMuscle,
     XFile? image,
     String? tutorialVideoId,
   }) async {
@@ -66,6 +69,7 @@ class MachinesService {
             'name': name.trim(),
             'image_url': imageUrl,
             'muscle_group': muscleGroup.toJson(),
+            'target_muscle': targetMuscle?.toJson(),
             'tutorial_video_id': tutorialVideoId,
             'notes': notes.trim().isEmpty ? null : notes.trim(),
           })
@@ -75,6 +79,7 @@ class MachinesService {
           name,
           image_url,
           muscle_group,
+          target_muscle,
           tutorial_video_id,
           notes,
           created_at,
@@ -108,6 +113,7 @@ class MachinesService {
     required String name,
     required String notes,
     required MuscleGroup muscleGroup,
+    TargetMuscle? targetMuscle,
     String? tutorialVideoId,
     XFile? image,
   }) async {
@@ -134,6 +140,7 @@ class MachinesService {
             'name': name.trim(),
             'image_url': imageUrl,
             'muscle_group': muscleGroup.toJson(),
+            'target_muscle': targetMuscle?.toJson(),
             'tutorial_video_id': tutorialVideoId,
             'notes': notes.trim().isEmpty ? null : notes.trim(),
             'updated_at': DateTime.now().toUtc().toIso8601String(),
@@ -172,11 +179,10 @@ class MachinesService {
         throw Exception('User is not logged in');
       }
 
-      await SupabaseService.client
-          .from('machines')
-          .delete()
-          .eq('id', machineId)
-          .eq('user_id', userId);
+      await SupabaseService.client.rpc(
+        'delete_machine_with_workouts',
+        params: {'p_machine_id': machineId},
+      );
 
       final imagePath = _machineImagePath(imageUrl);
       if (imagePath != null) {

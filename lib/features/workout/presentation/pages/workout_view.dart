@@ -7,6 +7,7 @@ import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/muscle_group.dart';
 import 'package:lift_log/core/models/machine_image.dart';
 import 'package:lift_log/core/models/machine_model.dart';
+import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_radius.dart';
 import 'package:lift_log/core/widgets/app_button.dart';
@@ -132,16 +133,34 @@ class WorkoutView extends StatelessWidget {
 
   Future<void> _selectMachine(BuildContext context, WorkoutCubit cubit) async {
     final available = cubit.selectableMachines;
-    if (available.isEmpty) return;
 
-    final machine = await showModalBottomSheet<MachineModel>(
+    final result = await showModalBottomSheet<Object?>(
       context: context,
       showDragHandle: true,
-      builder: (context) => SafeArea(
+      builder: (sheetContext) => SafeArea(
         child: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.only(bottom: AppSpacing.md),
           children: [
+            available.isEmpty
+                ? Padding(
+                    padding: EdgeInsets.all(AppSpacing.md),
+                    child: Column(
+                      children: [
+                        AppText(
+                          'no_machines_available'.tr,
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: AppSpacing.md),
+                        AppButton(
+                          title: 'add_machine'.tr,
+                          icon: const Icon(Icons.add_rounded),
+                          onPressed: () => Navigator.pop(sheetContext, true),
+                        ),
+                      ],
+                    ),
+                  )
+                : SizedBox.shrink(),
             for (final item in available)
               ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -151,15 +170,25 @@ class WorkoutView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                   fit: BoxFit.contain,
                 ),
-                title: AppText(item.name ?? '', fontSize: 17.sp),
-                subtitle: AppText(item.muscleGroup?.displayName ?? ''),
-                onTap: () => Navigator.pop(context, item),
+                title: AppText("${item.name}", fontSize: 17.sp),
+                subtitle: AppText(
+                  "${item.muscleGroup?.displayName}: ${item.targetMuscle?.name.tr}",
+                ),
+                onTap: () => Navigator.pop(sheetContext, item),
               ),
           ],
         ),
       ),
     );
 
-    if (machine != null && context.mounted) cubit.addMachine(machine);
+    if (result is MachineModel && context.mounted) {
+      cubit.addMachine(result);
+      return;
+    }
+
+    if (result == true && context.mounted) {
+      final machine = await context.push<MachineModel>(AppRoutes.addMachine);
+      if (machine != null && context.mounted) cubit.addMachine(machine);
+    }
   }
 }

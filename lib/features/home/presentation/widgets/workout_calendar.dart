@@ -53,6 +53,8 @@ class _WorkoutCalendarState extends State<WorkoutCalendar> {
 
       calendarFormat: CalendarFormat.month,
 
+      availableGestures: AvailableGestures.horizontalSwipe,
+
       availableCalendarFormats: const {CalendarFormat.month: 'Month'},
 
       headerStyle: HeaderStyle(

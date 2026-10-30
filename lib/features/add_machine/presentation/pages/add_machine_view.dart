@@ -9,6 +9,7 @@ import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/core/widgets/app_button.dart';
 import 'package:lift_log/core/widgets/app_labeled_text_field.dart';
 import 'package:lift_log/core/widgets/app_scaffold.dart';
@@ -23,6 +24,7 @@ import 'package:lift_log/features/add_machine/presentation/widgets/image_source_
 import 'package:lift_log/features/add_machine/presentation/widgets/machine_image_picker.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/muscle_group_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/performance_tip_card.dart';
+import 'package:lift_log/features/add_machine/presentation/widgets/target_muscle_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/tutorial_video_selector.dart';
 
 class AddMachineView extends StatefulWidget {
@@ -181,21 +183,33 @@ class AddMachineViewState extends State<AddMachineView> {
                     ),
                     if (state.selectedMuscleGroup != null) ...[
                       SizedBox(height: AppSpacing.md),
-                      AppStaggeredAnimation(
-                        index: 4,
-                        child: LabeledTextField(
-                          label: 'tutorial_videos_selection_label',
-                          child: TutorialVideoSelector(
-                            videos: state.tutorialVideos,
-                            selectedVideo: state.selectedTutorialVideo,
-                            isLoading: state.isTutorialVideosLoading,
-                            onSelected: context
-                                .read<AddMachineCubit>()
-                                .selectTutorialVideo,
-                            onPlay: _playTutorialVideo,
-                          ),
+                      LabeledTextField(
+                        label: 'target_muscle',
+                        child: TargetMuscleSelector(
+                          options: targetMusclesFor(state.selectedMuscleGroup!),
+                          selected: state.selectedTargetMuscle,
+                          onSelected: context
+                              .read<AddMachineCubit>()
+                              .selectTargetMuscle,
                         ),
                       ),
+                      SizedBox(height: AppSpacing.md),
+                      if (state.selectedTargetMuscle != null)
+                        AppStaggeredAnimation(
+                          index: 4,
+                          child: LabeledTextField(
+                            label: 'tutorial_videos_selection_label',
+                            child: TutorialVideoSelector(
+                              videos: state.tutorialVideos,
+                              selectedVideo: state.selectedTutorialVideo,
+                              isLoading: state.isTutorialVideosLoading,
+                              onSelected: context
+                                  .read<AddMachineCubit>()
+                                  .selectTutorialVideo,
+                              onPlay: _playTutorialVideo,
+                            ),
+                          ),
+                        ),
                     ],
                     SizedBox(height: AppSpacing.md),
                     const AppStaggeredAnimation(

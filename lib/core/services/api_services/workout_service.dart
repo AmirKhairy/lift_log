@@ -85,6 +85,7 @@ class WorkoutService {
               name,
               image_url,
               muscle_group,
+              target_muscle,
               tutorial_video_id,
               notes,
               created_at,

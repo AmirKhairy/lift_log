@@ -5,13 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/muscle_group.dart';
+import 'package:lift_log/core/models/machine_image.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/router/app_router.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/utils/logic_utilities.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
-import 'package:lift_log/core/models/machine_image.dart';
 
 class MachineItemWidget extends StatefulWidget {
   const MachineItemWidget({
@@ -139,6 +139,7 @@ class MachineItemWidgetState extends State<MachineItemWidget>
 
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     AppText(
                                       '${'muscle_group'.tr}:',
@@ -148,15 +149,44 @@ class MachineItemWidgetState extends State<MachineItemWidget>
                                       fontSize: 16.sp,
                                     ),
                                     SizedBox(width: AppSpacing.sm),
+                                    Expanded(
+                                      child: AppText(
+                                        widget
+                                                .machine
+                                                ?.muscleGroup
+                                                ?.displayName ??
+                                            '',
+                                        color:
+                                            context.theme.colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: AppSpacing.sm),
+
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                     AppText(
-                                      widget
-                                              .machine
-                                              ?.muscleGroup
-                                              ?.displayName ??
-                                          '',
-                                      color: context.theme.colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
+                                      '${'target_muscle'.tr}:',
+                                      color:
+                                          context.theme.colorScheme.onSurface,
+                                      fontWeight: FontWeight.normal,
                                       fontSize: 16.sp,
+                                    ),
+                                    SizedBox(width: AppSpacing.sm),
+                                    Expanded(
+                                      child: AppText(
+                                        widget.machine?.targetMuscle?.name.tr ??
+                                            '',
+                                        color:
+                                            context.theme.colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp,
+                                      ),
                                     ),
                                   ],
                                 ),

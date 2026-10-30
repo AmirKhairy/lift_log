@@ -6,6 +6,7 @@ import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/services/api_services/machines_service.dart';
 import 'package:lift_log/core/services/api_services/tutorial_videos_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/features/add_machine/cubit/add_machine_state.dart';
 
 class AddMachineCubit extends Cubit<AddMachineState> {
@@ -24,6 +25,10 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     if (muscleGroup == null) return;
 
     await selectMuscleGroup(muscleGroup);
+    final targetMuscle = machineToEdit?.targetMuscle;
+    if (targetMuscle != null) {
+      await selectTargetMuscle(targetMuscle);
+    }
 
     final tutorialVideoId = machineToEdit?.tutorialVideoId;
     if (tutorialVideoId == null || tutorialVideoId.isEmpty) return;
@@ -65,6 +70,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       _loaded(
         currentState,
         selectedMuscleGroup: muscleGroup,
+        clearSelectedTargetMuscle: true,
         selectedTutorialVideo: null,
         clearSelectedTutorialVideo: true,
         tutorialVideos: const [],
@@ -95,6 +101,49 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     }
   }
 
+  Future<void> selectTargetMuscle(TargetMuscle targetMuscle) async {
+    final currentState = state;
+    if (currentState is! AddMachineLoaded ||
+        currentState.selectedMuscleGroup == null) {
+      return;
+    }
+
+    emit(
+      _loaded(
+        currentState,
+        selectedTargetMuscle: targetMuscle,
+        selectedTutorialVideo: null,
+        clearSelectedTutorialVideo: true,
+        tutorialVideos: const [],
+        isTutorialVideosLoading: true,
+      ),
+    );
+
+    try {
+      final videos = await _tutorialVideosService.getByMuscleGroup(
+        currentState.selectedMuscleGroup!,
+        targetMuscle: targetMuscle,
+      );
+      final latestState = state;
+      if (latestState is AddMachineLoaded) {
+        emit(
+          _loaded(
+            latestState,
+            tutorialVideos: videos,
+            isTutorialVideosLoading: false,
+          ),
+        );
+      }
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s);
+      emit(AddMachineError(e.toString()));
+      final latestState = state;
+      if (latestState is AddMachineLoaded) {
+        emit(_loaded(latestState, isTutorialVideosLoading: false));
+      }
+    }
+  }
+
   void selectTutorialVideo(TutorialVideosModel video) {
     final currentState = state;
     if (currentState is! AddMachineLoaded) return;
@@ -116,6 +165,12 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       emit(currentState);
       return;
     }
+    final targetMuscle = currentState.selectedTargetMuscle;
+    if (targetMuscle == null) {
+      emit(const AddMachineError('select_target_muscle'));
+      emit(currentState);
+      return;
+    }
 
     emit(_loaded(currentState, isSaving: true));
 
@@ -126,6 +181,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
               name: name,
               notes: notes,
               muscleGroup: muscleGroup,
+              targetMuscle: targetMuscle,
               tutorialVideoId: currentState.selectedTutorialVideo?.id,
               image: selectedImage,
             )
@@ -133,6 +189,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
               name: name,
               notes: notes,
               muscleGroup: muscleGroup,
+              targetMuscle: targetMuscle,
               tutorialVideoId: currentState.selectedTutorialVideo?.id,
               image: selectedImage,
             );
@@ -150,6 +207,8 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     AddMachineLoaded current, {
     XFile? selectedImage,
     MuscleGroup? selectedMuscleGroup,
+    TargetMuscle? selectedTargetMuscle,
+    bool clearSelectedTargetMuscle = false,
     TutorialVideosModel? selectedTutorialVideo,
     List<TutorialVideosModel>? tutorialVideos,
     bool clearSelectedTutorialVideo = false,
@@ -159,6 +218,9 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     return AddMachineLoaded(
       selectedImage: selectedImage ?? current.selectedImage,
       selectedMuscleGroup: selectedMuscleGroup ?? current.selectedMuscleGroup,
+      selectedTargetMuscle: clearSelectedTargetMuscle
+          ? null
+          : selectedTargetMuscle ?? current.selectedTargetMuscle,
       selectedTutorialVideo: clearSelectedTutorialVideo
           ? null
           : selectedTutorialVideo ?? current.selectedTutorialVideo,

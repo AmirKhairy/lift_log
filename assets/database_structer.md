@@ -20,6 +20,7 @@ CREATE TABLE public.tutorial_videos (
   video_url text NOT NULL,
   thumbnail_url text,
   muscle_group text NOT NULL,
+  target_muscle text,
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT tutorial_videos_pkey PRIMARY KEY (id)
 );
@@ -29,6 +30,7 @@ CREATE TABLE public.machines (
   name text NOT NULL,
   image_url text,
   muscle_group text NOT NULL,
+  target_muscle text,
   tutorial_video_id uuid,
   notes text,
   created_at timestamp with time zone DEFAULT now(),

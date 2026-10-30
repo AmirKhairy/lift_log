@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 
 sealed class AddMachineState extends Equatable {
   const AddMachineState();
@@ -23,6 +24,7 @@ final class AddMachineLoaded extends AddMachineState {
   const AddMachineLoaded({
     this.selectedImage,
     this.selectedMuscleGroup,
+    this.selectedTargetMuscle,
     this.selectedTutorialVideo,
     this.tutorialVideos = const [],
     this.isTutorialVideosLoading = false,
@@ -31,6 +33,7 @@ final class AddMachineLoaded extends AddMachineState {
 
   final XFile? selectedImage;
   final MuscleGroup? selectedMuscleGroup;
+  final TargetMuscle? selectedTargetMuscle;
   final TutorialVideosModel? selectedTutorialVideo;
   final List<TutorialVideosModel> tutorialVideos;
   final bool isTutorialVideosLoading;
@@ -40,6 +43,7 @@ final class AddMachineLoaded extends AddMachineState {
   List<Object?> get props => [
     selectedImage,
     selectedMuscleGroup,
+    selectedTargetMuscle,
     selectedTutorialVideo,
     tutorialVideos,
     isTutorialVideosLoading,

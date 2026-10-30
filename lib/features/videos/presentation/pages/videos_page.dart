@@ -8,7 +8,9 @@ import 'package:lift_log/core/widgets/app_scaffold.dart';
 import 'package:lift_log/core/widgets/app_snackbar.dart';
 import 'package:lift_log/core/widgets/app_staggered_animation.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/muscle_group_selector.dart';
+import 'package:lift_log/features/add_machine/presentation/widgets/target_muscle_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/tutorial_video_selector.dart';
 import 'package:lift_log/features/videos/presentation/widgets/videos_loading.dart'
     as loading_widget;
@@ -49,6 +51,24 @@ class VideosPage extends StatelessWidget {
                     selectedMuscleGroup: selectedMuscleGroup,
                     onSelected: context.read<VideosCubit>().selectMuscleGroup,
                   ),
+                ),
+              ),
+              SizedBox(height: AppSpacing.sm),
+              AppStaggeredAnimation(
+                index: 1,
+                child: TargetMuscleSelector(
+                  options: targetMusclesFor(selectedMuscleGroup),
+                  selected: state is VideosLoaded
+                      ? state.targetMuscle
+                      : state is VideosLoading
+                      ? state.targetMuscle
+                      : state is VideosError
+                      ? state.targetMuscle
+                      : null,
+                  showAll: true,
+                  onSelected: context.read<VideosCubit>().selectTargetMuscle,
+                  onAllSelected: () =>
+                      context.read<VideosCubit>().selectTargetMuscle(null),
                 ),
               ),
               SizedBox(height: AppSpacing.lg),
