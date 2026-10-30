@@ -23,6 +23,8 @@ import 'package:lift_log/features/timer/presentation/pages/timer_page.dart';
 import 'package:lift_log/features/tutorial_video_player/presentation/pages/tutorial_video_player_page.dart';
 import 'package:lift_log/features/workout/presentation/pages/workout_page.dart';
 import 'package:lift_log/features/workout_history/presentation/pages/workout_history_page.dart';
+import 'package:lift_log/core/services/api_services/app_update_service.dart';
+import 'package:lift_log/features/force_update/presentation/pages/force_update_page.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -45,6 +47,7 @@ class AppRoutes {
   static const machineDetails = '/machine-details';
   static const tutorialVideoPlayer = '/tutorial-video-player';
   static const timer = '/timer';
+  static const forceUpdate = '/force-update';
 }
 
 bool get _isOnboardingCompleted =>
@@ -56,6 +59,9 @@ bool get _hasSavedUserId {
 }
 
 String _resolveInitialLocation() {
+  if (AppUpdateService.instance.requiredUpdate != null) {
+    return AppRoutes.forceUpdate;
+  }
   if (!_isOnboardingCompleted) {
     return AppRoutes.onboarding;
   }
@@ -72,6 +78,11 @@ final GoRouter appRouter = GoRouter(
   redirect: (context, state) {
     final uri = state.uri;
     final location = state.matchedLocation;
+
+    if (AppUpdateService.instance.requiredUpdate != null &&
+        location != AppRoutes.forceUpdate) {
+      return AppRoutes.forceUpdate;
+    }
 
     if (!_isOnboardingCompleted && location != AppRoutes.onboarding) {
       return AppRoutes.onboarding;
@@ -97,6 +108,11 @@ final GoRouter appRouter = GoRouter(
     return null;
   },
   routes: [
+    GoRoute(
+      path: AppRoutes.forceUpdate,
+      builder: (_, _) =>
+          ForceUpdatePage(config: AppUpdateService.instance.requiredUpdate!),
+    ),
     GoRoute(
       path: AppRoutes.onboarding,
       builder: (context, state) {

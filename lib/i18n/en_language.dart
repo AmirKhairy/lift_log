@@ -182,6 +182,12 @@ const Map<String, String> enLanguage = {
   "history_sessions": "Sessions",
   "history_sets": "Sets",
   "no_machine_history": "No workouts logged for this exercise yet.",
+  "volume_progress": "Volume Progress",
+  "exercise_volume": "Exercise volume",
+  "muscle_volume": "Muscle volume",
+  "volume": "Volume",
+  "volume_chart_explanation":
+      "Exercise volume is the total for one session. Muscle volume is the cumulative total across sessions.",
   "machine_updated": "Exercise updated successfully",
   "rep": "Rep",
   "core": "Core",
@@ -331,4 +337,10 @@ const Map<String, String> enLanguage = {
   'your_current_weight': 'Your current weight',
   'no_machines_available':
       'No exercises available, add a new one to get started.',
+  'update_required': 'Update required',
+  'update_required_description':
+      'A newer version of LiftLog is available. Update the app to continue.',
+  'update_now': 'Update now',
+  'update_link_error': 'Could not open the update link.',
+  'version': 'Version',
 };

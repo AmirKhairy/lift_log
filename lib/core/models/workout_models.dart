@@ -188,6 +188,9 @@ class MachineWorkoutHistoryItem extends Equatable {
   final String? logNotes;
   final List<WorkoutSetModel> sets;
 
+  double get totalVolume =>
+      sets.fold<double>(0, (total, set) => total + (set.weight * set.reps));
+
   factory MachineWorkoutHistoryItem.fromJson(Map<String, dynamic> json) {
     final sessionJson = json['workout_sessions'];
     final session = sessionJson is Map

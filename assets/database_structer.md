@@ -13,6 +13,21 @@ CREATE TABLE public.profiles (
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
+
+-- Public, singleton configuration used by the force-update check.
+-- Enable SELECT for anon/authenticated roles, and restrict INSERT/UPDATE/DELETE
+-- to administrators (or manage this row through the Supabase dashboard).
+CREATE TABLE public.app_settings (
+  id integer PRIMARY KEY CHECK (id = 1),
+  minimum_android_version text NOT NULL,
+  minimum_ios_version text NOT NULL,
+  android_store_url text NOT NULL,
+  ios_store_url text NOT NULL,
+  updated_at timestamp with time zone DEFAULT now()
+);
+ALTER TABLE public.app_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can read app settings"
+  ON public.app_settings FOR SELECT TO anon, authenticated USING (true);
 CREATE TABLE public.tutorial_videos (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   title text NOT NULL,

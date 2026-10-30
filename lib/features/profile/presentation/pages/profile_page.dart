@@ -6,6 +6,7 @@ import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/models/user_model.dart';
 import 'package:lift_log/core/router/app_router.dart';
+import 'package:lift_log/core/services/api_services/app_update_service.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_button.dart';
@@ -127,6 +128,11 @@ class ProfilePage extends StatelessWidget {
     bool isLoggingOut,
     bool isDeletingAccount,
   ) {
+    final installedVersion = AppUpdateService.instance.currentVersion;
+    final version = installedVersion.isEmpty
+        ? 'not_available'.tr
+        : installedVersion;
+
     return RefreshIndicator(
       onRefresh: () => context.read<ProfileCubit>().refresh(),
       child: ListView(
@@ -163,6 +169,14 @@ class ProfilePage extends StatelessWidget {
             isDeletingAccount: isDeletingAccount,
             onLogout: () => _confirmLogout(context),
             onDeleteAccount: () => _confirmDeleteAccount(context),
+          ),
+          SizedBox(height: AppSpacing.md),
+          Center(
+            child: AppText(
+              '${'version'.tr} $version',
+              color: context.appColors.subtitle,
+              fontSize: 12.sp,
+            ),
           ),
         ],
       ),

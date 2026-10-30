@@ -179,6 +179,12 @@ const Map<String, String> arLanguage = {
   "history_sessions": "الجلسات",
   "history_sets": "المجموعات",
   "no_machine_history": "لا توجد تمارين مسجلة لهذا التمرين بعد.",
+  "volume_progress": "تطور حجم التدريب",
+  "exercise_volume": "حجم التمرين",
+  "muscle_volume": "حجم العضلة",
+  "volume": "الحجم",
+  "volume_chart_explanation":
+      "حجم التمرين هو إجمالي جلسة واحدة، وحجم العضلة هو الإجمالي التراكمي عبر الجلسات.",
   "machine_updated": "تم تحديث التمرين بنجاح",
   "rep": "تكرار",
   "core": "الجذع",
@@ -325,4 +331,10 @@ const Map<String, String> arLanguage = {
   'date': 'التاريخ',
   'your_current_weight': 'وزنك الحالي',
   'no_machines_available': 'لا توجد تمارين متاحة. أضف تمرينًا جديدًا للبدء.',
+  'update_required': 'التحديث مطلوب',
+  'update_required_description':
+      'يتوفر إصدار أحدث من LiftLog. حدّث التطبيق للمتابعة.',
+  'update_now': 'التحديث الآن',
+  'update_link_error': 'تعذر فتح رابط التحديث.',
+  'version': 'الإصدار',
 };

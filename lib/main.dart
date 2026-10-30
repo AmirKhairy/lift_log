@@ -8,6 +8,7 @@ import 'app.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/theme_service.dart';
 import 'core/services/network_service.dart';
+import 'core/services/api_services/app_update_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ Future<void> main() async {
     url: dotenv.env['SUPABASE_URL'] ?? '',
     publishableKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY'] ?? '',
   );
+  await AppUpdateService.instance.checkForRequiredUpdate();
   DeepLinkService.instance.initialize();
 
   runApp(const LiftLogApp());

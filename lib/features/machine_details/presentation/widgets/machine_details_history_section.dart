@@ -7,6 +7,7 @@ import 'package:lift_log/core/models/workout_models.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_card.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/features/machine_details/presentation/widgets/machine_details_volume_chart.dart';
 
 class MachineDetailsHistorySection extends StatelessWidget {
   const MachineDetailsHistorySection({
@@ -44,6 +45,8 @@ class MachineDetailsHistorySection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HistorySummary(sessionCount: history.length, setCount: setCount),
+        SizedBox(height: AppSpacing.md.h),
+        MachineDetailsVolumeChart(history: history),
         SizedBox(height: AppSpacing.md.h),
         for (var index = 0; index < history.length; index++) ...[
           if (index > 0) SizedBox(height: AppSpacing.sm.h),
