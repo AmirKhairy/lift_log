@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/models/user_model.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
@@ -13,11 +13,13 @@ class ProfileDataSection extends StatelessWidget {
   const ProfileDataSection({
     super.key,
     required this.user,
+    required this.onBodyProgress,
     required this.onEditProfile,
     required this.onChangePassword,
   });
 
   final UserModel user;
+  final VoidCallback onBodyProgress;
   final VoidCallback onEditProfile;
   final VoidCallback onChangePassword;
 
@@ -48,6 +50,14 @@ class ProfileDataSection extends StatelessWidget {
           ProfileInfoRow(
             label: 'weight'.tr,
             value: '${user.weight.toInt()} ${'weight_unit'.tr}',
+          ),
+          SizedBox(height: AppSpacing.md),
+          OutlinedButton.icon(
+            onPressed: onBodyProgress,
+            label: AppText(
+              'body_progress'.tr,
+              color: context.theme.colorScheme.primary,
+            ),
           ),
           SizedBox(height: AppSpacing.md),
           OutlinedButton(

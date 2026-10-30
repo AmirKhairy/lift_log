@@ -11,10 +11,12 @@ import 'package:lift_log/features/auth/presentation/pages/forgot_password_page.d
 import 'package:lift_log/features/auth/presentation/pages/login_page.dart';
 import 'package:lift_log/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:lift_log/features/auth/presentation/pages/sign_up_page.dart';
+import 'package:lift_log/features/body_progress/presentation/pages/body_progress_page.dart';
 import 'package:lift_log/features/machine_details/presentation/pages/machine_details_page.dart';
 import 'package:lift_log/features/main/presentation/pages/main_page.dart';
 import 'package:lift_log/features/onBoarding/presentation/pages/onboarding_page.dart';
 import 'package:lift_log/features/profile/presentation/pages/change_password_page.dart';
+import 'package:lift_log/features/profile/cubit/profile_cubit.dart';
 import 'package:lift_log/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:lift_log/features/timer/cubit/timer_cubit.dart';
 import 'package:lift_log/features/timer/presentation/pages/timer_page.dart';
@@ -36,6 +38,7 @@ class AppRoutes {
   static const settings = '/settings';
   static const editProfile = '/edit-profile';
   static const changePassword = '/change-password';
+  static const bodyProgress = '/body-progress';
   static const workout = '/workout';
   static const workoutHistory = '/workout-history';
   static const addMachine = '/add-machine';
@@ -102,7 +105,13 @@ final GoRouter appRouter = GoRouter(
     ),
     ShellRoute(
       builder: (context, state, child) {
-        return BlocProvider(create: (_) => AuthCubit(), child: child);
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => AuthCubit()),
+            BlocProvider(create: (_) => ProfileCubit()),
+          ],
+          child: child,
+        );
       },
       routes: [
         GoRoute(path: AppRoutes.login, builder: (_, _) => const LoginPage()),
@@ -181,6 +190,11 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.changePassword,
           builder: (_, _) => const ChangePasswordPage(),
+        ),
+        GoRoute(
+          path: AppRoutes.bodyProgress,
+          builder: (_, state) =>
+              BodyProgressPage(user: state.extra as UserModel),
         ),
         GoRoute(
           path: AppRoutes.timer,

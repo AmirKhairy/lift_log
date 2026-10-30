@@ -17,7 +17,6 @@ class MainPage extends StatelessWidget {
         BlocProvider(create: (_) => HomeCubit()),
         BlocProvider(create: (_) => VideosCubit()),
         BlocProvider(create: (_) => MachinesCubit()),
-        BlocProvider(create: (_) => ProfileCubit()),
         BlocProvider(
           create: (context) => MainCubit(
             loadHome: () => context.read<HomeCubit>().loadIfNeeded(),

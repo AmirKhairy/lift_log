@@ -32,6 +32,13 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> refresh() => _loadOnce();
 
+  void updateWeightLocally(double weight) {
+    final current = state;
+    if (current is ProfileUserState) {
+      emit(ProfileLoaded(current.user.copyWith(weight: weight)));
+    }
+  }
+
   Future<void> _loadOnce() {
     final loadingFuture = _loadingFuture;
     if (loadingFuture != null) {

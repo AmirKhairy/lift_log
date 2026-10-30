@@ -134,6 +134,8 @@ class ProfilePage extends StatelessWidget {
         children: [
           ProfileDataSection(
             user: user,
+            onBodyProgress: () =>
+                context.push(AppRoutes.bodyProgress, extra: user),
             onEditProfile: () async {
               final updated = await context.push<bool>(
                 AppRoutes.editProfile,
