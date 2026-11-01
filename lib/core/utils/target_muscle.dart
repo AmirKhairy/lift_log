@@ -26,6 +26,7 @@ enum TargetMuscle {
   obliques,
   lowerAbs,
   cardiovascular,
+  fullbody,
 }
 
 class TargetMuscleOption {
@@ -90,6 +91,7 @@ List<TargetMuscleOption> targetMusclesFor(MuscleGroup group) {
       TargetMuscle.lowerAbs,
     ],
     MuscleGroup.cardio => const [TargetMuscle.cardiovascular],
+    MuscleGroup.fullbody => const [TargetMuscle.fullbody],
   };
 
   return values.map((value) => TargetMuscleOption(value, group)).toList();

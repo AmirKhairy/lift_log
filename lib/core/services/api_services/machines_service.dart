@@ -1,5 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:lift_log/core/extensions/muscle_group.dart';
+import 'package:lift_log/core/extensions/exercise_type_extension.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/services/supabase_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
@@ -29,6 +30,7 @@ class MachinesService {
           image_url,
           muscle_group,
           target_muscle,
+          exercise_type,
           tutorial_video_id,
           notes,
           created_at,
@@ -50,6 +52,7 @@ class MachinesService {
     TargetMuscle? targetMuscle,
     XFile? image,
     String? tutorialVideoId,
+    required ExerciseType exerciseType,
   }) async {
     try {
       final userId = SupabaseService.currentUser?.id;
@@ -70,6 +73,7 @@ class MachinesService {
             'image_url': imageUrl,
             'muscle_group': muscleGroup.toJson(),
             'target_muscle': targetMuscle?.toJson(),
+            'exercise_type': exerciseType.databaseValue,
             'tutorial_video_id': tutorialVideoId,
             'notes': notes.trim().isEmpty ? null : notes.trim(),
           })
@@ -80,6 +84,7 @@ class MachinesService {
           image_url,
           muscle_group,
           target_muscle,
+          exercise_type,
           tutorial_video_id,
           notes,
           created_at,
@@ -102,6 +107,8 @@ class MachinesService {
           name,
           image_url,
           muscle_group,
+          target_muscle,
+          exercise_type,
           tutorial_video_id,
           notes,
           created_at,
@@ -116,6 +123,7 @@ class MachinesService {
     TargetMuscle? targetMuscle,
     String? tutorialVideoId,
     XFile? image,
+    required ExerciseType exerciseType,
   }) async {
     try {
       final userId = SupabaseService.currentUser?.id;
@@ -141,6 +149,7 @@ class MachinesService {
             'image_url': imageUrl,
             'muscle_group': muscleGroup.toJson(),
             'target_muscle': targetMuscle?.toJson(),
+            'exercise_type': exerciseType.databaseValue,
             'tutorial_video_id': tutorialVideoId,
             'notes': notes.trim().isEmpty ? null : notes.trim(),
             'updated_at': DateTime.now().toUtc().toIso8601String(),

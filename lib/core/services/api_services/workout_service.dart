@@ -32,6 +32,7 @@ class WorkoutService {
                     'set_number': set.setNumber,
                     'weight': set.weight,
                     'reps': set.reps,
+                    'duration_seconds': set.durationSeconds,
                   },
               ],
             },
@@ -86,6 +87,7 @@ class WorkoutService {
               image_url,
               muscle_group,
               target_muscle,
+              exercise_type,
               tutorial_video_id,
               notes,
               created_at,
@@ -95,6 +97,7 @@ class WorkoutService {
               set_number,
               weight,
               reps
+              ,duration_seconds
             )
           )
         ''')
@@ -133,6 +136,7 @@ class WorkoutService {
             set_number,
             weight,
             reps
+              ,duration_seconds
           )
         ''')
         .eq('machine_id', machineId)

@@ -20,7 +20,14 @@ class AddMachineCubit extends Cubit<AddMachineState> {
 
   bool get isEditing => machineToEdit != null;
 
+  void selectExerciseType(ExerciseType type) {
+    final current = state;
+    if (current is AddMachineLoaded) emit(_loaded(current, selectedExerciseType: type));
+  }
+
   Future<void> hydrate() async {
+    final existingType = machineToEdit?.exerciseType;
+    if (existingType != null) selectExerciseType(existingType);
     final muscleGroup = machineToEdit?.muscleGroup;
     if (muscleGroup == null) return;
 
@@ -184,6 +191,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
               targetMuscle: targetMuscle,
               tutorialVideoId: currentState.selectedTutorialVideo?.id,
               image: selectedImage,
+              exerciseType: currentState.selectedExerciseType,
             )
           : await _machinesService.addMachine(
               name: name,
@@ -192,6 +200,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
               targetMuscle: targetMuscle,
               tutorialVideoId: currentState.selectedTutorialVideo?.id,
               image: selectedImage,
+              exerciseType: currentState.selectedExerciseType,
             );
 
       emit(AddMachineSuccess(machine));
@@ -214,6 +223,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     bool clearSelectedTutorialVideo = false,
     bool? isTutorialVideosLoading,
     bool? isSaving,
+    ExerciseType? selectedExerciseType,
   }) {
     return AddMachineLoaded(
       selectedImage: selectedImage ?? current.selectedImage,
@@ -228,6 +238,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       isTutorialVideosLoading:
           isTutorialVideosLoading ?? current.isTutorialVideosLoading,
       isSaving: isSaving ?? current.isSaving,
+      selectedExerciseType: selectedExerciseType ?? current.selectedExerciseType,
     );
   }
 }

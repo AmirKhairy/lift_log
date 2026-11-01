@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lift_log/core/utils/app_assets.dart';
+import 'package:lift_log/core/services/api_services/app_settings_service.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/core/widgets/app_cached_network_image.dart';
 
 class MachineImage extends StatelessWidget {
   const MachineImage({
     super.key,
     this.imageUrl,
+    this.targetMuscle,
     this.width,
     this.height,
     this.fit = BoxFit.cover,
@@ -13,6 +15,7 @@ class MachineImage extends StatelessWidget {
   });
 
   final String? imageUrl;
+  final TargetMuscle? targetMuscle;
   final double? width;
   final double? height;
   final BoxFit fit;
@@ -20,8 +23,10 @@ class MachineImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final url = imageUrl?.trim() ?? '';
-    if (url.isEmpty) return _logo();
+    final url = imageUrl?.trim().isNotEmpty == true
+        ? imageUrl!.trim()
+        : AppSettingsService.instance.targetMuscleImageUrl(targetMuscle);
+    if (url == null || url.isEmpty) return const SizedBox.shrink();
 
     return AppCachedNetworkImage(
       imageUrl: url,
@@ -29,16 +34,7 @@ class MachineImage extends StatelessWidget {
       height: height,
       fit: fit,
       borderRadius: borderRadius,
-      errorWidget: _logo(),
-    );
-  }
-
-  Widget _logo() {
-    return Image.asset(
-      AppAssets.logo,
-      width: width,
-      height: height,
-      fit: BoxFit.contain,
+      errorWidget: const SizedBox.shrink(),
     );
   }
 }

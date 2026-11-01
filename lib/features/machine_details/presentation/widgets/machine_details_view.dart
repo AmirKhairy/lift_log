@@ -180,6 +180,7 @@ class MachineDetailsView extends StatelessWidget {
                             child: MachineDetailsHistorySection(
                               history: history,
                               error: historyError,
+                              exerciseType: machine.exerciseType,
                             ),
                           ),
                         ],

@@ -35,6 +35,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   final WorkoutDraftStorage _draftStorage = WorkoutDraftStorage.instance;
   final MachineModel? _initialMachine;
   String? _appliedRoutineId;
+  bool _isEditingRoutine = false;
   final MachinesService _machinesService = MachinesService.instance;
 
   WorkoutDraft get draft => switch (state) {
@@ -57,6 +58,21 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     WorkoutError(:final routines) => routines,
     WorkoutSaved() => const [],
   };
+
+  String? get appliedRoutineName {
+    final routineId = _appliedRoutineId;
+    if (routineId == null) return null;
+
+    for (final routine in routines) {
+      if (routine.id == routineId) return routine.name;
+    }
+    return null;
+  }
+
+  bool get shouldShowRoutineSave =>
+      _appliedRoutineId == null || _isEditingRoutine;
+
+  bool get isEditingRoutine => _isEditingRoutine;
 
   List<MachineModel> get selectableMachines {
     final selectedIds = draft.machines
@@ -114,8 +130,9 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     } catch (_) {}
   }
 
-  void applyRoutine(RoutineModel routine) {
+  void applyRoutine(RoutineModel routine, {bool editing = false}) {
     _appliedRoutineId = routine.id;
+    _isEditingRoutine = editing;
     _emitDraft(draft.copyWith(machines: routine.exercises));
   }
 
@@ -205,12 +222,18 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     required int setIndex,
     double? weight,
     int? reps,
+    int? durationSeconds,
   }) {
     final parsedWeight = weight?.isFinite == true ? weight : null;
     final machines = [...draft.machines];
     final machineLog = machines[machineIndex];
     final sets = [...machineLog.sets];
-    sets[setIndex] = sets[setIndex].copyWith(weight: parsedWeight, reps: reps);
+    sets[setIndex] = WorkoutSetDraft(
+      setNumber: sets[setIndex].setNumber,
+      weight: parsedWeight,
+      reps: reps,
+      durationSeconds: durationSeconds,
+    );
     machines[machineIndex] = machineLog.copyWith(sets: sets);
     _emitDraft(draft.copyWith(machines: machines));
   }

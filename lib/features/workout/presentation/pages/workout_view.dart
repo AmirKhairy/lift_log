@@ -121,6 +121,10 @@ class WorkoutView extends StatelessWidget {
                   onSelect: () => _selectRoutine(context, cubit),
                   onSave: () => _saveRoutine(context, cubit),
                   showSelect: false,
+                  showSave: cubit.shouldShowRoutineSave,
+                  saveLabel: cubit.isEditingRoutine
+                      ? 'update_routine'
+                      : 'save_routine',
                 ),
               if (error != null)
                 Padding(
@@ -169,37 +173,57 @@ class WorkoutView extends StatelessWidget {
                       subtitle: AppText(
                         '${routine.exercises.length} ${'exercises'.tr}',
                       ),
-                      trailing: IconButton(
-                        tooltip: 'delete_routine'.tr,
-                        icon: Icon(
-                          Icons.delete_outline_rounded,
-                          color: Theme.of(sheetContext).colorScheme.error,
-                        ),
-                        onPressed: () async {
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (_) =>
-                                RoutineDeleteDialog(routineName: routine.name),
-                          );
-                          if (confirmed != true || !context.mounted) return;
-                          Navigator.pop(sheetContext);
-                          try {
-                            await cubit.deleteRoutine(routine.id);
-                            if (context.mounted) {
-                              AppSnackbar.success(
-                                message: 'routine_deleted'.tr,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            tooltip: 'edit_routine'.tr,
+                            icon: const Icon(Icons.edit_outlined),
+                            onPressed: () {
+                              Navigator.pop(sheetContext);
+                              cubit.applyRoutine(routine, editing: true);
+                              AppSnackbar.info(
+                                message: 'routine_loaded_for_editing',
                                 context: context,
                               );
-                            }
-                          } catch (error) {
-                            if (context.mounted) {
-                              AppSnackbar.error(
-                                message: error.toString(),
+                            },
+                          ),
+                          IconButton(
+                            tooltip: 'delete_routine'.tr,
+                            icon: Icon(
+                              Icons.delete_outline_rounded,
+                              color: Theme.of(sheetContext).colorScheme.error,
+                            ),
+                            onPressed: () async {
+                              final confirmed = await showDialog<bool>(
                                 context: context,
+                                builder: (_) => RoutineDeleteDialog(
+                                  routineName: routine.name,
+                                ),
                               );
-                            }
-                          }
-                        },
+                              if (confirmed != true || !context.mounted) {
+                                return;
+                              }
+                              Navigator.pop(sheetContext);
+                              try {
+                                await cubit.deleteRoutine(routine.id);
+                                if (context.mounted) {
+                                  AppSnackbar.success(
+                                    message: 'routine_deleted'.tr,
+                                    context: context,
+                                  );
+                                }
+                              } catch (error) {
+                                if (context.mounted) {
+                                  AppSnackbar.error(
+                                    message: error.toString(),
+                                    context: context,
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        ],
                       ),
                       onTap: () => Navigator.pop(sheetContext, routine),
                     ),
@@ -211,15 +235,19 @@ class WorkoutView extends StatelessWidget {
   }
 
   Future<void> _saveRoutine(BuildContext context, WorkoutCubit cubit) async {
+    final updating = cubit.appliedRoutineName != null;
     final name = await showDialog<String>(
       context: context,
-      builder: (_) => const RoutineNameDialog(),
+      builder: (_) => RoutineNameDialog(initialName: cubit.appliedRoutineName),
     );
     if (name == null || !context.mounted) return;
     try {
       final saved = await cubit.saveRoutine(name);
       if (saved && context.mounted) {
-        AppSnackbar.success(message: 'routine_saved'.tr, context: context);
+        AppSnackbar.success(
+          message: updating ? 'routine_updated' : 'routine_saved',
+          context: context,
+        );
       }
     } catch (error) {
       if (context.mounted) {
@@ -263,6 +291,7 @@ class WorkoutView extends StatelessWidget {
                 contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 leading: MachineImage(
                   imageUrl: item.imageUrl,
+                  targetMuscle: item.targetMuscle,
                   width: 60.w,
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                   fit: BoxFit.contain,

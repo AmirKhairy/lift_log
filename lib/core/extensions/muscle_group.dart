@@ -20,6 +20,8 @@ extension MuscleGroupExtension on MuscleGroup {
         return 'core'.tr;
       case MuscleGroup.cardio:
         return 'cardio'.tr;
+      case MuscleGroup.fullbody:
+        return 'fullbody'.tr;
     }
   }
 
@@ -41,6 +43,8 @@ extension MuscleGroupExtension on MuscleGroup {
         return MuscleGroup.core;
       case 'cardio':
         return MuscleGroup.cardio;
+      case 'fullbody':
+        return MuscleGroup.fullbody;
       default:
         throw Exception('Invalid muscle group: $value');
     }

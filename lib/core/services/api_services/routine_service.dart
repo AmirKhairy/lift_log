@@ -18,8 +18,8 @@ class RoutineService {
           workout_routine_exercises(
             machine_id,
             notes,
-            machines(id, user_id, name, image_url, muscle_group, target_muscle, tutorial_video_id, notes, created_at, updated_at),
-            workout_routine_sets(set_number, weight, reps)
+            machines(id, user_id, name, image_url, muscle_group, target_muscle, exercise_type, tutorial_video_id, notes, created_at, updated_at),
+            workout_routine_sets(set_number, weight, reps, duration_seconds)
           )
         ''')
         .eq('user_id', userId)
@@ -80,6 +80,7 @@ class RoutineService {
             'set_number': set.setNumber,
             'weight': set.weight,
             'reps': set.reps,
+            'duration_seconds': set.durationSeconds,
           },
       ]);
     }

@@ -200,6 +200,7 @@ class MachineItemWidgetState extends State<MachineItemWidget>
                             children: [
                               MachineImage(
                                 imageUrl: widget.machine?.imageUrl,
+                                targetMuscle: widget.machine?.targetMuscle,
                                 width: 120.w,
                                 fit: BoxFit.cover,
                                 borderRadius: BorderRadius.circular(

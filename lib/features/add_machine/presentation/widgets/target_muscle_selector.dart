@@ -26,7 +26,6 @@ class TargetMuscleSelector extends StatelessWidget {
     return SizedBox(
       height: 40.h,
       child: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
         scrollDirection: Axis.horizontal,
         itemCount: options.length + (showAll ? 1 : 0),
         separatorBuilder: (_, _) => SizedBox(width: AppSpacing.sm),

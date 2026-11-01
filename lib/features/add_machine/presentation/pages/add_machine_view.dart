@@ -26,6 +26,7 @@ import 'package:lift_log/features/add_machine/presentation/widgets/muscle_group_
 import 'package:lift_log/features/add_machine/presentation/widgets/performance_tip_card.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/target_muscle_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/tutorial_video_selector.dart';
+import 'package:lift_log/features/add_machine/presentation/widgets/exercise_type_selector.dart';
 
 class AddMachineView extends StatefulWidget {
   const AddMachineView({super.key, this.machineToEdit});
@@ -137,6 +138,7 @@ class AddMachineViewState extends State<AddMachineView> {
                       child: MachineImagePicker(
                         image: state.selectedImage,
                         existingImageUrl: widget.machineToEdit?.imageUrl,
+                        targetMuscle: state.selectedTargetMuscle,
                         onTap: _showImageSourceSheet,
                       ),
                     ),
@@ -152,6 +154,14 @@ class AddMachineViewState extends State<AddMachineView> {
                           textInputAction: TextInputAction.next,
                           textCapitalization: TextCapitalization.words,
                         ),
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+                    LabeledTextField(
+                      label: 'exercise_type',
+                      child: ExerciseTypeSelector(
+                        selected: state.selectedExerciseType,
+                        onSelected: context.read<AddMachineCubit>().selectExerciseType,
                       ),
                     ),
                     SizedBox(height: AppSpacing.md),

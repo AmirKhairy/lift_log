@@ -5,6 +5,7 @@ import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/models/workout_models.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
+import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/widgets/app_card.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 import 'package:lift_log/features/machine_details/presentation/widgets/machine_details_volume_chart.dart';
@@ -14,10 +15,12 @@ class MachineDetailsHistorySection extends StatelessWidget {
     super.key,
     required this.history,
     this.error,
+    this.exerciseType = ExerciseType.weightReps,
   });
 
   final List<MachineWorkoutHistoryItem> history;
   final String? error;
+  final ExerciseType exerciseType;
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +49,13 @@ class MachineDetailsHistorySection extends StatelessWidget {
       children: [
         HistorySummary(sessionCount: history.length, setCount: setCount),
         SizedBox(height: AppSpacing.md.h),
-        MachineDetailsVolumeChart(history: history),
+        if (exerciseType == ExerciseType.weightReps ||
+            exerciseType == ExerciseType.reps)
+          MachineDetailsVolumeChart(history: history),
         SizedBox(height: AppSpacing.md.h),
         for (var index = 0; index < history.length; index++) ...[
           if (index > 0) SizedBox(height: AppSpacing.sm.h),
-          MachineHistoryTile(item: history[index]),
+          MachineHistoryTile(item: history[index], exerciseType: exerciseType),
         ],
       ],
     );
@@ -176,9 +181,14 @@ class HistoryMessageCard extends StatelessWidget {
 }
 
 class MachineHistoryTile extends StatelessWidget {
-  const MachineHistoryTile({super.key, required this.item});
+  const MachineHistoryTile({
+    super.key,
+    required this.item,
+    required this.exerciseType,
+  });
 
   final MachineWorkoutHistoryItem item;
+  final ExerciseType exerciseType;
 
   @override
   Widget build(BuildContext context) {
@@ -254,9 +264,10 @@ class MachineHistoryTile extends StatelessWidget {
             ),
           ],
           SizedBox(height: AppSpacing.md.h),
-          SetTableHeader(),
+          SetTableHeader(exerciseType: exerciseType),
           SizedBox(height: AppSpacing.xs.h),
-          for (final set in item.sets) HistorySetRow(set: set),
+          for (final set in item.sets)
+            HistorySetRow(set: set, exerciseType: exerciseType),
         ],
       ),
     );
@@ -264,7 +275,8 @@ class MachineHistoryTile extends StatelessWidget {
 }
 
 class SetTableHeader extends StatelessWidget {
-  const SetTableHeader({super.key});
+  const SetTableHeader({super.key, required this.exerciseType});
+  final ExerciseType exerciseType;
 
   @override
   Widget build(BuildContext context) {
@@ -285,8 +297,12 @@ class SetTableHeader extends StatelessWidget {
       child: Row(
         children: [
           Expanded(child: AppText('set', style: style)),
-          Expanded(child: AppText('weight', style: style)),
-          Expanded(child: AppText('rep', style: style)),
+          if (exerciseType == ExerciseType.weightReps)
+            Expanded(child: AppText('weight', style: style)),
+          if (exerciseType != ExerciseType.time)
+            Expanded(child: AppText('rep', style: style)),
+          if (exerciseType == ExerciseType.time)
+            Expanded(child: AppText('duration_seconds'.tr, style: style)),
         ],
       ),
     );
@@ -294,9 +310,14 @@ class SetTableHeader extends StatelessWidget {
 }
 
 class HistorySetRow extends StatelessWidget {
-  const HistorySetRow({super.key, required this.set});
+  const HistorySetRow({
+    super.key,
+    required this.set,
+    required this.exerciseType,
+  });
 
   final WorkoutSetModel set;
+  final ExerciseType exerciseType;
 
   @override
   Widget build(BuildContext context) {
@@ -308,8 +329,19 @@ class HistorySetRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(child: AppText(set.setNumber.toString(), fontSize: 13.sp)),
-          Expanded(child: AppText(_formatNumber(set.weight), fontSize: 13.sp)),
-          Expanded(child: AppText(set.reps.toString(), fontSize: 13.sp)),
+          if (exerciseType == ExerciseType.weightReps)
+            Expanded(
+              child: AppText(_formatNumber(set.weight!), fontSize: 13.sp),
+            ),
+          if (exerciseType != ExerciseType.time)
+            Expanded(child: AppText(set.reps.toString(), fontSize: 13.sp)),
+          if (exerciseType == ExerciseType.time)
+            Expanded(
+              child: AppText(
+                '${set.durationSeconds} ${'seconds'.tr}',
+                fontSize: 13.sp,
+              ),
+            ),
         ],
       ),
     );

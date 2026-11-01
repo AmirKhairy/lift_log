@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lift_log/core/extensions/context_extension.dart';
+import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
+import 'package:lift_log/core/utils/app_padding.dart';
+import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/core/widgets/app_labeled_text_field.dart';
-import 'package:lift_log/core/widgets/app_scaffold.dart';
 import 'package:lift_log/core/widgets/app_snackbar.dart';
 import 'package:lift_log/core/widgets/app_staggered_animation.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
-import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/muscle_group_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/target_muscle_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/tutorial_video_selector.dart';
@@ -36,13 +38,19 @@ class VideosPage extends StatelessWidget {
             : List<TutorialVideosModel>.empty();
         final isLoading = state is VideosLoading || state is VideosInitial;
 
-        return AppScaffold(
-          title: 'videos',
-          centerTitle: false,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          body: Column(
+        return Padding(
+          padding: AppPadding.horizontal,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              AppText(
+                'tutorial_videos'.tr,
+                color: context.theme.colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.sp,
+                textAlign: TextAlign.start,
+              ),
+              SizedBox(height: AppSpacing.nm),
               AppStaggeredAnimation(
                 index: 0,
                 child: LabeledTextField(

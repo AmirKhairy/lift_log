@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lift_log/core/extensions/context_extension.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
+import 'package:lift_log/core/models/machine_image.dart';
 import 'package:lift_log/core/models/workout_models.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
+import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 import 'package:lift_log/core/widgets/app_text_field.dart';
 import 'package:lift_log/features/workout/cubit/workout_cubit.dart';
@@ -70,6 +72,15 @@ class _MachineLogCardState extends State<MachineLogCard> {
           children: [
             Row(
               children: [
+                MachineImage(
+                  imageUrl: log.machine.imageUrl,
+                  targetMuscle: log.machine.targetMuscle,
+                  width: 44.w,
+                  height: 44.w,
+                  fit: BoxFit.cover,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: AppText(log.machine.name ?? '', fontSize: 17.sp),
                 ),
@@ -87,11 +98,16 @@ class _MachineLogCardState extends State<MachineLogCard> {
             Row(
               children: [
                 AppText('set'.tr),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(child: AppText('weight'.tr)),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(child: AppText('reps'.tr)),
-                const SizedBox(width: 48),
+                const SizedBox(width: AppSpacing.md),
+                if (log.machine.exerciseType == ExerciseType.weightReps)
+                  Expanded(child: AppText('weight'.tr)),
+                if (log.machine.exerciseType == ExerciseType.weightReps)
+                  const SizedBox(width: AppSpacing.md),
+                if (log.machine.exerciseType != ExerciseType.time)
+                  Expanded(child: AppText('reps'.tr)),
+                if (log.machine.exerciseType == ExerciseType.time)
+                  Expanded(child: AppText('duration'.tr)),
+                const SizedBox(width: AppSpacing.md),
               ],
             ),
             for (var setIndex = 0; setIndex < log.sets.length; setIndex++)

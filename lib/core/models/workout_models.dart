@@ -2,17 +2,19 @@ import 'package:equatable/equatable.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 
 class WorkoutSetDraft extends Equatable {
-  const WorkoutSetDraft({required this.setNumber, this.weight, this.reps});
+  const WorkoutSetDraft({required this.setNumber, this.weight, this.reps, this.durationSeconds});
 
   final int setNumber;
   final double? weight;
   final int? reps;
+  final int? durationSeconds;
 
   factory WorkoutSetDraft.fromJson(Map<String, dynamic> json) {
     return WorkoutSetDraft(
       setNumber: (json['set_number'] as num).toInt(),
       weight: (json['weight'] as num?)?.toDouble(),
       reps: (json['reps'] as num?)?.toInt(),
+      durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
     );
   }
 
@@ -20,18 +22,20 @@ class WorkoutSetDraft extends Equatable {
     'set_number': setNumber,
     'weight': weight,
     'reps': reps,
+    'duration_seconds': durationSeconds,
   };
 
-  WorkoutSetDraft copyWith({int? setNumber, double? weight, int? reps}) {
+  WorkoutSetDraft copyWith({int? setNumber, double? weight, int? reps, int? durationSeconds}) {
     return WorkoutSetDraft(
       setNumber: setNumber ?? this.setNumber,
       weight: weight ?? this.weight,
       reps: reps ?? this.reps,
+      durationSeconds: durationSeconds ?? this.durationSeconds,
     );
   }
 
   @override
-  List<Object?> get props => [setNumber, weight, reps];
+  List<Object?> get props => [setNumber, weight, reps, durationSeconds];
 }
 
 class WorkoutMachineDraft extends Equatable {
@@ -159,8 +163,9 @@ class RoutineModel extends Equatable {
             final set = Map<String, dynamic>.from(rawSet as Map);
             return WorkoutSetDraft(
               setNumber: (set['set_number'] as num).toInt(),
-              weight: (set['weight'] as num).toDouble(),
-              reps: (set['reps'] as num).toInt(),
+              weight: (set['weight'] as num?)?.toDouble(),
+              reps: (set['reps'] as num?)?.toInt(),
+              durationSeconds: (set['duration_seconds'] as num?)?.toInt(),
             );
           },
         ).toList()..sort((a, b) => a.setNumber.compareTo(b.setNumber));
@@ -188,8 +193,10 @@ class MachineWorkoutHistoryItem extends Equatable {
   final String? logNotes;
   final List<WorkoutSetModel> sets;
 
-  double get totalVolume =>
-      sets.fold<double>(0, (total, set) => total + (set.weight * set.reps));
+  double get totalVolume => sets.fold<double>(
+    0,
+    (total, set) => total + (set.reps ?? 0),
+  );
 
   factory MachineWorkoutHistoryItem.fromJson(Map<String, dynamic> json) {
     final sessionJson = json['workout_sessions'];
@@ -223,24 +230,27 @@ class MachineWorkoutHistoryItem extends Equatable {
 class WorkoutSetModel extends Equatable {
   const WorkoutSetModel({
     required this.setNumber,
-    required this.weight,
-    required this.reps,
+    this.weight,
+    this.reps,
+    this.durationSeconds,
   });
 
   final int setNumber;
-  final double weight;
-  final int reps;
+  final double? weight;
+  final int? reps;
+  final int? durationSeconds;
 
   factory WorkoutSetModel.fromJson(Map<String, dynamic> json) {
     return WorkoutSetModel(
       setNumber: (json['set_number'] as num).toInt(),
-      weight: (json['weight'] as num).toDouble(),
-      reps: (json['reps'] as num).toInt(),
+      weight: (json['weight'] as num?)?.toDouble(),
+      reps: (json['reps'] as num?)?.toInt(),
+      durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
     );
   }
 
   @override
-  List<Object?> get props => [setNumber, weight, reps];
+  List<Object?> get props => [setNumber, weight, reps, durationSeconds];
 }
 
 class WorkoutLogModel extends Equatable {

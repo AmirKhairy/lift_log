@@ -37,8 +37,6 @@ class AppUpdateService {
       if (config.requiresUpdate(packageInfo.version)) {
         _requiredUpdate = config;
       }
-    } catch (e) {
-      print('Failed to check for required update: $e');
-    }
+    } catch (_) {}
   }
 }

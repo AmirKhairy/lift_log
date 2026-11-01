@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/muscle_group.dart';
+import 'package:lift_log/core/extensions/exercise_type_extension.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/models/machine_image.dart';
 import 'package:lift_log/core/models/machine_model.dart';
@@ -29,6 +30,7 @@ class MachineDetailsHeader extends StatelessWidget {
             color: context.theme.colorScheme.surfaceContainerHighest,
             child: MachineImage(
               imageUrl: machine.imageUrl,
+              targetMuscle: machine.targetMuscle,
               width: double.infinity,
               height: 200.h,
               fit: BoxFit.contain,
@@ -66,6 +68,8 @@ class MachineDetailsHeader extends StatelessWidget {
             ],
           ),
         ],
+        SizedBox(height: AppSpacing.md),
+        AppText('${"exercise_type".tr}: ${machine.exerciseType.localizationKey.tr}', fontWeight: FontWeight.w700),
         if (targetMuscle != null && targetMuscle.isNotEmpty) ...[
           SizedBox(height: AppSpacing.md),
           Row(

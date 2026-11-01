@@ -29,6 +29,7 @@ final class AddMachineLoaded extends AddMachineState {
     this.tutorialVideos = const [],
     this.isTutorialVideosLoading = false,
     this.isSaving = false,
+    this.selectedExerciseType = ExerciseType.weightReps,
   });
 
   final XFile? selectedImage;
@@ -38,6 +39,7 @@ final class AddMachineLoaded extends AddMachineState {
   final List<TutorialVideosModel> tutorialVideos;
   final bool isTutorialVideosLoading;
   final bool isSaving;
+  final ExerciseType selectedExerciseType;
 
   @override
   List<Object?> get props => [
@@ -48,6 +50,7 @@ final class AddMachineLoaded extends AddMachineState {
     tutorialVideos,
     isTutorialVideosLoading,
     isSaving,
+    selectedExerciseType,
   ];
 }
 

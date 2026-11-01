@@ -6,7 +6,6 @@ import 'package:lift_log/core/services/theme_service.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_card.dart';
-import 'package:lift_log/core/widgets/app_picker.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 import 'package:lift_log/i18n/localization_service.dart';
 import 'package:lift_log/features/profile/presentation/widgets/profile_settings_row.dart';
@@ -16,76 +15,149 @@ class ProfileSettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      margin: AppPadding.horizontal,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppText(
-            'app_settings'.tr,
-            fontWeight: FontWeight.bold,
-            fontSize: 18.sp,
-            color: context.theme.colorScheme.onSurface,
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        LocalizationService.instance,
+        ThemeService.instance,
+      ]),
+      builder: (context, child) {
+        return AppCard(
+          margin: AppPadding.horizontal,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(
+                'app_settings'.tr,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.sp,
+                color: context.theme.colorScheme.onSurface,
+              ),
+              SizedBox(height: AppSpacing.md),
+              ProfileSettingsRow(
+                label: 'language'.tr,
+                trailing: _buildLanguageSwitcher(context),
+              ),
+              SizedBox(height: AppSpacing.sm),
+              ProfileSettingsRow(
+                label: 'theme'.tr,
+                trailing: _buildThemeSwitcher(context),
+              ),
+            ],
           ),
-          SizedBox(height: AppSpacing.md),
-          ProfileSettingsRow(
-            label: 'language'.tr,
-            value: _currentLanguageLabel(),
-            onTap: () => _openLanguagePicker(context),
-          ),
-          SizedBox(height: AppSpacing.sm),
-          ProfileSettingsRow(
-            label: 'theme'.tr,
-            value: _currentThemeLabel(),
-            onTap: () => _openThemePicker(context),
-          ),
-        ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageSwitcher(BuildContext context) {
+    final current = LocalizationService.instance.locale.languageCode;
+
+    return _buildSwitcher(
+      context,
+      options: [
+        _SwitcherOption(
+          value: 'ar',
+          label: 'arabic'.tr,
+          child: const Text('AR'),
+        ),
+        _SwitcherOption(
+          value: 'en',
+          label: 'english'.tr,
+          child: const Text('EN'),
+        ),
+      ],
+      selectedValue: current,
+      onSelected: (value) => LocalizationService.instance.changeLanguage(value),
+    );
+  }
+
+  Widget _buildThemeSwitcher(BuildContext context) {
+    final current = ThemeService.instance.themeMode;
+
+    return _buildSwitcher(
+      context,
+      options: [
+        _SwitcherOption(
+          value: ThemeMode.light,
+          label: 'light_theme'.tr,
+          child: const Icon(Icons.light_mode_outlined),
+        ),
+        _SwitcherOption(
+          value: ThemeMode.dark,
+          label: 'dark_theme'.tr,
+          child: const Icon(Icons.dark_mode_outlined),
+        ),
+      ],
+      selectedValue: current,
+      onSelected: (value) => ThemeService.instance.setThemeMode(value),
+    );
+  }
+
+  Widget _buildSwitcher<T>(
+    BuildContext context, {
+    required List<_SwitcherOption<T>> options,
+    required T selectedValue,
+    required Future<void> Function(T value) onSelected,
+  }) {
+    final colors = context.theme.colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: options.map((option) {
+          final isSelected = option.value == selectedValue;
+
+          return Semantics(
+            button: true,
+            selected: isSelected,
+            label: option.label,
+            child: InkWell(
+              onTap: isSelected ? null : () => onSelected(option.value),
+              borderRadius: BorderRadius.circular(8),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                constraints: BoxConstraints(minWidth: 38.sp, minHeight: 34.sp),
+                padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                decoration: BoxDecoration(
+                  color: isSelected ? colors.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: IconTheme(
+                  data: IconThemeData(
+                    size: 18.sp,
+                    color: isSelected ? colors.onPrimary : colors.onSurface,
+                  ),
+                  child: DefaultTextStyle(
+                    style: TextStyle(
+                      color: isSelected ? colors.onPrimary : colors.onSurface,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    child: Center(child: option.child),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
+}
 
-  String _currentLanguageLabel() {
-    final code = LocalizationService.instance.locale.languageCode;
-    return code == 'ar' ? 'arabic'.tr : 'english'.tr;
-  }
+class _SwitcherOption<T> {
+  const _SwitcherOption({
+    required this.value,
+    required this.label,
+    required this.child,
+  });
 
-  String _currentThemeLabel() {
-    final mode = ThemeService.instance.themeMode;
-    return mode == ThemeMode.light ? 'light_theme'.tr : 'dark_theme'.tr;
-  }
-
-  Future<void> _openLanguagePicker(BuildContext context) async {
-    final languages = ['ar', 'en'];
-    final current = LocalizationService.instance.locale.languageCode;
-
-    final selected = await AppPicker.show<String>(
-      context: context,
-      items: languages,
-      itemLabel: (code) => code == 'ar' ? 'arabic'.tr : 'english'.tr,
-      initialValue: current,
-      pickerTitle: 'language',
-    );
-
-    if (selected != null) {
-      await LocalizationService.instance.changeLanguage(selected);
-    }
-  }
-
-  Future<void> _openThemePicker(BuildContext context) async {
-    final themes = [ThemeMode.light, ThemeMode.dark];
-    final current = ThemeService.instance.themeMode;
-
-    final selected = await AppPicker.show<ThemeMode>(
-      context: context,
-      items: themes,
-      itemLabel: (mode) =>
-          mode == ThemeMode.light ? 'light_theme'.tr : 'dark_theme'.tr,
-      initialValue: current,
-      pickerTitle: 'theme',
-    );
-
-    if (selected != null) {
-      await ThemeService.instance.setThemeMode(selected);
-    }
-  }
+  final T value;
+  final String label;
+  final Widget child;
 }

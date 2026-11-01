@@ -23,11 +23,25 @@ CREATE TABLE public.app_settings (
   minimum_ios_version text NOT NULL,
   android_store_url text NOT NULL,
   ios_store_url text NOT NULL,
+  -- Keys use TargetMuscle.name, for example: {"biceps": "https://..."}.
+  target_muscle_image_urls jsonb NOT NULL DEFAULT '{}'::jsonb,
   updated_at timestamp with time zone DEFAULT now()
 );
 ALTER TABLE public.app_settings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can read app settings"
   ON public.app_settings FOR SELECT TO anon, authenticated USING (true);
+
+-- If app_settings already exists in Supabase, apply this migration instead:
+-- ALTER TABLE public.app_settings
+-- ADD COLUMN IF NOT EXISTS target_muscle_image_urls jsonb NOT NULL DEFAULT '{}'::jsonb;
+-- Example after uploading the images to a public Supabase Storage bucket:
+-- UPDATE public.app_settings
+-- SET target_muscle_image_urls = jsonb_build_object(
+--   'biceps', 'https://<project>.supabase.co/storage/v1/object/public/app-images/muscles/biceps.png',
+--   'triceps', 'https://<project>.supabase.co/storage/v1/object/public/app-images/muscles/triceps.png',
+--   'quadriceps', 'https://<project>.supabase.co/storage/v1/object/public/app-images/muscles/quadriceps.png'
+-- )
+-- WHERE id = 1;
 CREATE TABLE public.tutorial_videos (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   title text NOT NULL,

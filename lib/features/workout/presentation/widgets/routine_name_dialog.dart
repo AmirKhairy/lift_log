@@ -4,7 +4,9 @@ import 'package:lift_log/core/widgets/app_button.dart';
 import 'package:lift_log/core/widgets/app_text_field.dart';
 
 class RoutineNameDialog extends StatefulWidget {
-  const RoutineNameDialog({super.key});
+  const RoutineNameDialog({super.key, this.initialName});
+
+  final String? initialName;
 
   @override
   State<RoutineNameDialog> createState() => _RoutineNameDialogState();
@@ -13,6 +15,12 @@ class RoutineNameDialog extends StatefulWidget {
 class _RoutineNameDialogState extends State<RoutineNameDialog> {
   final _controller = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = widget.initialName ?? '';
+  }
 
   @override
   void dispose() {

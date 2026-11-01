@@ -12,6 +12,7 @@ class RoutineActions extends StatelessWidget {
     required this.onSave,
     this.showSelect = true,
     this.showSave = true,
+    this.saveLabel = 'save_routine',
   });
 
   final List<RoutineModel> routines;
@@ -20,6 +21,7 @@ class RoutineActions extends StatelessWidget {
   final VoidCallback onSave;
   final bool showSelect;
   final bool showSave;
+  final String saveLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class RoutineActions extends StatelessWidget {
             child: TextButton.icon(
               onPressed: enabled ? onSave : null,
               icon: const Icon(Icons.bookmark_add_outlined),
-              label: AppText('save_routine'),
+              label: AppText(saveLabel),
             ),
           ),
       ],

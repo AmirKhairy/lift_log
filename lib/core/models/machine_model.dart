@@ -1,4 +1,5 @@
 import 'package:lift_log/core/extensions/muscle_group.dart';
+import 'package:lift_log/core/extensions/exercise_type_extension.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/utils/target_muscle.dart';
 
@@ -13,6 +14,7 @@ class MachineModel {
   final DateTime? updatedAt;
   final MuscleGroup? muscleGroup;
   final TargetMuscle? targetMuscle;
+  final ExerciseType exerciseType;
 
   MachineModel({
     this.id,
@@ -25,6 +27,7 @@ class MachineModel {
     this.updatedAt,
     this.muscleGroup,
     this.targetMuscle,
+    this.exerciseType = ExerciseType.weightReps,
   });
 
   factory MachineModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +50,9 @@ class MachineModel {
       targetMuscle: json['target_muscle'] != null
           ? TargetMuscleExtension.fromString(json['target_muscle'])
           : null,
+      exerciseType: ExerciseTypeExtension.fromDatabaseValue(
+        json['exercise_type'] as String?,
+      ),
     );
   }
 
@@ -62,6 +68,7 @@ class MachineModel {
       'updated_at': updatedAt?.toIso8601String(),
       'muscle_group': muscleGroup?.toJson(),
       'target_muscle': targetMuscle?.toJson(),
+      'exercise_type': exerciseType.databaseValue,
     };
   }
 
@@ -76,6 +83,7 @@ class MachineModel {
     DateTime? updatedAt,
     MuscleGroup? muscleGroup,
     TargetMuscle? targetMuscle,
+    ExerciseType? exerciseType,
   }) {
     return MachineModel(
       id: id ?? this.id,
@@ -88,6 +96,7 @@ class MachineModel {
       updatedAt: updatedAt ?? this.updatedAt,
       muscleGroup: muscleGroup ?? this.muscleGroup,
       targetMuscle: targetMuscle ?? this.targetMuscle,
+      exerciseType: exerciseType ?? this.exerciseType,
     );
   }
 }

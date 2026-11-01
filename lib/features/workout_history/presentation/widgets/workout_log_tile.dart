@@ -7,6 +7,7 @@ import 'package:lift_log/core/models/machine_image.dart';
 import 'package:lift_log/core/models/workout_models.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/core/utils/app_enums.dart';
 
 class WorkoutLogTile extends StatelessWidget {
   const WorkoutLogTile({super.key, required this.log});
@@ -29,6 +30,7 @@ class WorkoutLogTile extends StatelessWidget {
             children: [
               MachineImage(
                 imageUrl: log.machine.imageUrl,
+                targetMuscle: log.machine.targetMuscle,
                 width: 64.w,
                 height: 64.w,
                 borderRadius: BorderRadius.circular(14.r),
@@ -163,22 +165,9 @@ class WorkoutLogTile extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: AppText(
-                    'weight'.tr,
-                    color: context.appColors.subtitle,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: AppText(
-                    'reps'.tr,
-                    color: context.appColors.subtitle,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                if (log.machine.exerciseType == ExerciseType.weightReps) Expanded(flex: 2, child: AppText('weight'.tr, color: context.appColors.subtitle, fontWeight: FontWeight.w700)),
+                if (log.machine.exerciseType != ExerciseType.time) Expanded(flex: 2, child: AppText('reps'.tr, color: context.appColors.subtitle, fontWeight: FontWeight.w700)),
+                if (log.machine.exerciseType == ExerciseType.time) Expanded(flex: 2, child: AppText('duration_seconds'.tr, color: context.appColors.subtitle, fontWeight: FontWeight.w700)),
               ],
             ),
           ),
@@ -218,20 +207,21 @@ class WorkoutLogTile extends StatelessWidget {
               child: AppText('${set.setNumber}', color: context.colors.primary),
             ),
           ),
-          Expanded(
+          if (log.machine.exerciseType == ExerciseType.weightReps) Expanded(
             flex: 2,
             child: AppText(
-              '${_formatNumber(set.weight)} ${'weight_unit'.tr}',
+              '${_formatNumber(set.weight!)} ${'weight_unit'.tr}',
               fontWeight: FontWeight.w600,
             ),
           ),
-          Expanded(
+          if (log.machine.exerciseType != ExerciseType.time) Expanded(
             flex: 2,
             child: AppText(
               '${set.reps} ${'rep'.tr}',
               fontWeight: FontWeight.w600,
             ),
           ),
+          if (log.machine.exerciseType == ExerciseType.time) Expanded(flex: 2, child: AppText('${set.durationSeconds} ${'seconds'.tr}', fontWeight: FontWeight.w600)),
         ],
       ),
     );
