@@ -1,3 +1,4 @@
+
 name: Build iOS IPA
 
 on:
@@ -5,12 +6,34 @@ on:
 
 jobs:
   build:
-    name: Build iOS IPA
+    name: Build iOS
     runs-on: macos-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Create .env from GitHub Secrets
+        shell: bash
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          WEB_CLIENT_ID: ${{ secrets.WEB_CLIENT_ID }}
+          IOS_CLIENT_ID: ${{ secrets.IOS_CLIENT_ID }}
+        run: |
+          set -euo pipefail
+
+          : "${SUPABASE_URL:?Missing SUPABASE_URL secret}"
+          : "${SUPABASE_PUBLISHABLE_KEY:?Missing SUPABASE_PUBLISHABLE_KEY secret}"
+          : "${WEB_CLIENT_ID:?Missing WEB_CLIENT_ID secret}"
+          : "${IOS_CLIENT_ID:?Missing IOS_CLIENT_ID secret}"
+
+          umask 077
+          printf 'SUPABASE_URL=%s\nSUPABASE_PUBLISHABLE_KEY=%s\nWEB_CLIENT_ID=%s\nIOS_CLIENT_ID=%s\n' \
+            "$SUPABASE_URL" \
+            "$SUPABASE_PUBLISHABLE_KEY" \
+            "$WEB_CLIENT_ID" \
+            "$IOS_CLIENT_ID" > .env
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -21,20 +44,21 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Build iOS IPA
+      - name: Build iOS Archive
         run: flutter build ipa --release --no-codesign
 
-      - name: Show build output
+      - name: Package iOS Archive
         shell: bash
         run: |
-          echo "=== build/ios ==="
-          find build/ios -maxdepth 4 -type f | sort || true
+          set -euo pipefail
+          ARCHIVE_PATH="$(find build/ios/archive -maxdepth 1 -name '*.xcarchive' -print -quit)"
+          test -n "$ARCHIVE_PATH"
+          ditto -c -k --sequesterRsrc --keepParent \
+            "$ARCHIVE_PATH" build/ios/archive/ios-archive.zip
 
-      - name: Upload iOS build
+      - name: Upload iOS Archive
         uses: actions/upload-artifact@v4
         with:
-          name: ios-build
-          path: |
-            build/ios/**/*.ipa
-            build/ios/**/*.xcarchive
+          name: ios-archive
+          path: build/ios/archive/ios-archive.zip
           if-no-files-found: error
