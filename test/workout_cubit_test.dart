@@ -13,9 +13,17 @@ void main() {
   );
 
   test('requires a machine and valid sets before saving', () {
-    expect(WorkoutDraft().validate(), 'workout_empty_machines');
+    final now = DateTime.now();
+    expect(
+      WorkoutDraft(startedAt: now, endedAt: now).validate(),
+      'workout_empty_machines',
+    );
 
-    final draft = WorkoutDraft(machines: [workoutMachineDraft(machine)]);
+    final draft = WorkoutDraft(
+      startedAt: now,
+      endedAt: now,
+      machines: [workoutMachineDraft(machine)],
+    );
     expect(draft.validate(), 'workout_weight_required');
   });
 

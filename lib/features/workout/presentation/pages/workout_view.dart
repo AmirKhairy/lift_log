@@ -23,6 +23,7 @@ import 'package:lift_log/features/workout/presentation/widgets/routine_actions.d
 import 'package:lift_log/features/workout/presentation/widgets/routine_delete_dialog.dart';
 import 'package:lift_log/features/workout/presentation/widgets/routine_name_dialog.dart';
 import 'package:lift_log/features/workout/presentation/widgets/workout_notes_field.dart';
+import 'package:lift_log/features/workout/presentation/widgets/workout_timer_card.dart';
 
 class WorkoutView extends StatelessWidget {
   const WorkoutView({super.key, required this.machineOnly});
@@ -50,8 +51,24 @@ class WorkoutView extends StatelessWidget {
             children: [
               PerformedAtCard(
                 performedAt: draft.performedAt,
-                enabled: !saving,
+                enabled: !saving && !cubit.isWorkoutStarted,
                 onChanged: cubit.updatePerformedDateTime,
+              ),
+              SizedBox(height: AppSpacing.sm),
+              WorkoutTimerCard(
+                started: cubit.isWorkoutStarted,
+                paused: cubit.isPaused,
+                finished: cubit.isWorkoutFinished,
+                hasExercises: draft.machines.isNotEmpty,
+                elapsed: cubit.elapsed,
+                onStart: cubit.startWorkout,
+                onPause: cubit.pauseWorkout,
+                onResume: cubit.resumeWorkout,
+                onReset: cubit.resetWorkoutTimer,
+                onContinue: cubit.continueWorkout,
+                onFinish: () {
+                  cubit.finishWorkout();
+                },
               ),
               SizedBox(height: AppSpacing.lg),
               if (cubit.routines.isNotEmpty)
@@ -67,10 +84,12 @@ class WorkoutView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  AppText(
-                    'workout_exercises',
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w700,
+                  Expanded(
+                    child: AppText(
+                      'workout_exercises',
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   TextButton.icon(
                     onPressed: saving || cubit.isLoadingMachines
@@ -81,6 +100,15 @@ class WorkoutView extends StatelessWidget {
                   ),
                 ],
               ),
+              if (draft.machines.isNotEmpty)
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: TextButton.icon(
+                    onPressed: saving ? null : cubit.clearMachines,
+                    icon: const Icon(Icons.clear_all_rounded),
+                    label: AppText('clear_exercises'),
+                  ),
+                ),
               SizedBox(height: AppSpacing.sm),
 
               if (draft.machines.isEmpty)
@@ -140,7 +168,7 @@ class WorkoutView extends StatelessWidget {
               AppButton(
                 title: 'save_workout',
                 loading: saving,
-                onPressed: cubit.save,
+                onPressed: cubit.isWorkoutFinished ? cubit.save : null,
                 icon: const Icon(Icons.check_rounded),
               ),
               SizedBox(height: AppSpacing.sm),

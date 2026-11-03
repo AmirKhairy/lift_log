@@ -91,6 +91,8 @@ CREATE TABLE public.workout_sessions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL,
   performed_at timestamp with time zone DEFAULT now(),
+  started_at timestamp with time zone,
+  ended_at timestamp with time zone,
   notes text,
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT workout_sessions_pkey PRIMARY KEY (id),

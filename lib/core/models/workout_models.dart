@@ -2,7 +2,12 @@ import 'package:equatable/equatable.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 
 class WorkoutSetDraft extends Equatable {
-  const WorkoutSetDraft({required this.setNumber, this.weight, this.reps, this.durationSeconds});
+  const WorkoutSetDraft({
+    required this.setNumber,
+    this.weight,
+    this.reps,
+    this.durationSeconds,
+  });
 
   final int setNumber;
   final double? weight;
@@ -25,7 +30,12 @@ class WorkoutSetDraft extends Equatable {
     'duration_seconds': durationSeconds,
   };
 
-  WorkoutSetDraft copyWith({int? setNumber, double? weight, int? reps, int? durationSeconds}) {
+  WorkoutSetDraft copyWith({
+    int? setNumber,
+    double? weight,
+    int? reps,
+    int? durationSeconds,
+  }) {
     return WorkoutSetDraft(
       setNumber: setNumber ?? this.setNumber,
       weight: weight ?? this.weight,
@@ -90,6 +100,11 @@ class WorkoutMachineDraft extends Equatable {
 class WorkoutDraft extends Equatable {
   WorkoutDraft({
     DateTime? performedAt,
+    this.startedAt,
+    this.endedAt,
+    this.activeSince,
+    this.elapsedSeconds = 0,
+    this.isPaused = false,
     this.notes = '',
     this.machines = const [],
   }) : performedAt = performedAt ?? _defaultPerformedAt;
@@ -97,12 +112,28 @@ class WorkoutDraft extends Equatable {
   static DateTime get _defaultPerformedAt => DateTime.now();
 
   final DateTime performedAt;
+  final DateTime? startedAt;
+  final DateTime? endedAt;
+  final DateTime? activeSince;
+  final int elapsedSeconds;
+  final bool isPaused;
   final String notes;
   final List<WorkoutMachineDraft> machines;
 
   factory WorkoutDraft.fromJson(Map<String, dynamic> json) {
     return WorkoutDraft(
       performedAt: DateTime.parse(json['performed_at'] as String),
+      startedAt: (json['started_at'] as String?) == null
+          ? null
+          : DateTime.parse(json['started_at'] as String),
+      endedAt: (json['ended_at'] as String?) == null
+          ? null
+          : DateTime.parse(json['ended_at'] as String),
+      activeSince: (json['active_since'] as String?) == null
+          ? null
+          : DateTime.parse(json['active_since'] as String),
+      elapsedSeconds: (json['elapsed_seconds'] as num?)?.toInt() ?? 0,
+      isPaused: json['is_paused'] as bool? ?? false,
       notes: json['notes'] as String? ?? '',
       machines: (json['machines'] as List<dynamic>? ?? [])
           .map(
@@ -116,24 +147,51 @@ class WorkoutDraft extends Equatable {
 
   Map<String, dynamic> toJson() => {
     'performed_at': performedAt.toIso8601String(),
+    'started_at': startedAt?.toIso8601String(),
+    'ended_at': endedAt?.toIso8601String(),
+    'active_since': activeSince?.toIso8601String(),
+    'elapsed_seconds': elapsedSeconds,
+    'is_paused': isPaused,
     'notes': notes,
     'machines': machines.map((machine) => machine.toJson()).toList(),
   };
 
   WorkoutDraft copyWith({
     DateTime? performedAt,
+    DateTime? startedAt,
+    DateTime? endedAt,
+    DateTime? activeSince,
+    bool clearActiveSince = false,
+    bool clearStartedAt = false,
+    bool clearEndedAt = false,
+    int? elapsedSeconds,
+    bool? isPaused,
     String? notes,
     List<WorkoutMachineDraft>? machines,
   }) {
     return WorkoutDraft(
       performedAt: performedAt ?? this.performedAt,
+      startedAt: clearStartedAt ? null : startedAt ?? this.startedAt,
+      endedAt: clearEndedAt ? null : endedAt ?? this.endedAt,
+      activeSince: clearActiveSince ? null : activeSince ?? this.activeSince,
+      elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
+      isPaused: isPaused ?? this.isPaused,
       notes: notes ?? this.notes,
       machines: machines ?? this.machines,
     );
   }
 
   @override
-  List<Object?> get props => [performedAt, notes, machines];
+  List<Object?> get props => [
+    performedAt,
+    startedAt,
+    endedAt,
+    activeSince,
+    elapsedSeconds,
+    isPaused,
+    notes,
+    machines,
+  ];
 }
 
 class RoutineModel extends Equatable {
@@ -186,17 +244,18 @@ class MachineWorkoutHistoryItem extends Equatable {
   const MachineWorkoutHistoryItem({
     required this.performedAt,
     required this.sets,
+    this.startedAt,
+    this.endedAt,
     this.logNotes,
   });
 
   final DateTime performedAt;
+  final DateTime? startedAt;
+  final DateTime? endedAt;
   final String? logNotes;
   final List<WorkoutSetModel> sets;
 
-  double get totalVolume => sets.fold<double>(
-    0,
-    (total, set) => total + (set.reps ?? 0),
-  );
+  double get totalVolume => sets.length.toDouble();
 
   factory MachineWorkoutHistoryItem.fromJson(Map<String, dynamic> json) {
     final sessionJson = json['workout_sessions'];
@@ -204,12 +263,18 @@ class MachineWorkoutHistoryItem extends Equatable {
         ? Map<String, dynamic>.from(sessionJson)
         : <String, dynamic>{};
     final performedAtRaw = session['performed_at'] as String?;
+    final startedAtRaw = session['started_at'] as String?;
+    final endedAtRaw = session['ended_at'] as String?;
     final setsJson = json['workout_sets'];
 
     return MachineWorkoutHistoryItem(
       performedAt: performedAtRaw != null
           ? DateTime.parse(performedAtRaw).toLocal()
           : DateTime.parse(json['created_at'] as String).toLocal(),
+      startedAt: startedAtRaw == null
+          ? null
+          : DateTime.parse(startedAtRaw).toLocal(),
+      endedAt: endedAtRaw == null ? null : DateTime.parse(endedAtRaw).toLocal(),
       logNotes: json['notes'] as String?,
       sets:
           (setsJson as List<dynamic>? ?? [])
@@ -224,7 +289,7 @@ class MachineWorkoutHistoryItem extends Equatable {
   }
 
   @override
-  List<Object?> get props => [performedAt, logNotes, sets];
+  List<Object?> get props => [performedAt, startedAt, endedAt, logNotes, sets];
 }
 
 class WorkoutSetModel extends Equatable {
@@ -293,12 +358,16 @@ class WorkoutSessionModel extends Equatable {
   const WorkoutSessionModel({
     required this.id,
     required this.performedAt,
+    this.startedAt,
+    this.endedAt,
     required this.logs,
     this.notes,
   });
 
   final String id;
   final DateTime performedAt;
+  final DateTime? startedAt;
+  final DateTime? endedAt;
   final List<WorkoutLogModel> logs;
   final String? notes;
 
@@ -308,6 +377,12 @@ class WorkoutSessionModel extends Equatable {
     return WorkoutSessionModel(
       id: json['id'] as String,
       performedAt: DateTime.parse(json['performed_at'] as String).toLocal(),
+      startedAt: (json['started_at'] as String?) == null
+          ? null
+          : DateTime.parse(json['started_at'] as String).toLocal(),
+      endedAt: (json['ended_at'] as String?) == null
+          ? null
+          : DateTime.parse(json['ended_at'] as String).toLocal(),
       notes: json['notes'] as String?,
       logs: (logsJson as List<dynamic>? ?? [])
           .map(
@@ -320,5 +395,5 @@ class WorkoutSessionModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, performedAt, logs, notes];
+  List<Object?> get props => [id, performedAt, startedAt, endedAt, logs, notes];
 }

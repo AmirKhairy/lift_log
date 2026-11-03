@@ -194,7 +194,13 @@ class MachineHistoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final date = DateFormat('EEEE, MMMM d, y', locale).format(item.performedAt);
-    final time = DateFormat.jm(locale).format(item.performedAt);
+    final startTime = DateFormat.jm(
+      locale,
+    ).format(item.startedAt ?? item.performedAt);
+    final endTime = item.endedAt == null
+        ? null
+        : DateFormat.jm(locale).format(item.endedAt!);
+    final time = endTime == null ? startTime : '$startTime – $endTime';
 
     return AppCard(
       padding: EdgeInsets.fromLTRB(

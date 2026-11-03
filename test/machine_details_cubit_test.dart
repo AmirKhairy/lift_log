@@ -55,8 +55,8 @@ void main() {
     expect(state.historyError, isNull);
   });
 
-  test('calculates machine volume from reps instead of weight', () {
-    expect(historyItem.totalVolume, 10);
+  test('calculates machine volume from sets instead of reps', () {
+    expect(historyItem.totalVolume, 1);
   });
 
   test('keeps the machine when tutorial or history fetch fails', () async {

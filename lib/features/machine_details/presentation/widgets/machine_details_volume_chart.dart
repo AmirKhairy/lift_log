@@ -33,7 +33,7 @@ class MachineDetailsVolumeChart extends StatelessWidget {
     final chartMax = maxVolume == 0 ? 1.0 : maxVolume * 1.2;
     final primary = context.theme.colorScheme.primary;
     final secondary = context.theme.colorScheme.error;
-    final volumeUnit = 'reps'.tr;
+    final volumeUnit = 'sets'.tr;
     final locale = Localizations.localeOf(context).toLanguageTag();
 
     return AppCard(

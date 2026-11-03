@@ -18,6 +18,8 @@ class WorkoutService {
       params: {
         'p_user_id': userId,
         'p_performed_at': draft.performedAt.toUtc().toIso8601String(),
+        'p_started_at': draft.startedAt?.toUtc().toIso8601String(),
+        'p_ended_at': draft.endedAt?.toUtc().toIso8601String(),
         'p_notes': draft.notes.trim().isEmpty ? null : draft.notes.trim(),
         'p_machines': [
           for (final machineLog in draft.machines)
@@ -76,6 +78,8 @@ class WorkoutService {
         .select('''
           id,
           performed_at,
+          started_at,
+          ended_at,
           notes,
           workout_logs(
             id,
@@ -129,6 +133,8 @@ class WorkoutService {
           created_at,
           workout_sessions!inner(
             performed_at,
+            started_at,
+            ended_at,
             notes,
             user_id
           ),

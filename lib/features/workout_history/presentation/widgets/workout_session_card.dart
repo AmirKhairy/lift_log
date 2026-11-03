@@ -17,6 +17,18 @@ class WorkoutSessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final time = DateFormat.jm(locale).format(session.performedAt);
+    final startTime = session.startedAt == null
+        ? time
+        : DateFormat.jm(locale).format(session.startedAt!);
+    final endTime = session.endedAt == null
+        ? null
+        : DateFormat.jm(locale).format(session.endedAt!);
+    final workoutDuration = session.startedAt != null && session.endedAt != null
+        ? session.endedAt!.difference(session.startedAt!)
+        : null;
+    final durationText = workoutDuration == null
+        ? '—'
+        : '${workoutDuration.inHours.toString().padLeft(2, '0')}:${(workoutDuration.inMinutes % 60).toString().padLeft(2, '0')}:${(workoutDuration.inSeconds % 60).toString().padLeft(2, '0')}';
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -36,7 +48,11 @@ class WorkoutSessionCard extends StatelessWidget {
             color: context.colors.primary,
           ),
         ),
-        title: AppText(time),
+        title: AppText(endTime == null ? startTime : '$startTime – $endTime'),
+        subtitle: Text(
+          '${'duration'.tr}: $durationText',
+          style: TextStyle(color: context.appColors.subtitle),
+        ),
         childrenPadding: EdgeInsets.fromLTRB(
           AppSpacing.md,
           0,

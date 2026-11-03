@@ -37,6 +37,9 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   String? _appliedRoutineId;
   bool _isEditingRoutine = false;
   final MachinesService _machinesService = MachinesService.instance;
+  Timer? _workoutTimer;
+  DateTime? _runningSince;
+  Duration _pausedElapsed = Duration.zero;
 
   WorkoutDraft get draft => switch (state) {
     WorkoutEditing(:final draft) => draft,
@@ -74,6 +77,152 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
   bool get isEditingRoutine => _isEditingRoutine;
 
+  DateTime? get startedAt => switch (state) {
+    WorkoutEditing(:final startedAt) => startedAt,
+    WorkoutSaving(:final startedAt) => startedAt,
+    WorkoutError(:final startedAt) => startedAt,
+    WorkoutSaved() => null,
+  };
+
+  DateTime? get endedAt => switch (state) {
+    WorkoutEditing(:final endedAt) => endedAt,
+    WorkoutSaving(:final endedAt) => endedAt,
+    WorkoutError(:final endedAt) => endedAt,
+    WorkoutSaved() => null,
+  };
+
+  Duration get elapsed => switch (state) {
+    WorkoutEditing(:final elapsed) => elapsed,
+    WorkoutSaving(:final elapsed) => elapsed,
+    WorkoutError(:final elapsed) => elapsed,
+    WorkoutSaved() => Duration.zero,
+  };
+
+  bool get isPaused => switch (state) {
+    WorkoutEditing(:final isPaused) => isPaused,
+    WorkoutSaving(:final isPaused) => isPaused,
+    WorkoutError(:final isPaused) => isPaused,
+    WorkoutSaved() => false,
+  };
+
+  bool get isWorkoutStarted => startedAt != null;
+  bool get isWorkoutFinished => endedAt != null;
+
+  void startWorkout() {
+    if (isWorkoutStarted || draft.machines.isEmpty) return;
+    final now = DateTime.now();
+    _runningSince = now;
+    _pausedElapsed = Duration.zero;
+    _emitTiming(
+      draft.copyWith(
+        performedAt: now,
+        startedAt: now,
+        activeSince: now,
+        elapsedSeconds: 0,
+        isPaused: false,
+      ),
+      startedAt: now,
+      elapsed: Duration.zero,
+      isPaused: false,
+    );
+    _workoutTimer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+    _persistDraft(draft);
+  }
+
+  void pauseWorkout() {
+    if (!isWorkoutStarted || isPaused || isWorkoutFinished) return;
+    _pausedElapsed += DateTime.now().difference(_runningSince!);
+    _runningSince = null;
+    _workoutTimer?.cancel();
+    final pausedDraft = draft.copyWith(
+      clearActiveSince: true,
+      elapsedSeconds: _pausedElapsed.inSeconds,
+      isPaused: true,
+    );
+    _emitTiming(pausedDraft, elapsed: _pausedElapsed, isPaused: true);
+    _persistDraft(pausedDraft);
+  }
+
+  void resumeWorkout() {
+    if (!isWorkoutStarted || !isPaused || isWorkoutFinished) return;
+    _runningSince = DateTime.now();
+    final resumedDraft = draft.copyWith(
+      activeSince: _runningSince,
+      isPaused: false,
+    );
+    _emitTiming(resumedDraft, elapsed: _pausedElapsed, isPaused: false);
+    _persistDraft(resumedDraft);
+    _workoutTimer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  }
+
+  void finishWorkout() {
+    if (!isWorkoutStarted || isWorkoutFinished) return;
+    if (!isPaused) {
+      _pausedElapsed += DateTime.now().difference(_runningSince!);
+    }
+    _runningSince = null;
+    _workoutTimer?.cancel();
+    final now = DateTime.now();
+    final finishedDraft = draft.copyWith(
+      endedAt: now,
+      clearActiveSince: true,
+      elapsedSeconds: _pausedElapsed.inSeconds,
+      isPaused: true,
+    );
+    _emitTiming(
+      finishedDraft,
+      endedAt: now,
+      elapsed: _pausedElapsed,
+      isPaused: true,
+    );
+    _persistDraft(finishedDraft);
+  }
+
+  void resetWorkoutTimer() {
+    _workoutTimer?.cancel();
+    _runningSince = null;
+    _pausedElapsed = Duration.zero;
+    final resetDraft = draft.copyWith(
+      performedAt: DateTime.now(),
+      clearStartedAt: true,
+      clearEndedAt: true,
+      clearActiveSince: true,
+      elapsedSeconds: 0,
+      isPaused: false,
+    );
+    _emitEditing(resetDraft, clearError: true, clearTiming: true);
+    _persistDraft(resetDraft);
+  }
+
+  void continueWorkout() {
+    if (!isWorkoutFinished || startedAt == null) return;
+    final now = DateTime.now();
+    _runningSince = now;
+    final continuedDraft = draft.copyWith(
+      clearEndedAt: true,
+      activeSince: now,
+      isPaused: false,
+    );
+    _emitTiming(
+      continuedDraft,
+      startedAt: startedAt,
+      elapsed: _pausedElapsed,
+      isPaused: false,
+    );
+    _persistDraft(continuedDraft);
+    _workoutTimer?.cancel();
+    _workoutTimer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  }
+
+  void _tick() {
+    if (_runningSince == null) return;
+    _emitTiming(
+      draft,
+      elapsed: _pausedElapsed + DateTime.now().difference(_runningSince!),
+      isPaused: false,
+    );
+  }
+
   List<MachineModel> get selectableMachines {
     final selectedIds = draft.machines
         .map((machineLog) => machineLog.machine.id)
@@ -104,6 +253,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     if (cachedDraft != null || _initialMachine != null) {
       _emitEditing(restoredDraft);
     }
+    _restoreWorkoutTiming(restoredDraft);
 
     try {
       await Future.wait([_machinesService.getMachines(), _loadRoutines()]);
@@ -123,6 +273,32 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     }
   }
 
+  void _restoreWorkoutTiming(WorkoutDraft restoredDraft) {
+    if (restoredDraft.startedAt == null) return;
+
+    _pausedElapsed = Duration(seconds: restoredDraft.elapsedSeconds);
+    if (restoredDraft.endedAt != null || restoredDraft.isPaused) {
+      _emitTiming(
+        restoredDraft,
+        startedAt: restoredDraft.startedAt,
+        endedAt: restoredDraft.endedAt,
+        elapsed: _pausedElapsed,
+        isPaused: true,
+      );
+      return;
+    }
+
+    _runningSince = restoredDraft.activeSince ?? restoredDraft.startedAt;
+    _emitTiming(
+      restoredDraft,
+      startedAt: restoredDraft.startedAt,
+      elapsed: _pausedElapsed + DateTime.now().difference(_runningSince!),
+      isPaused: false,
+    );
+    _workoutTimer?.cancel();
+    _workoutTimer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  }
+
   Future<void> _loadRoutines() async {
     try {
       final loaded = await _routineService.getRoutines();
@@ -137,7 +313,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   }
 
   Future<bool> saveRoutine(String name) async {
-    final error = draft.validate();
+    final error = draft.validate(requireTiming: false);
     if (error != null) {
       _emitEditing(draft, error: error);
       return false;
@@ -182,6 +358,13 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   void removeMachine(int index) {
     final machines = [...draft.machines]..removeAt(index);
     _emitDraft(draft.copyWith(machines: machines));
+  }
+
+  void clearMachines() {
+    _appliedRoutineId = null;
+    _isEditingRoutine = false;
+    _emitDraft(draft.copyWith(machines: const []));
+    if (isWorkoutStarted || isWorkoutFinished) resetWorkoutTimer();
   }
 
   void updateMachineNotes(int index, String notes) {
@@ -250,6 +433,10 @@ class WorkoutCubit extends Cubit<WorkoutState> {
         draft,
         availableMachines: availableMachines,
         routines: routines,
+        startedAt: startedAt,
+        endedAt: endedAt,
+        elapsed: elapsed,
+        isPaused: isPaused,
       ),
     );
     try {
@@ -271,14 +458,42 @@ class WorkoutCubit extends Cubit<WorkoutState> {
           draft,
           availableMachines: availableMachines,
           routines: routines,
+          startedAt: startedAt,
+          endedAt: endedAt,
+          elapsed: elapsed,
+          isPaused: isPaused,
         ),
       );
     }
   }
 
   void _emitDraft(WorkoutDraft nextDraft) {
-    _emitEditing(nextDraft, clearError: true);
+    _emitEditing(
+      nextDraft,
+      clearError: true,
+      startedAt: startedAt,
+      endedAt: endedAt,
+      elapsed: elapsed,
+      isPaused: isPaused,
+    );
     _persistDraft(nextDraft);
+  }
+
+  void _emitTiming(
+    WorkoutDraft nextDraft, {
+    DateTime? startedAt,
+    DateTime? endedAt,
+    Duration? elapsed,
+    bool? isPaused,
+  }) {
+    _emitEditing(
+      nextDraft,
+      clearError: true,
+      startedAt: startedAt ?? this.startedAt,
+      endedAt: endedAt ?? this.endedAt,
+      elapsed: elapsed ?? this.elapsed,
+      isPaused: isPaused ?? this.isPaused,
+    );
   }
 
   void _persistDraft(WorkoutDraft nextDraft) {
@@ -294,6 +509,11 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     List<RoutineModel>? routines,
     bool clearError = false,
     bool clearMachinesError = false,
+    bool clearTiming = false,
+    DateTime? startedAt,
+    DateTime? endedAt,
+    Duration? elapsed,
+    bool? isPaused,
   }) {
     final current = state is WorkoutEditing ? state as WorkoutEditing : null;
     emit(
@@ -308,7 +528,19 @@ class WorkoutCubit extends Cubit<WorkoutState> {
             ? null
             : machinesError ?? current?.machinesError,
         routines: routines ?? current?.routines ?? const [],
+        startedAt: clearTiming ? null : startedAt ?? current?.startedAt,
+        endedAt: clearTiming ? null : endedAt ?? current?.endedAt,
+        elapsed: clearTiming
+            ? Duration.zero
+            : elapsed ?? current?.elapsed ?? Duration.zero,
+        isPaused: clearTiming ? false : isPaused ?? current?.isPaused ?? false,
       ),
     );
+  }
+
+  @override
+  Future<void> close() {
+    _workoutTimer?.cancel();
+    return super.close();
   }
 }

@@ -5,11 +5,11 @@ import 'package:lift_log/i18n/localization_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/services/api_services/app_settings_service.dart';
+import 'core/services/api_services/app_update_service.dart';
+import 'core/services/network_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/theme_service.dart';
-import 'core/services/network_service.dart';
-import 'core/services/api_services/app_update_service.dart';
-import 'core/services/api_services/app_settings_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
