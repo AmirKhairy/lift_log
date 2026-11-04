@@ -30,7 +30,7 @@ class RoutineService {
         .toList();
   }
 
-  Future<void> saveRoutine(
+  Future<String> saveRoutine(
     String name,
     WorkoutDraft draft, {
     String? id,
@@ -84,6 +84,8 @@ class RoutineService {
           },
       ]);
     }
+
+    return routineId;
   }
 
   Future<void> deleteRoutine(String routineId) async {

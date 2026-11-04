@@ -8,6 +8,7 @@ class RoutineActions extends StatelessWidget {
     super.key,
     required this.routines,
     required this.enabled,
+    required this.saving,
     required this.onSelect,
     required this.onSave,
     this.showSelect = true,
@@ -17,6 +18,7 @@ class RoutineActions extends StatelessWidget {
 
   final List<RoutineModel> routines;
   final bool enabled;
+  final bool saving;
   final VoidCallback onSelect;
   final VoidCallback onSave;
   final bool showSelect;
@@ -42,7 +44,13 @@ class RoutineActions extends StatelessWidget {
           Expanded(
             child: TextButton.icon(
               onPressed: enabled ? onSave : null,
-              icon: const Icon(Icons.bookmark_add_outlined),
+              icon: saving
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.bookmark_add_outlined),
               label: AppText(saveLabel),
             ),
           ),

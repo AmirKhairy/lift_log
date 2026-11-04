@@ -7,6 +7,7 @@ import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_card.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
+import 'package:lift_log/core/widgets/language_switcher.dart';
 import 'package:lift_log/i18n/localization_service.dart';
 import 'package:lift_log/features/profile/presentation/widgets/profile_settings_row.dart';
 
@@ -35,7 +36,7 @@ class ProfileSettingsSection extends StatelessWidget {
               SizedBox(height: AppSpacing.md),
               ProfileSettingsRow(
                 label: 'language'.tr,
-                trailing: _buildLanguageSwitcher(context),
+                trailing: const LanguageSwitcher(),
               ),
               SizedBox(height: AppSpacing.sm),
               ProfileSettingsRow(
@@ -46,28 +47,6 @@ class ProfileSettingsSection extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildLanguageSwitcher(BuildContext context) {
-    final current = LocalizationService.instance.locale.languageCode;
-
-    return _buildSwitcher(
-      context,
-      options: [
-        _SwitcherOption(
-          value: 'ar',
-          label: 'arabic'.tr,
-          child: const Text('AR'),
-        ),
-        _SwitcherOption(
-          value: 'en',
-          label: 'english'.tr,
-          child: const Text('EN'),
-        ),
-      ],
-      selectedValue: current,
-      onSelected: (value) => LocalizationService.instance.changeLanguage(value),
     );
   }
 

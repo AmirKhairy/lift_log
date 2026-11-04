@@ -17,6 +17,7 @@ import 'package:lift_log/features/machine_details/cubit/machine_details_state.da
 import 'package:lift_log/features/machine_details/presentation/widgets/machine_details_header.dart';
 import 'package:lift_log/features/machine_details/presentation/widgets/machine_details_delete_dialog.dart';
 import 'package:lift_log/features/machine_details/presentation/widgets/machine_details_history_section.dart';
+import 'package:lift_log/features/machine_details/presentation/widgets/machine_details_loading_shimmer.dart';
 import 'package:lift_log/features/machine_details/presentation/widgets/machine_details_tutorial_card.dart';
 
 class MachineDetailsView extends StatelessWidget {
@@ -46,7 +47,7 @@ class MachineDetailsView extends StatelessWidget {
           return switch (state) {
             MachineDetailsInitial() || MachineDetailsLoading() => AppScaffold(
               title: 'machine_details',
-              body: const Center(child: CircularProgressIndicator()),
+              body: const MachineDetailsLoadingShimmer(),
             ),
             MachineDetailsError() => AppScaffold(
               title: 'machine_details',
