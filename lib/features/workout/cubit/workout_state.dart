@@ -81,6 +81,37 @@ final class WorkoutSaving extends WorkoutState {
   ];
 }
 
+final class WorkoutRoutineSaving extends WorkoutState {
+  const WorkoutRoutineSaving(
+    this.draft, {
+    this.availableMachines = const [],
+    this.routines = const [],
+    this.startedAt,
+    this.endedAt,
+    this.elapsed = Duration.zero,
+    this.isPaused = false,
+  });
+
+  final WorkoutDraft draft;
+  final List<MachineModel> availableMachines;
+  final List<RoutineModel> routines;
+  final DateTime? startedAt;
+  final DateTime? endedAt;
+  final Duration elapsed;
+  final bool isPaused;
+
+  @override
+  List<Object?> get props => [
+    draft,
+    availableMachines,
+    routines,
+    startedAt,
+    endedAt,
+    elapsed,
+    isPaused,
+  ];
+}
+
 final class WorkoutSaved extends WorkoutState {
   const WorkoutSaved();
 }

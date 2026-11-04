@@ -12,7 +12,6 @@ import 'package:lift_log/core/utils/app_padding.dart';
 import 'package:lift_log/core/widgets/app_button.dart';
 import 'package:lift_log/core/widgets/app_snackbar.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
-import 'package:lift_log/core/widgets/loading.dart';
 import 'package:lift_log/features/home/cubit/home_cubit.dart';
 import 'package:lift_log/features/profile/cubit/profile_cubit.dart';
 import 'package:lift_log/features/profile/cubit/profile_state.dart';
@@ -20,6 +19,7 @@ import 'package:lift_log/features/profile/presentation/widgets/profile_confirmat
 import 'package:lift_log/features/profile/presentation/widgets/profile_danger_section.dart';
 import 'package:lift_log/features/profile/presentation/widgets/profile_data_section.dart';
 import 'package:lift_log/features/profile/presentation/widgets/profile_settings_section.dart';
+import 'package:lift_log/features/profile/presentation/widgets/profile_loading_shimmer.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -65,7 +65,7 @@ class ProfilePage extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, ProfileState state) {
     if (state is ProfileInitial || state is ProfileLoading) {
-      return const Center(child: Loading());
+      return const ProfileLoadingShimmer();
     }
 
     if (state is ProfileLoaded) {

@@ -6,6 +6,7 @@ import 'package:lift_log/features/workout_history/cubit/workout_history_cubit.da
 import 'package:lift_log/features/workout_history/cubit/workout_history_state.dart';
 import 'package:lift_log/features/workout_history/presentation/widgets/workout_history_empty_view.dart';
 import 'package:lift_log/features/workout_history/presentation/widgets/workout_history_error_view.dart';
+import 'package:lift_log/features/workout_history/presentation/widgets/workout_history_loading_shimmer.dart';
 import 'package:lift_log/features/workout_history/presentation/widgets/workout_day_section.dart';
 
 class WorkoutHistoryView extends StatelessWidget {
@@ -16,9 +17,8 @@ class WorkoutHistoryView extends StatelessWidget {
     return BlocBuilder<WorkoutHistoryCubit, WorkoutHistoryState>(
       builder: (context, state) {
         return switch (state) {
-          WorkoutHistoryInitial() || WorkoutHistoryLoading() => const Center(
-            child: CircularProgressIndicator(),
-          ),
+          WorkoutHistoryInitial() || WorkoutHistoryLoading() =>
+            const WorkoutHistoryLoadingShimmer(),
           WorkoutHistoryError(:final message) => WorkoutHistoryErrorView(
             message: message,
             onRetry: context.read<WorkoutHistoryCubit>().load,

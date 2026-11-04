@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/workout_models.dart';
 import 'package:lift_log/core/services/api_services/machines_service.dart';
-import 'package:lift_log/core/services/api_services/workout_service.dart';
 import 'package:lift_log/core/services/api_services/routine_service.dart';
+import 'package:lift_log/core/services/api_services/workout_service.dart';
 import 'package:lift_log/core/services/workout_draft_storage.dart';
 
 import 'workout_state.dart';
@@ -44,6 +44,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   WorkoutDraft get draft => switch (state) {
     WorkoutEditing(:final draft) => draft,
     WorkoutSaving(:final draft) => draft,
+    WorkoutRoutineSaving(:final draft) => draft,
     WorkoutError(:final draft) => draft,
     WorkoutSaved() => WorkoutDraft(),
   };
@@ -51,6 +52,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   List<MachineModel> get availableMachines => switch (state) {
     WorkoutEditing(:final availableMachines) => availableMachines,
     WorkoutSaving(:final availableMachines) => availableMachines,
+    WorkoutRoutineSaving(:final availableMachines) => availableMachines,
     WorkoutError(:final availableMachines) => availableMachines,
     WorkoutSaved() => const [],
   };
@@ -58,6 +60,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   List<RoutineModel> get routines => switch (state) {
     WorkoutEditing(:final routines) => routines,
     WorkoutSaving(:final routines) => routines,
+    WorkoutRoutineSaving(:final routines) => routines,
     WorkoutError(:final routines) => routines,
     WorkoutSaved() => const [],
   };
@@ -72,14 +75,14 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     return null;
   }
 
-  bool get shouldShowRoutineSave =>
-      _appliedRoutineId == null || _isEditingRoutine;
+  bool get shouldShowRoutineSave => _appliedRoutineId == null;
 
   bool get isEditingRoutine => _isEditingRoutine;
 
   DateTime? get startedAt => switch (state) {
     WorkoutEditing(:final startedAt) => startedAt,
     WorkoutSaving(:final startedAt) => startedAt,
+    WorkoutRoutineSaving(:final startedAt) => startedAt,
     WorkoutError(:final startedAt) => startedAt,
     WorkoutSaved() => null,
   };
@@ -87,6 +90,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   DateTime? get endedAt => switch (state) {
     WorkoutEditing(:final endedAt) => endedAt,
     WorkoutSaving(:final endedAt) => endedAt,
+    WorkoutRoutineSaving(:final endedAt) => endedAt,
     WorkoutError(:final endedAt) => endedAt,
     WorkoutSaved() => null,
   };
@@ -94,6 +98,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   Duration get elapsed => switch (state) {
     WorkoutEditing(:final elapsed) => elapsed,
     WorkoutSaving(:final elapsed) => elapsed,
+    WorkoutRoutineSaving(:final elapsed) => elapsed,
     WorkoutError(:final elapsed) => elapsed,
     WorkoutSaved() => Duration.zero,
   };
@@ -101,6 +106,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   bool get isPaused => switch (state) {
     WorkoutEditing(:final isPaused) => isPaused,
     WorkoutSaving(:final isPaused) => isPaused,
+    WorkoutRoutineSaving(:final isPaused) => isPaused,
     WorkoutError(:final isPaused) => isPaused,
     WorkoutSaved() => false,
   };
@@ -215,7 +221,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   }
 
   void _tick() {
-    if (_runningSince == null) return;
+    if (_runningSince == null || isSavingRoutine) return;
     _emitTiming(
       draft,
       elapsed: _pausedElapsed + DateTime.now().difference(_runningSince!),
@@ -235,6 +241,8 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
   bool get isLoadingMachines =>
       state is WorkoutEditing && (state as WorkoutEditing).isLoadingMachines;
+
+  bool get isSavingRoutine => state is WorkoutRoutineSaving;
 
   Future<void> loadMachines() async {
     final cachedDraft = await _draftStorage.load();
@@ -318,10 +326,58 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       _emitEditing(draft, error: error);
       return false;
     }
-    await _routineService.saveRoutine(name, draft, id: _appliedRoutineId);
-    final loaded = await _routineService.getRoutines();
-    _emitEditing(draft, routines: loaded, clearError: true);
-    return true;
+
+    final routineDraft = draft;
+    final machines = availableMachines;
+    final savedRoutines = routines;
+    final savedStartedAt = startedAt;
+    final savedEndedAt = endedAt;
+    final savedElapsed = elapsed;
+    final savedIsPaused = isPaused;
+    emit(
+      WorkoutRoutineSaving(
+        routineDraft,
+        availableMachines: machines,
+        routines: savedRoutines,
+        startedAt: savedStartedAt,
+        endedAt: savedEndedAt,
+        elapsed: savedElapsed,
+        isPaused: savedIsPaused,
+      ),
+    );
+
+    try {
+      final savedRoutineId = await _routineService.saveRoutine(
+        name,
+        routineDraft,
+        id: _appliedRoutineId,
+      );
+      final loaded = await _routineService.getRoutines();
+      _appliedRoutineId = savedRoutineId;
+      _isEditingRoutine = false;
+      _emitEditing(
+        routineDraft,
+        availableMachines: machines,
+        routines: loaded,
+        clearError: true,
+        startedAt: savedStartedAt,
+        endedAt: savedEndedAt,
+        elapsed: savedElapsed,
+        isPaused: savedIsPaused,
+      );
+      return true;
+    } catch (_) {
+      _emitEditing(
+        routineDraft,
+        availableMachines: machines,
+        routines: savedRoutines,
+        startedAt: savedStartedAt,
+        endedAt: savedEndedAt,
+        elapsed: savedElapsed,
+        isPaused: savedIsPaused,
+      );
+      rethrow;
+    }
   }
 
   Future<void> deleteRoutine(String routineId) async {

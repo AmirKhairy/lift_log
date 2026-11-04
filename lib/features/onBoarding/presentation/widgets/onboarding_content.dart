@@ -3,11 +3,12 @@ import 'package:lift_log/core/extensions/localization_extension.dart';
 import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
+import '../../../../core/models/onboarding_item.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../core/utils/app_padding.dart';
 import '../../../../core/utils/app_radius.dart';
-import '../../../../core/models/onboarding_item.dart';
+import 'onboarding_language_button.dart';
 import 'onboarding_visual.dart';
 
 class OnboardingContent extends StatelessWidget {
@@ -23,8 +24,15 @@ class OnboardingContent extends StatelessWidget {
         children: [
           const SizedBox(height: AppSpacing.md),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+
             children: [
+              if (item.visualType == OnboardingVisualType.machines)
+                const OnboardingLanguageButton(
+                  languageCode: 'en',
+                  labelKey: 'english',
+                ),
+              Spacer(),
               Container(
                 width: 28,
                 height: 28,
@@ -48,6 +56,13 @@ class OnboardingContent extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                 ),
               ),
+              Spacer(),
+
+              if (item.visualType == OnboardingVisualType.machines)
+                const OnboardingLanguageButton(
+                  languageCode: 'ar',
+                  labelKey: 'arabic',
+                ),
             ],
           ),
           const Spacer(),

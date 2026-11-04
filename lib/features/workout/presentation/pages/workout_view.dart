@@ -44,7 +44,9 @@ class WorkoutView extends StatelessWidget {
         builder: (context, state) {
           final cubit = context.read<WorkoutCubit>();
           final draft = cubit.draft;
-          final saving = state is WorkoutSaving;
+          final workoutSaving = state is WorkoutSaving;
+          final savingRoutine = state is WorkoutRoutineSaving;
+          final saving = workoutSaving || savingRoutine;
           final error = state is WorkoutEditing ? state.error : null;
 
           return ListView(
@@ -74,7 +76,8 @@ class WorkoutView extends StatelessWidget {
               if (cubit.routines.isNotEmpty)
                 RoutineActions(
                   routines: cubit.routines,
-                  enabled: !saving,
+                  enabled: !saving && !savingRoutine,
+                  saving: savingRoutine,
                   onSelect: () => _selectRoutine(context, cubit),
                   onSave: () => _saveRoutine(context, cubit),
                   showSave: false,
@@ -145,7 +148,8 @@ class WorkoutView extends StatelessWidget {
               if (draft.machines.isNotEmpty)
                 RoutineActions(
                   routines: cubit.routines,
-                  enabled: !saving,
+                  enabled: !saving && !savingRoutine,
+                  saving: savingRoutine,
                   onSelect: () => _selectRoutine(context, cubit),
                   onSave: () => _saveRoutine(context, cubit),
                   showSelect: false,
@@ -167,7 +171,7 @@ class WorkoutView extends StatelessWidget {
               SizedBox(height: AppSpacing.lg),
               AppButton(
                 title: 'save_workout',
-                loading: saving,
+                loading: workoutSaving,
                 onPressed: cubit.isWorkoutFinished ? cubit.save : null,
                 icon: const Icon(Icons.check_rounded),
               ),
