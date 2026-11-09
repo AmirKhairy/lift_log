@@ -31,7 +31,7 @@ const Map<String, String> enLanguage = {
       "Password reset email sent successfully, Please check your inbox.",
   "send_reset_email": "Send Reset Email",
   "back_to_login": "Back to Login",
-  "lift_log": "LiftLog",
+  "lift_log": "Bulkito",
   "welcome_back": "Welcome back",
   "dont_have_account": "Don't have an account? ",
   "sign_up": "Sign up",
@@ -361,7 +361,7 @@ const Map<String, String> enLanguage = {
       'No exercises available, add a new one to get started.',
   'update_required': 'Update required',
   'update_required_description':
-      'A newer version of LiftLog is available. Update the app to continue.',
+      'A newer version of Bulkito is available. Update the app to continue.',
   'update_now': 'Update now',
   'update_link_error': 'Could not open the update link.',
   'version': 'Version',

@@ -1,4 +1,4 @@
-package com.example.lift_log
+package com.amirkhairy.bulkito
 
 import io.flutter.embedding.android.FlutterActivity
 

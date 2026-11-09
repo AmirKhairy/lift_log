@@ -31,7 +31,7 @@ const Map<String, String> arLanguage = {
       "تم إرسال رابط إعادة تعيين كلمة المرور بنجاح، يرجى التحقق من بريدك الإلكتروني.",
   "send_reset_email": "إرسال رابط إعادة التعيين",
   "back_to_login": "العودة لتسجيل الدخول",
-  "lift_log": "LiftLog",
+  "lift_log": "Bulkito",
   "welcome_back": "مرحبًا بعودتك",
   "dont_have_account": "ليس لديك حساب؟ ",
   "sign_up": "إنشاء حساب",
@@ -349,7 +349,7 @@ const Map<String, String> arLanguage = {
   'no_machines_available': 'لا توجد تمارين متاحة. أضف تمرينًا جديدًا للبدء.',
   'update_required': 'التحديث مطلوب',
   'update_required_description':
-      'يتوفر إصدار أحدث من LiftLog. حدّث التطبيق للمتابعة.',
+      'يتوفر إصدار أحدث من Bulkito. حدّث التطبيق للمتابعة.',
   'update_now': 'التحديث الآن',
   'update_link_error': 'تعذر فتح رابط التحديث.',
   'version': 'الإصدار',

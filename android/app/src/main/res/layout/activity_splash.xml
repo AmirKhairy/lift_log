@@ -33,7 +33,7 @@
             android:id="@+id/appName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lift Log"
+            android:text="Bulkito"
             android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="#000000"

@@ -14,4 +14,4 @@ Before implementing, inspect existing code and put the change in the matching la
 - If ambiguity would change architecture, state flow, or public API, ask before assuming.
 - New code should be clean, maintainable, testable, and consistent with nearby files.
 
-Target: **Clean + Maintainable + Testable + Performant + Scalable + Consistent with lift_log.**
+Target: **Clean + Maintainable + Testable + Performant + Scalable + Consistent with Bulkito.**

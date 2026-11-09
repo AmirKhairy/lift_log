@@ -1,4 +1,4 @@
-package com.example.lift_log
+package com.amirkhairy.bulkito
 
 import android.app.Activity
 import android.content.Intent

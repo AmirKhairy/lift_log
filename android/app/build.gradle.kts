@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.lift_log"
+    namespace = "com.amirkhairy.bulkito"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.lift_log"
+        applicationId = "com.amirkhairy.bulkito"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

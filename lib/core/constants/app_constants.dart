@@ -11,7 +11,7 @@ class AppConstants {
 
   final languages = ['العربية', 'English'];
   String languageKey = 'languageKey';
-  static const String appName = 'Lift Log';
+  static const String appName = 'Bulkito';
 
   static const double defaultRadius = 16;
 
