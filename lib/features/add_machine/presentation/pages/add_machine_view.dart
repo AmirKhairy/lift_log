@@ -20,13 +20,13 @@ import 'package:lift_log/features/add_machine/cubit/add_machine_cubit.dart';
 import 'package:lift_log/features/add_machine/cubit/add_machine_state.dart'
     hide AddMachineLoading;
 import 'package:lift_log/features/add_machine/presentation/widgets/add_machine_loading.dart';
+import 'package:lift_log/features/add_machine/presentation/widgets/exercise_type_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/image_source_tile.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/machine_image_picker.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/muscle_group_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/performance_tip_card.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/target_muscle_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/tutorial_video_selector.dart';
-import 'package:lift_log/features/add_machine/presentation/widgets/exercise_type_selector.dart';
 
 class AddMachineView extends StatefulWidget {
   const AddMachineView({super.key, this.machineToEdit});
@@ -135,16 +135,6 @@ class AddMachineViewState extends State<AddMachineView> {
                   children: [
                     AppStaggeredAnimation(
                       index: 0,
-                      child: MachineImagePicker(
-                        image: state.selectedImage,
-                        existingImageUrl: widget.machineToEdit?.imageUrl,
-                        targetMuscle: state.selectedTargetMuscle,
-                        onTap: _showImageSourceSheet,
-                      ),
-                    ),
-                    SizedBox(height: AppSpacing.lg),
-                    AppStaggeredAnimation(
-                      index: 1,
                       child: LabeledTextField(
                         label: 'machine_name',
                         child: AppTextField(
@@ -157,16 +147,8 @@ class AddMachineViewState extends State<AddMachineView> {
                       ),
                     ),
                     SizedBox(height: AppSpacing.md),
-                    LabeledTextField(
-                      label: 'exercise_type',
-                      child: ExerciseTypeSelector(
-                        selected: state.selectedExerciseType,
-                        onSelected: context.read<AddMachineCubit>().selectExerciseType,
-                      ),
-                    ),
-                    SizedBox(height: AppSpacing.md),
                     AppStaggeredAnimation(
-                      index: 2,
+                      index: 1,
                       child: LabeledTextField(
                         label: 'description',
                         child: AppTextField(
@@ -179,8 +161,19 @@ class AddMachineViewState extends State<AddMachineView> {
                       ),
                     ),
                     SizedBox(height: AppSpacing.md),
+                    LabeledTextField(
+                      label: 'exercise_type',
+                      child: ExerciseTypeSelector(
+                        selected: state.selectedExerciseType,
+                        onSelected: context
+                            .read<AddMachineCubit>()
+                            .selectExerciseType,
+                      ),
+                    ),
+
+                    SizedBox(height: AppSpacing.md),
                     AppStaggeredAnimation(
-                      index: 3,
+                      index: 2,
                       child: LabeledTextField(
                         label: 'primary_muscle_group',
                         child: MuscleGroupSelector(
@@ -204,24 +197,36 @@ class AddMachineViewState extends State<AddMachineView> {
                         ),
                       ),
                       SizedBox(height: AppSpacing.md),
-                      if (state.selectedTargetMuscle != null)
-                        AppStaggeredAnimation(
-                          index: 4,
-                          child: LabeledTextField(
-                            label: 'tutorial_videos_selection_label',
-                            child: TutorialVideoSelector(
-                              videos: state.tutorialVideos,
-                              selectedVideo: state.selectedTutorialVideo,
-                              isLoading: state.isTutorialVideosLoading,
-                              onSelected: context
-                                  .read<AddMachineCubit>()
-                                  .selectTutorialVideo,
-                              onPlay: _playTutorialVideo,
-                            ),
+                    ],
+                    AppStaggeredAnimation(
+                      index: 3,
+                      child: MachineImagePicker(
+                        image: state.selectedImage,
+                        existingImageUrl: widget.machineToEdit?.imageUrl,
+                        targetMuscle: state.selectedTargetMuscle,
+                        onTap: _showImageSourceSheet,
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.lg),
+                    if (state.selectedTargetMuscle != null) ...[
+                      AppStaggeredAnimation(
+                        index: 4,
+                        child: LabeledTextField(
+                          label: 'tutorial_videos_selection_label',
+                          child: TutorialVideoSelector(
+                            videos: state.tutorialVideos,
+                            selectedVideo: state.selectedTutorialVideo,
+                            isLoading: state.isTutorialVideosLoading,
+                            onSelected: context
+                                .read<AddMachineCubit>()
+                                .selectTutorialVideo,
+                            onPlay: _playTutorialVideo,
                           ),
                         ),
+                      ),
+                      SizedBox(height: AppSpacing.md),
                     ],
-                    SizedBox(height: AppSpacing.md),
+
                     const AppStaggeredAnimation(
                       index: 5,
                       child: PerformanceTipCard(),
