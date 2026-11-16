@@ -62,11 +62,24 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       if (image == null || state is! AddMachineLoaded) return;
 
       final currentState = state as AddMachineLoaded;
-      emit(_loaded(currentState, selectedImage: image));
+      emit(
+        _loaded(
+          currentState,
+          selectedImage: image,
+          clearSelectedTargetMuscleImage: true,
+        ),
+      );
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
       emit(AddMachineError(e.toString()));
       emit(const AddMachineLoaded());
+    }
+  }
+
+  void removePickedImage() {
+    final currentState = state;
+    if (currentState is AddMachineLoaded) {
+      emit(_loaded(currentState, clearSelectedImage: true));
     }
   }
 
@@ -232,9 +245,11 @@ class AddMachineCubit extends Cubit<AddMachineState> {
   AddMachineLoaded _loaded(
     AddMachineLoaded current, {
     XFile? selectedImage,
+    bool clearSelectedImage = false,
     MuscleGroup? selectedMuscleGroup,
     TargetMuscle? selectedTargetMuscle,
     String? selectedTargetMuscleImageUrl,
+    bool clearSelectedTargetMuscleImage = false,
     bool clearSelectedTargetMuscle = false,
     TutorialVideosModel? selectedTutorialVideo,
     List<TutorialVideosModel>? tutorialVideos,
@@ -244,15 +259,17 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     ExerciseType? selectedExerciseType,
   }) {
     return AddMachineLoaded(
-      selectedImage: selectedImage ?? current.selectedImage,
+      selectedImage: clearSelectedImage
+          ? null
+          : selectedImage ?? current.selectedImage,
       selectedMuscleGroup: selectedMuscleGroup ?? current.selectedMuscleGroup,
       selectedTargetMuscle: clearSelectedTargetMuscle
           ? null
           : selectedTargetMuscle ?? current.selectedTargetMuscle,
-      selectedTargetMuscleImageUrl: clearSelectedTargetMuscle
+      selectedTargetMuscleImageUrl:
+          clearSelectedTargetMuscle || clearSelectedTargetMuscleImage
           ? null
-          : selectedTargetMuscleImageUrl ??
-                current.selectedTargetMuscleImageUrl,
+          : selectedTargetMuscleImageUrl ?? current.selectedTargetMuscleImageUrl,
       selectedTutorialVideo: clearSelectedTutorialVideo
           ? null
           : selectedTutorialVideo ?? current.selectedTutorialVideo,

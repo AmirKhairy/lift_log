@@ -174,6 +174,7 @@ const Map<String, String> enLanguage = {
   "upload_machine_photo_optional": "Upload Exercise Photo (Optional)",
   "camera": "Camera",
   "gallery": "Gallery",
+  "remove_image": "Remove image",
   "machine_name": "Exercise Name",
   "machine_name_hint": "e.g., Plate Loaded Leg Press",
   "description": "Description",

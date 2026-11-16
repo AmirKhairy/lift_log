@@ -165,6 +165,7 @@ const Map<String, String> arLanguage = {
   "upload_machine_photo_optional": "رفع صورة التمرين (اختياري)",
   "camera": "الكاميرا",
   "gallery": "معرض الصور",
+  "remove_image": "إزالة الصورة",
   "machine_name": "اسم التمرين",
   "machine_name_hint": "مثال: جهاز ضغط الأرجل المحمل بالأقراص",
   "description": "الوصف",

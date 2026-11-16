@@ -223,6 +223,9 @@ class AddMachineViewState extends State<AddMachineView> {
                         selectedTargetMuscleImageUrl:
                             state.selectedTargetMuscleImageUrl,
                         onTap: _showImageSourceSheet,
+                        onRemove: context
+                            .read<AddMachineCubit>()
+                            .removePickedImage,
                       ),
                     ),
                     SizedBox(height: AppSpacing.lg),
