@@ -196,6 +196,7 @@ const Map<String, String> enLanguage = {
   "delete_machine_confirmation":
       "Are you sure you want to delete this exercise?",
   "select_machine_image": "Select an exercise image",
+  "exercise_image_options": "Choose an exercise image",
   "select_muscle_group": "Select a muscle group",
   "machine_details": "Exercise Details",
   "edit_machine": "Edit Exercise",

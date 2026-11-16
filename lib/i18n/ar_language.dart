@@ -186,6 +186,7 @@ const Map<String, String> arLanguage = {
   "delete_machine": "حذف التمرين",
   "delete_machine_confirmation": "هل أنت متأكد من حذف هذا التمرين؟",
   "select_machine_image": "اختر صورة للتمرين",
+  "exercise_image_options": "اختر صورة التمرين",
   "select_muscle_group": "اختر مجموعة عضلية",
   "machine_details": "تفاصيل التمرين",
   "edit_machine": "تعديل التمرين",

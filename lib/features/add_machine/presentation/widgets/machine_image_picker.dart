@@ -16,6 +16,7 @@ class MachineImagePicker extends StatelessWidget {
     required this.image,
     required this.onTap,
     this.targetMuscle,
+    this.selectedTargetMuscleImageUrl,
     this.existingImageUrl,
   });
 
@@ -23,6 +24,7 @@ class MachineImagePicker extends StatelessWidget {
   final String? existingImageUrl;
   final VoidCallback onTap;
   final TargetMuscle? targetMuscle;
+  final String? selectedTargetMuscleImageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +59,8 @@ class MachineImagePicker extends StatelessWidget {
       );
     }
 
-    final defaultUrl = AppSettingsService.instance.targetMuscleImageUrl(
-      targetMuscle,
-    );
+    final defaultUrl = selectedTargetMuscleImageUrl ??
+        AppSettingsService.instance.targetMuscleImageUrl(targetMuscle);
     if (defaultUrl != null) {
       return AppCachedNetworkImage(
         imageUrl: defaultUrl,

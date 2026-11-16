@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/services/api_services/machines_service.dart';
+import 'package:lift_log/core/services/api_services/app_settings_service.dart';
 import 'package:lift_log/core/services/api_services/tutorial_videos_service.dart';
 import 'package:lift_log/core/utils/app_enums.dart';
 import 'package:lift_log/core/utils/target_muscle.dart';
@@ -119,6 +120,9 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       _loaded(
         currentState,
         selectedTargetMuscle: targetMuscle,
+        selectedTargetMuscleImageUrl: AppSettingsService.instance
+            .targetMuscleImageUrls(targetMuscle)
+            .firstOrNull,
         selectedTutorialVideo: null,
         clearSelectedTutorialVideo: true,
         tutorialVideos: const [],
@@ -158,6 +162,13 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     emit(_loaded(currentState, selectedTutorialVideo: video));
   }
 
+  void selectTargetMuscleImage(String imageUrl) {
+    final currentState = state;
+    if (currentState is AddMachineLoaded) {
+      emit(_loaded(currentState, selectedTargetMuscleImageUrl: imageUrl));
+    }
+  }
+
   Future<void> saveMachine({
     required String name,
     required String notes,
@@ -189,6 +200,9 @@ class AddMachineCubit extends Cubit<AddMachineState> {
               notes: notes,
               muscleGroup: muscleGroup,
               targetMuscle: targetMuscle,
+              selectedImageUrl: selectedImage == null
+                  ? currentState.selectedTargetMuscleImageUrl
+                  : null,
               tutorialVideoId: currentState.selectedTutorialVideo?.id,
               image: selectedImage,
               exerciseType: currentState.selectedExerciseType,
@@ -198,6 +212,9 @@ class AddMachineCubit extends Cubit<AddMachineState> {
               notes: notes,
               muscleGroup: muscleGroup,
               targetMuscle: targetMuscle,
+              selectedImageUrl: selectedImage == null
+                  ? currentState.selectedTargetMuscleImageUrl
+                  : null,
               tutorialVideoId: currentState.selectedTutorialVideo?.id,
               image: selectedImage,
               exerciseType: currentState.selectedExerciseType,
@@ -217,6 +234,7 @@ class AddMachineCubit extends Cubit<AddMachineState> {
     XFile? selectedImage,
     MuscleGroup? selectedMuscleGroup,
     TargetMuscle? selectedTargetMuscle,
+    String? selectedTargetMuscleImageUrl,
     bool clearSelectedTargetMuscle = false,
     TutorialVideosModel? selectedTutorialVideo,
     List<TutorialVideosModel>? tutorialVideos,
@@ -231,6 +249,10 @@ class AddMachineCubit extends Cubit<AddMachineState> {
       selectedTargetMuscle: clearSelectedTargetMuscle
           ? null
           : selectedTargetMuscle ?? current.selectedTargetMuscle,
+      selectedTargetMuscleImageUrl: clearSelectedTargetMuscle
+          ? null
+          : selectedTargetMuscleImageUrl ??
+                current.selectedTargetMuscleImageUrl,
       selectedTutorialVideo: clearSelectedTutorialVideo
           ? null
           : selectedTutorialVideo ?? current.selectedTutorialVideo,

@@ -8,6 +8,7 @@ import 'package:lift_log/core/helpers/validators.dart';
 import 'package:lift_log/core/models/machine_model.dart';
 import 'package:lift_log/core/models/tutorial_videos_model.dart';
 import 'package:lift_log/core/router/app_router.dart';
+import 'package:lift_log/core/services/api_services/app_settings_service.dart';
 import 'package:lift_log/core/theme/app_spacing.dart';
 import 'package:lift_log/core/utils/target_muscle.dart';
 import 'package:lift_log/core/widgets/app_button.dart';
@@ -20,6 +21,7 @@ import 'package:lift_log/features/add_machine/cubit/add_machine_cubit.dart';
 import 'package:lift_log/features/add_machine/cubit/add_machine_state.dart'
     hide AddMachineLoading;
 import 'package:lift_log/features/add_machine/presentation/widgets/add_machine_loading.dart';
+import 'package:lift_log/features/add_machine/presentation/widgets/exercise_image_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/exercise_type_selector.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/image_source_tile.dart';
 import 'package:lift_log/features/add_machine/presentation/widgets/machine_image_picker.dart';
@@ -197,13 +199,29 @@ class AddMachineViewState extends State<AddMachineView> {
                         ),
                       ),
                       SizedBox(height: AppSpacing.md),
+                      LabeledTextField(
+                        label: 'exercise_image_options',
+                        child: ExerciseImageSelector(
+                          imageUrls: AppSettingsService.instance
+                              .targetMuscleImageUrls(
+                                state.selectedTargetMuscle,
+                              ),
+                          selectedUrl: state.selectedTargetMuscleImageUrl,
+                          onSelected: context
+                              .read<AddMachineCubit>()
+                              .selectTargetMuscleImage,
+                        ),
+                      ),
                     ],
+                    SizedBox(height: AppSpacing.md),
                     AppStaggeredAnimation(
                       index: 3,
                       child: MachineImagePicker(
                         image: state.selectedImage,
                         existingImageUrl: widget.machineToEdit?.imageUrl,
                         targetMuscle: state.selectedTargetMuscle,
+                        selectedTargetMuscleImageUrl:
+                            state.selectedTargetMuscleImageUrl,
                         onTap: _showImageSourceSheet,
                       ),
                     ),

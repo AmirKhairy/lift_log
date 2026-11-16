@@ -6,13 +6,16 @@ class AppSettingsService {
 
   static final instance = AppSettingsService._();
 
-  Map<String, String> _targetMuscleImageUrls = const {};
+  Map<String, List<String>> _targetMuscleImageUrls = const {};
+
+  List<String> targetMuscleImageUrls(TargetMuscle? targetMuscle) {
+    if (targetMuscle == null) return const [];
+    return _targetMuscleImageUrls[targetMuscle.toJson()] ?? const [];
+  }
 
   String? targetMuscleImageUrl(TargetMuscle? targetMuscle) {
-    if (targetMuscle == null) return null;
-
-    final url = _targetMuscleImageUrls[targetMuscle.toJson()]?.trim();
-    return url == null || url.isEmpty ? null : url;
+    final urls = targetMuscleImageUrls(targetMuscle);
+    return urls.isEmpty ? null : urls.first;
   }
 
   Future<void> load() async {
@@ -29,9 +32,17 @@ class AppSettingsService {
 
       _targetMuscleImageUrls = {
         for (final entry in rawUrls.entries)
-          if (entry.key is String && entry.value is String)
-            entry.key as String: entry.value as String,
+          if (entry.key is String)
+            entry.key as String: _parseUrls(entry.value),
       };
     } catch (_) {}
+  }
+
+  List<String> _parseUrls(Object? value) {
+    final values = value is List ? value : [value];
+    return [
+      for (final item in values)
+        if (item is String && item.trim().isNotEmpty) item.trim(),
+    ];
   }
 }

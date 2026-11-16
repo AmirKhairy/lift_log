@@ -25,6 +25,7 @@ final class AddMachineLoaded extends AddMachineState {
     this.selectedImage,
     this.selectedMuscleGroup,
     this.selectedTargetMuscle,
+    this.selectedTargetMuscleImageUrl,
     this.selectedTutorialVideo,
     this.tutorialVideos = const [],
     this.isTutorialVideosLoading = false,
@@ -35,6 +36,7 @@ final class AddMachineLoaded extends AddMachineState {
   final XFile? selectedImage;
   final MuscleGroup? selectedMuscleGroup;
   final TargetMuscle? selectedTargetMuscle;
+  final String? selectedTargetMuscleImageUrl;
   final TutorialVideosModel? selectedTutorialVideo;
   final List<TutorialVideosModel> tutorialVideos;
   final bool isTutorialVideosLoading;
@@ -46,6 +48,7 @@ final class AddMachineLoaded extends AddMachineState {
     selectedImage,
     selectedMuscleGroup,
     selectedTargetMuscle,
+    selectedTargetMuscleImageUrl,
     selectedTutorialVideo,
     tutorialVideos,
     isTutorialVideosLoading,

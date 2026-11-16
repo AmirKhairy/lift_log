@@ -51,6 +51,7 @@ class MachinesService {
     required MuscleGroup muscleGroup,
     TargetMuscle? targetMuscle,
     XFile? image,
+    String? selectedImageUrl,
     String? tutorialVideoId,
     required ExerciseType exerciseType,
   }) async {
@@ -61,8 +62,8 @@ class MachinesService {
         throw Exception('User is not logged in');
       }
 
-      final imageUrl = image == null
-          ? null
+      final resolvedImageUrl = image == null
+          ? selectedImageUrl
           : await _uploadMachineImage(userId: userId, image: image);
 
       final response = await SupabaseService.client
@@ -70,7 +71,7 @@ class MachinesService {
           .insert({
             'user_id': userId,
             'name': name.trim(),
-            'image_url': imageUrl,
+            'image_url': resolvedImageUrl,
             'muscle_group': muscleGroup.toJson(),
             'target_muscle': targetMuscle?.toJson(),
             'exercise_type': exerciseType.databaseValue,
@@ -123,6 +124,7 @@ class MachinesService {
     TargetMuscle? targetMuscle,
     String? tutorialVideoId,
     XFile? image,
+    String? selectedImageUrl,
     required ExerciseType exerciseType,
   }) async {
     try {
@@ -137,16 +139,18 @@ class MachinesService {
         throw Exception('Machine is invalid');
       }
 
-      var imageUrl = machine.imageUrl;
+      var resolvedImageUrl = machine.imageUrl;
       if (image != null) {
-        imageUrl = await _uploadMachineImage(userId: userId, image: image);
+        resolvedImageUrl = await _uploadMachineImage(userId: userId, image: image);
+      } else if (selectedImageUrl != null) {
+        resolvedImageUrl = selectedImageUrl;
       }
 
       final response = await SupabaseService.client
           .from('machines')
           .update({
             'name': name.trim(),
-            'image_url': imageUrl,
+            'image_url': resolvedImageUrl,
             'muscle_group': muscleGroup.toJson(),
             'target_muscle': targetMuscle?.toJson(),
             'exercise_type': exerciseType.databaseValue,
