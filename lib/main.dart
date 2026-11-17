@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lift_log/core/services/deep_link_service.dart';
@@ -8,11 +9,14 @@ import 'app.dart';
 import 'core/services/api_services/app_settings_service.dart';
 import 'core/services/api_services/app_update_service.dart';
 import 'core/services/network_service.dart';
+import 'core/services/notification_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/theme_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await NotificationService.instance.initialize();
   await dotenv.load(fileName: ".env");
   await StorageService.init();
   await LocalizationService.instance.init();

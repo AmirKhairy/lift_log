@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +8,7 @@ import 'package:lift_log/core/extensions/theme_extension.dart';
 import 'package:lift_log/core/widgets/app_text.dart';
 
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_padding.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -30,6 +33,7 @@ class OnboardingPageState extends State<OnboardingPage> {
   void initState() {
     super.initState();
     _pageController = PageController();
+    unawaited(NotificationService.instance.requestPermissionAndSubscribe());
   }
 
   @override
